@@ -1,0 +1,25 @@
+appId: com.wordclassifier.app
+productName: 单词分类app
+directories:
+  buildResources: resources
+  output: dist
+files:
+  - out/**/*
+  - "!node_modules/**/*"
+asar: true
+win:
+  target:
+    - target: zip
+      arch:
+        - x64
+  signAndEditExecutable: false
+  artifactName: "${productName}-${version}-win-x64.${ext}"
+mac:
+  target:
+    - dmg
+  icon: resources/icon.icns
+  artifactName: "${productName}-${version}.${ext}"
+  category: public.app-category.education
+extraResources:
+  - from: resources/dictionary
+    to: dictionary

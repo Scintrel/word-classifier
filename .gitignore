@@ -1,0 +1,28 @@
+# 依赖包（几百MB，不需要存档，npm install 就能装回来）
+node_modules/
+
+# 构建输出（每次构建都会重新生成）
+out/
+dist/
+
+# 数据库文件（你的个人单词数据，不上传到云端）
+*.db
+
+# 打包产物
+*.exe
+*.zip
+*.dmg
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.log
+.tmp/
+
+# 大词典文件（可以重新下载）
+resources/ecdict.json
+resources/ecdict-dict.json
+resources/DB.Browser.for.SQLite.zip
+node_modules

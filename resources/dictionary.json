@@ -1,0 +1,5006 @@
+[
+  {
+    "word": "a",
+    "phonetic": "/ə/",
+    "definition": "一个",
+    "pos": "article"
+  },
+  {
+    "word": "abandon",
+    "phonetic": "/əˈbændən/",
+    "definition": "丢弃；放弃",
+    "pos": "verb"
+  },
+  {
+    "word": "ability",
+    "phonetic": "/əˈbɪləti/",
+    "definition": "能力；本领",
+    "pos": "noun"
+  },
+  {
+    "word": "able",
+    "phonetic": "/ˈeɪbəl/",
+    "definition": "能干的；有能力的",
+    "pos": "adjective"
+  },
+  {
+    "word": "abnormal",
+    "phonetic": "/æbˈnɔːməl/",
+    "definition": "反常的",
+    "pos": "adjective"
+  },
+  {
+    "word": "aboard",
+    "phonetic": "/əˈbɔːd/",
+    "definition": "在船上",
+    "pos": "adverb"
+  },
+  {
+    "word": "abolish",
+    "phonetic": "/əˈbɒlɪʃ/",
+    "definition": "废除取消",
+    "pos": "verb"
+  },
+  {
+    "word": "about",
+    "phonetic": "/əˈbaʊt/",
+    "definition": "关于大约",
+    "pos": "preposition"
+  },
+  {
+    "word": "above",
+    "phonetic": "/əˈbʌv/",
+    "definition": "在…上面超过",
+    "pos": "preposition"
+  },
+  {
+    "word": "abroad",
+    "phonetic": "/əˈbrɔːd/",
+    "definition": "在国外海外",
+    "pos": "adverb"
+  },
+  {
+    "word": "abrupt",
+    "phonetic": "/əˈbrʌpt/",
+    "definition": "突然的意外的",
+    "pos": "adjective"
+  },
+  {
+    "word": "absence",
+    "phonetic": "/ˈæbsəns/",
+    "definition": "缺席不在场",
+    "pos": "noun"
+  },
+  {
+    "word": "absent",
+    "phonetic": "/ˈæbsənt/",
+    "definition": "缺席的",
+    "pos": "adjective"
+  },
+  {
+    "word": "absolute",
+    "phonetic": "/ˈæbsəluːt/",
+    "definition": "绝对的完全的",
+    "pos": "adjective"
+  },
+  {
+    "word": "absolutely",
+    "phonetic": "/ˈæbsəluːtli/",
+    "definition": "绝对地完全地",
+    "pos": "adverb"
+  },
+  {
+    "word": "absorb",
+    "phonetic": "/əbˈsɔːb/",
+    "definition": "吸收吸引",
+    "pos": "verb"
+  },
+  {
+    "word": "abstract",
+    "phonetic": "/ˈæbstrækt/",
+    "definition": "抽象的",
+    "pos": "adjective"
+  },
+  {
+    "word": "absurd",
+    "phonetic": "/əbˈsɜːd/",
+    "definition": "荒唐的不合理的",
+    "pos": "adjective"
+  },
+  {
+    "word": "abundance",
+    "phonetic": "/əˈbʌndəns/",
+    "definition": "丰富充裕",
+    "pos": "noun"
+  },
+  {
+    "word": "abundant",
+    "phonetic": "/əˈbʌndənt/",
+    "definition": "丰富的充裕的",
+    "pos": "adjective"
+  },
+  {
+    "word": "abuse",
+    "phonetic": "/əˈbjuːz/",
+    "definition": "滥用辱骂",
+    "pos": "verb"
+  },
+  {
+    "word": "academic",
+    "phonetic": "/ˌækəˈdemɪk/",
+    "definition": "学术的学院的",
+    "pos": "adjective"
+  },
+  {
+    "word": "academy",
+    "phonetic": "/əˈkædəmi/",
+    "definition": "学院专科院校",
+    "pos": "noun"
+  },
+  {
+    "word": "accelerate",
+    "phonetic": "/ækˈseləreɪt/",
+    "definition": "加速促进",
+    "pos": "verb"
+  },
+  {
+    "word": "accent",
+    "phonetic": "/ˈæksənt/",
+    "definition": "口音重音",
+    "pos": "noun"
+  },
+  {
+    "word": "accept",
+    "phonetic": "/əkˈsept/",
+    "definition": "接受同意",
+    "pos": "verb"
+  },
+  {
+    "word": "acceptable",
+    "phonetic": "/əkˈseptəbəl/",
+    "definition": "可接受的",
+    "pos": "adjective"
+  },
+  {
+    "word": "acceptance",
+    "phonetic": "/əkˈseptəns/",
+    "definition": "接受认可",
+    "pos": "noun"
+  },
+  {
+    "word": "access",
+    "phonetic": "/ˈækses/",
+    "definition": "进入通道",
+    "pos": "noun"
+  },
+  {
+    "word": "accident",
+    "phonetic": "/ˈæksɪdənt/",
+    "definition": "事故意外",
+    "pos": "noun"
+  },
+  {
+    "word": "accommodate",
+    "phonetic": "/əˈkɒmədeɪt/",
+    "definition": "容纳提供方便",
+    "pos": "verb"
+  },
+  {
+    "word": "accompany",
+    "phonetic": "/əˈkʌmpəni/",
+    "definition": "陪伴陪同",
+    "pos": "verb"
+  },
+  {
+    "word": "accomplish",
+    "phonetic": "/əˈkɒmplɪʃ/",
+    "definition": "完成达到",
+    "pos": "verb"
+  },
+  {
+    "word": "accord",
+    "phonetic": "/əˈkɔːd/",
+    "definition": "一致符合",
+    "pos": "noun"
+  },
+  {
+    "word": "according",
+    "phonetic": "/əˈkɔːdɪŋ/",
+    "definition": "根据按照",
+    "pos": "adverb"
+  },
+  {
+    "word": "account",
+    "phonetic": "/əˈkaʊnt/",
+    "definition": "账户解释",
+    "pos": "noun"
+  },
+  {
+    "word": "accumulate",
+    "phonetic": "/əˈkjuːmjuleɪt/",
+    "definition": "积累堆积",
+    "pos": "verb"
+  },
+  {
+    "word": "accuracy",
+    "phonetic": "/ˈækjərəsi/",
+    "definition": "准确性精确度",
+    "pos": "noun"
+  },
+  {
+    "word": "accurate",
+    "phonetic": "/ˈækjərət/",
+    "definition": "准确的精确的",
+    "pos": "adjective"
+  },
+  {
+    "word": "accuse",
+    "phonetic": "/əˈkjuːz/",
+    "definition": "指责控告",
+    "pos": "verb"
+  },
+  {
+    "word": "accustomed",
+    "phonetic": "/əˈkʌstəmd/",
+    "definition": "习惯的",
+    "pos": "adjective"
+  },
+  {
+    "word": "ache",
+    "phonetic": "/eɪk/",
+    "definition": "疼痛",
+    "pos": "noun"
+  },
+  {
+    "word": "achieve",
+    "phonetic": "/əˈtʃiːv/",
+    "definition": "完成实现",
+    "pos": "verb"
+  },
+  {
+    "word": "achievement",
+    "phonetic": "/əˈtʃiːvmənt/",
+    "definition": "成就成绩",
+    "pos": "noun"
+  },
+  {
+    "word": "acid",
+    "phonetic": "/ˈæsɪd/",
+    "definition": "酸酸性的",
+    "pos": "noun"
+  },
+  {
+    "word": "acknowledge",
+    "phonetic": "/əkˈnɒlɪdʒ/",
+    "definition": "承认",
+    "pos": "verb"
+  },
+  {
+    "word": "acquaint",
+    "phonetic": "/əˈkweɪnt/",
+    "definition": "使认识使了解",
+    "pos": "verb"
+  },
+  {
+    "word": "acquire",
+    "phonetic": "/əˈkwaɪə/",
+    "definition": "获得学到",
+    "pos": "verb"
+  },
+  {
+    "word": "acre",
+    "phonetic": "/ˈeɪkə/",
+    "definition": "英亩",
+    "pos": "noun"
+  },
+  {
+    "word": "across",
+    "phonetic": "/əˈkrɒs/",
+    "definition": "穿过横过",
+    "pos": "preposition"
+  },
+  {
+    "word": "act",
+    "phonetic": "/ækt/",
+    "definition": "行动表演",
+    "pos": "verb"
+  },
+  {
+    "word": "action",
+    "phonetic": "/ˈækʃən/",
+    "definition": "行动动作",
+    "pos": "noun"
+  },
+  {
+    "word": "active",
+    "phonetic": "/ˈæktɪv/",
+    "definition": "活跃的积极的",
+    "pos": "adjective"
+  },
+  {
+    "word": "activity",
+    "phonetic": "/ækˈtɪvəti/",
+    "definition": "活动活力",
+    "pos": "noun"
+  },
+  {
+    "word": "actor",
+    "phonetic": "/ˈæktə/",
+    "definition": "男演员",
+    "pos": "noun"
+  },
+  {
+    "word": "actress",
+    "phonetic": "/ˈæktrəs/",
+    "definition": "女演员",
+    "pos": "noun"
+  },
+  {
+    "word": "actual",
+    "phonetic": "/ˈæktʃuəl/",
+    "definition": "实际的真实的",
+    "pos": "adjective"
+  },
+  {
+    "word": "actually",
+    "phonetic": "/ˈæktʃuəli/",
+    "definition": "实际上",
+    "pos": "adverb"
+  },
+  {
+    "word": "acute",
+    "phonetic": "/əˈkjuːt/",
+    "definition": "尖的敏锐的",
+    "pos": "adjective"
+  },
+  {
+    "word": "adapt",
+    "phonetic": "/əˈdæpt/",
+    "definition": "适应改编",
+    "pos": "verb"
+  },
+  {
+    "word": "add",
+    "phonetic": "/æd/",
+    "definition": "添加增加",
+    "pos": "verb"
+  },
+  {
+    "word": "addition",
+    "phonetic": "/əˈdɪʃən/",
+    "definition": "加法附加",
+    "pos": "noun"
+  },
+  {
+    "word": "additional",
+    "phonetic": "/əˈdɪʃənəl/",
+    "definition": "附加的额外的",
+    "pos": "adjective"
+  },
+  {
+    "word": "address",
+    "phonetic": "/əˈdres/",
+    "definition": "地址演说",
+    "pos": "noun"
+  },
+  {
+    "word": "adequate",
+    "phonetic": "/ˈædɪkwət/",
+    "definition": "足够的适当的",
+    "pos": "adjective"
+  },
+  {
+    "word": "adjust",
+    "phonetic": "/əˈdʒʌst/",
+    "definition": "调整适应",
+    "pos": "verb"
+  },
+  {
+    "word": "admire",
+    "phonetic": "/ədˈmaɪə/",
+    "definition": "钦佩赞赏",
+    "pos": "verb"
+  },
+  {
+    "word": "admit",
+    "phonetic": "/ədˈmɪt/",
+    "definition": "承认准许进入",
+    "pos": "verb"
+  },
+  {
+    "word": "adopt",
+    "phonetic": "/əˈdɒpt/",
+    "definition": "采用收养",
+    "pos": "verb"
+  },
+  {
+    "word": "adult",
+    "phonetic": "/ˈædʌlt/",
+    "definition": "成年人",
+    "pos": "noun"
+  },
+  {
+    "word": "advance",
+    "phonetic": "/ədˈvɑːns/",
+    "definition": "前进进步",
+    "pos": "verb"
+  },
+  {
+    "word": "advanced",
+    "phonetic": "/ədˈvɑːnst/",
+    "definition": "高级的先进的",
+    "pos": "adjective"
+  },
+  {
+    "word": "advantage",
+    "phonetic": "/ədˈvɑːntɪdʒ/",
+    "definition": "优势有利",
+    "pos": "noun"
+  },
+  {
+    "word": "adventure",
+    "phonetic": "/ədˈventʃə/",
+    "definition": "冒险奇遇",
+    "pos": "noun"
+  },
+  {
+    "word": "advice",
+    "phonetic": "/ədˈvaɪs/",
+    "definition": "建议忠告",
+    "pos": "noun"
+  },
+  {
+    "word": "advise",
+    "phonetic": "/ədˈvaɪz/",
+    "definition": "建议劝告",
+    "pos": "verb"
+  },
+  {
+    "word": "affair",
+    "phonetic": "/əˈfeə/",
+    "definition": "事务事件",
+    "pos": "noun"
+  },
+  {
+    "word": "affect",
+    "phonetic": "/əˈfekt/",
+    "definition": "影响感动",
+    "pos": "verb"
+  },
+  {
+    "word": "afford",
+    "phonetic": "/əˈfɔːd/",
+    "definition": "负担得起提供",
+    "pos": "verb"
+  },
+  {
+    "word": "afraid",
+    "phonetic": "/əˈfreɪd/",
+    "definition": "害怕的",
+    "pos": "adjective"
+  },
+  {
+    "word": "after",
+    "phonetic": "/ˈɑːftə/",
+    "definition": "在…之后",
+    "pos": "preposition"
+  },
+  {
+    "word": "afternoon",
+    "phonetic": "/ˌɑːftəˈnuːn/",
+    "definition": "下午",
+    "pos": "noun"
+  },
+  {
+    "word": "again",
+    "phonetic": "/əˈɡen/",
+    "definition": "再次又",
+    "pos": "adverb"
+  },
+  {
+    "word": "against",
+    "phonetic": "/əˈɡenst/",
+    "definition": "反对靠着",
+    "pos": "preposition"
+  },
+  {
+    "word": "age",
+    "phonetic": "/eɪdʒ/",
+    "definition": "年龄时代",
+    "pos": "noun"
+  },
+  {
+    "word": "agency",
+    "phonetic": "/ˈeɪdʒənsi/",
+    "definition": "代理机构",
+    "pos": "noun"
+  },
+  {
+    "word": "agent",
+    "phonetic": "/ˈeɪdʒənt/",
+    "definition": "代理人",
+    "pos": "noun"
+  },
+  {
+    "word": "ago",
+    "phonetic": "/əˈɡəʊ/",
+    "definition": "以前",
+    "pos": "adverb"
+  },
+  {
+    "word": "agree",
+    "phonetic": "/əˈɡriː/",
+    "definition": "同意赞同",
+    "pos": "verb"
+  },
+  {
+    "word": "agreement",
+    "phonetic": "/əˈɡriːmənt/",
+    "definition": "协议同意",
+    "pos": "noun"
+  },
+  {
+    "word": "agriculture",
+    "phonetic": "/ˈæɡrɪkʌltʃə/",
+    "definition": "农业",
+    "pos": "noun"
+  },
+  {
+    "word": "ahead",
+    "phonetic": "/əˈhed/",
+    "definition": "在前面",
+    "pos": "adverb"
+  },
+  {
+    "word": "aid",
+    "phonetic": "/eɪd/",
+    "definition": "援助帮助",
+    "pos": "noun"
+  },
+  {
+    "word": "aim",
+    "phonetic": "/eɪm/",
+    "definition": "目标瞄准",
+    "pos": "verb"
+  },
+  {
+    "word": "air",
+    "phonetic": "/eə/",
+    "definition": "空气天空",
+    "pos": "noun"
+  },
+  {
+    "word": "aircraft",
+    "phonetic": "/ˈeəkrɑːft/",
+    "definition": "飞机航空器",
+    "pos": "noun"
+  },
+  {
+    "word": "airline",
+    "phonetic": "/ˈeəlaɪn/",
+    "definition": "航空公司",
+    "pos": "noun"
+  },
+  {
+    "word": "airport",
+    "phonetic": "/ˈeəpɔːt/",
+    "definition": "机场",
+    "pos": "noun"
+  },
+  {
+    "word": "alarm",
+    "phonetic": "/əˈlɑːm/",
+    "definition": "警报闹钟",
+    "pos": "noun"
+  },
+  {
+    "word": "alcohol",
+    "phonetic": "/ˈælkəhɒl/",
+    "definition": "酒精酒",
+    "pos": "noun"
+  },
+  {
+    "word": "alert",
+    "phonetic": "/əˈlɜːt/",
+    "definition": "警觉的",
+    "pos": "adjective"
+  },
+  {
+    "word": "alike",
+    "phonetic": "/əˈlaɪk/",
+    "definition": "相同的",
+    "pos": "adjective"
+  },
+  {
+    "word": "alive",
+    "phonetic": "/əˈlaɪv/",
+    "definition": "活着的",
+    "pos": "adjective"
+  },
+  {
+    "word": "allow",
+    "phonetic": "/əˈlaʊ/",
+    "definition": "允许许可",
+    "pos": "verb"
+  },
+  {
+    "word": "almost",
+    "phonetic": "/ˈɔːlməʊst/",
+    "definition": "几乎差不多",
+    "pos": "adverb"
+  },
+  {
+    "word": "alone",
+    "phonetic": "/əˈləʊn/",
+    "definition": "单独的",
+    "pos": "adjective"
+  },
+  {
+    "word": "along",
+    "phonetic": "/əˈlɒŋ/",
+    "definition": "沿着",
+    "pos": "preposition"
+  },
+  {
+    "word": "already",
+    "phonetic": "/ɔːlˈredi/",
+    "definition": "已经",
+    "pos": "adverb"
+  },
+  {
+    "word": "also",
+    "phonetic": "/ˈɔːlsəʊ/",
+    "definition": "也同样",
+    "pos": "adverb"
+  },
+  {
+    "word": "although",
+    "phonetic": "/ɔːlˈðəʊ/",
+    "definition": "虽然尽管",
+    "pos": "conjunction"
+  },
+  {
+    "word": "always",
+    "phonetic": "/ˈɔːlweɪz/",
+    "definition": "总是永远",
+    "pos": "adverb"
+  },
+  {
+    "word": "amaze",
+    "phonetic": "/əˈmeɪz/",
+    "definition": "使惊奇",
+    "pos": "verb"
+  },
+  {
+    "word": "ambition",
+    "phonetic": "/æmˈbɪʃən/",
+    "definition": "雄心野心",
+    "pos": "noun"
+  },
+  {
+    "word": "among",
+    "phonetic": "/əˈmʌŋ/",
+    "definition": "在…之中",
+    "pos": "preposition"
+  },
+  {
+    "word": "amount",
+    "phonetic": "/əˈmaʊnt/",
+    "definition": "数量总额",
+    "pos": "noun"
+  },
+  {
+    "word": "amuse",
+    "phonetic": "/əˈmjuːz/",
+    "definition": "娱乐消遣",
+    "pos": "verb"
+  },
+  {
+    "word": "analysis",
+    "phonetic": "/əˈnæləsɪs/",
+    "definition": "分析",
+    "pos": "noun"
+  },
+  {
+    "word": "analyze",
+    "phonetic": "/ˈænəlaɪz/",
+    "definition": "分析",
+    "pos": "verb"
+  },
+  {
+    "word": "ancient",
+    "phonetic": "/ˈeɪnʃənt/",
+    "definition": "古代的古老的",
+    "pos": "adjective"
+  },
+  {
+    "word": "anger",
+    "phonetic": "/ˈæŋɡə/",
+    "definition": "愤怒生气",
+    "pos": "noun"
+  },
+  {
+    "word": "angle",
+    "phonetic": "/ˈæŋɡəl/",
+    "definition": "角度观点",
+    "pos": "noun"
+  },
+  {
+    "word": "angry",
+    "phonetic": "/ˈæŋɡri/",
+    "definition": "生气的",
+    "pos": "adjective"
+  },
+  {
+    "word": "animal",
+    "phonetic": "/ˈænɪməl/",
+    "definition": "动物",
+    "pos": "noun"
+  },
+  {
+    "word": "announce",
+    "phonetic": "/əˈnaʊns/",
+    "definition": "宣布通告",
+    "pos": "verb"
+  },
+  {
+    "word": "annoy",
+    "phonetic": "/əˈnɔɪ/",
+    "definition": "使烦恼",
+    "pos": "verb"
+  },
+  {
+    "word": "annual",
+    "phonetic": "/ˈænjuəl/",
+    "definition": "年度的",
+    "pos": "adjective"
+  },
+  {
+    "word": "anxiety",
+    "phonetic": "/æŋˈzaɪəti/",
+    "definition": "焦虑忧虑",
+    "pos": "noun"
+  },
+  {
+    "word": "anxious",
+    "phonetic": "/ˈæŋkʃəs/",
+    "definition": "焦虑的",
+    "pos": "adjective"
+  },
+  {
+    "word": "apart",
+    "phonetic": "/əˈpɑːt/",
+    "definition": "分开分离",
+    "pos": "adverb"
+  },
+  {
+    "word": "apartment",
+    "phonetic": "/əˈpɑːtmənt/",
+    "definition": "公寓",
+    "pos": "noun"
+  },
+  {
+    "word": "apologize",
+    "phonetic": "/əˈpɒlədʒaɪz/",
+    "definition": "道歉",
+    "pos": "verb"
+  },
+  {
+    "word": "apparent",
+    "phonetic": "/əˈpærənt/",
+    "definition": "明显的",
+    "pos": "adjective"
+  },
+  {
+    "word": "appeal",
+    "phonetic": "/əˈpiːl/",
+    "definition": "呼吁吸引",
+    "pos": "verb"
+  },
+  {
+    "word": "appear",
+    "phonetic": "/əˈpɪə/",
+    "definition": "出现显得",
+    "pos": "verb"
+  },
+  {
+    "word": "appetite",
+    "phonetic": "/ˈæpɪtaɪt/",
+    "definition": "食欲胃口",
+    "pos": "noun"
+  },
+  {
+    "word": "apple",
+    "phonetic": "/ˈæpəl/",
+    "definition": "苹果",
+    "pos": "noun"
+  },
+  {
+    "word": "application",
+    "phonetic": "/ˌæplɪˈkeɪʃən/",
+    "definition": "申请应用",
+    "pos": "noun"
+  },
+  {
+    "word": "apply",
+    "phonetic": "/əˈplaɪ/",
+    "definition": "申请应用",
+    "pos": "verb"
+  },
+  {
+    "word": "appoint",
+    "phonetic": "/əˈpɔɪnt/",
+    "definition": "任命指定",
+    "pos": "verb"
+  },
+  {
+    "word": "appreciate",
+    "phonetic": "/əˈpriːʃieɪt/",
+    "definition": "欣赏感激",
+    "pos": "verb"
+  },
+  {
+    "word": "approach",
+    "phonetic": "/əˈprəʊtʃ/",
+    "definition": "接近方法",
+    "pos": "verb"
+  },
+  {
+    "word": "appropriate",
+    "phonetic": "/əˈprəʊpriət/",
+    "definition": "适当的",
+    "pos": "adjective"
+  },
+  {
+    "word": "approve",
+    "phonetic": "/əˈpruːv/",
+    "definition": "批准赞成",
+    "pos": "verb"
+  },
+  {
+    "word": "area",
+    "phonetic": "/ˈeəriə/",
+    "definition": "地区区域",
+    "pos": "noun"
+  },
+  {
+    "word": "argue",
+    "phonetic": "/ˈɑːɡjuː/",
+    "definition": "争论辩论",
+    "pos": "verb"
+  },
+  {
+    "word": "argument",
+    "phonetic": "/ˈɑːɡjəmənt/",
+    "definition": "争论论据",
+    "pos": "noun"
+  },
+  {
+    "word": "arise",
+    "phonetic": "/əˈraɪz/",
+    "definition": "出现产生",
+    "pos": "verb"
+  },
+  {
+    "word": "arm",
+    "phonetic": "/ɑːm/",
+    "definition": "手臂武器",
+    "pos": "noun"
+  },
+  {
+    "word": "army",
+    "phonetic": "/ˈɑːmi/",
+    "definition": "军队陆军",
+    "pos": "noun"
+  },
+  {
+    "word": "around",
+    "phonetic": "/əˈraʊnd/",
+    "definition": "在…周围大约",
+    "pos": "preposition"
+  },
+  {
+    "word": "arrange",
+    "phonetic": "/əˈreɪndʒ/",
+    "definition": "安排整理",
+    "pos": "verb"
+  },
+  {
+    "word": "arrest",
+    "phonetic": "/əˈrest/",
+    "definition": "逮捕阻止",
+    "pos": "verb"
+  },
+  {
+    "word": "arrival",
+    "phonetic": "/əˈraɪvəl/",
+    "definition": "到达到来",
+    "pos": "noun"
+  },
+  {
+    "word": "arrive",
+    "phonetic": "/əˈraɪv/",
+    "definition": "到达来临",
+    "pos": "verb"
+  },
+  {
+    "word": "arrow",
+    "phonetic": "/ˈærəʊ/",
+    "definition": "箭箭头",
+    "pos": "noun"
+  },
+  {
+    "word": "art",
+    "phonetic": "/ɑːt/",
+    "definition": "艺术美术",
+    "pos": "noun"
+  },
+  {
+    "word": "article",
+    "phonetic": "/ˈɑːtɪkəl/",
+    "definition": "文章物品",
+    "pos": "noun"
+  },
+  {
+    "word": "artificial",
+    "phonetic": "/ˌɑːtɪˈfɪʃəl/",
+    "definition": "人造的假的",
+    "pos": "adjective"
+  },
+  {
+    "word": "artist",
+    "phonetic": "/ˈɑːtɪst/",
+    "definition": "艺术家",
+    "pos": "noun"
+  },
+  {
+    "word": "ashamed",
+    "phonetic": "/əˈʃeɪmd/",
+    "definition": "羞愧的",
+    "pos": "adjective"
+  },
+  {
+    "word": "aside",
+    "phonetic": "/əˈsaɪd/",
+    "definition": "在旁边",
+    "pos": "adverb"
+  },
+  {
+    "word": "asleep",
+    "phonetic": "/əˈsliːp/",
+    "definition": "睡着的",
+    "pos": "adjective"
+  },
+  {
+    "word": "aspect",
+    "phonetic": "/ˈæspekt/",
+    "definition": "方面外观",
+    "pos": "noun"
+  },
+  {
+    "word": "assemble",
+    "phonetic": "/əˈsembəl/",
+    "definition": "集合组装",
+    "pos": "verb"
+  },
+  {
+    "word": "assign",
+    "phonetic": "/əˈsaɪn/",
+    "definition": "分配指派",
+    "pos": "verb"
+  },
+  {
+    "word": "assist",
+    "phonetic": "/əˈsɪst/",
+    "definition": "帮助协助",
+    "pos": "verb"
+  },
+  {
+    "word": "assistant",
+    "phonetic": "/əˈsɪstənt/",
+    "definition": "助手助理",
+    "pos": "noun"
+  },
+  {
+    "word": "associate",
+    "phonetic": "/əˈsəʊʃieɪt/",
+    "definition": "联系关联",
+    "pos": "verb"
+  },
+  {
+    "word": "association",
+    "phonetic": "/əˌsəʊsiˈeɪʃən/",
+    "definition": "协会关联",
+    "pos": "noun"
+  },
+  {
+    "word": "assume",
+    "phonetic": "/əˈsjuːm/",
+    "definition": "假设承担",
+    "pos": "verb"
+  },
+  {
+    "word": "assure",
+    "phonetic": "/əˈʃʊə/",
+    "definition": "保证使确信",
+    "pos": "verb"
+  },
+  {
+    "word": "atmosphere",
+    "phonetic": "/ˈætməsfɪə/",
+    "definition": "大气气氛",
+    "pos": "noun"
+  },
+  {
+    "word": "atom",
+    "phonetic": "/ˈætəm/",
+    "definition": "原子",
+    "pos": "noun"
+  },
+  {
+    "word": "attach",
+    "phonetic": "/əˈtætʃ/",
+    "definition": "贴上附上",
+    "pos": "verb"
+  },
+  {
+    "word": "attack",
+    "phonetic": "/əˈtæk/",
+    "definition": "攻击进攻",
+    "pos": "verb"
+  },
+  {
+    "word": "attempt",
+    "phonetic": "/əˈtempt/",
+    "definition": "试图尝试",
+    "pos": "verb"
+  },
+  {
+    "word": "attend",
+    "phonetic": "/əˈtend/",
+    "definition": "出席参加",
+    "pos": "verb"
+  },
+  {
+    "word": "attention",
+    "phonetic": "/əˈtenʃən/",
+    "definition": "注意关注",
+    "pos": "noun"
+  },
+  {
+    "word": "attitude",
+    "phonetic": "/ˈætɪtjuːd/",
+    "definition": "态度看法",
+    "pos": "noun"
+  },
+  {
+    "word": "attract",
+    "phonetic": "/əˈtrækt/",
+    "definition": "吸引引起",
+    "pos": "verb"
+  },
+  {
+    "word": "audience",
+    "phonetic": "/ˈɔːdiəns/",
+    "definition": "观众听众",
+    "pos": "noun"
+  },
+  {
+    "word": "author",
+    "phonetic": "/ˈɔːθə/",
+    "definition": "作者",
+    "pos": "noun"
+  },
+  {
+    "word": "authority",
+    "phonetic": "/ɔːˈθɒrəti/",
+    "definition": "权威当局",
+    "pos": "noun"
+  },
+  {
+    "word": "automatic",
+    "phonetic": "/ˌɔːtəˈmætɪk/",
+    "definition": "自动的",
+    "pos": "adjective"
+  },
+  {
+    "word": "available",
+    "phonetic": "/əˈveɪləbəl/",
+    "definition": "可用的有效的",
+    "pos": "adjective"
+  },
+  {
+    "word": "avenue",
+    "phonetic": "/ˈævənjuː/",
+    "definition": "大街途径",
+    "pos": "noun"
+  },
+  {
+    "word": "average",
+    "phonetic": "/ˈævərɪdʒ/",
+    "definition": "平均的普通的",
+    "pos": "adjective"
+  },
+  {
+    "word": "avoid",
+    "phonetic": "/əˈvɔɪd/",
+    "definition": "避免回避",
+    "pos": "verb"
+  },
+  {
+    "word": "awake",
+    "phonetic": "/əˈweɪk/",
+    "definition": "醒着的",
+    "pos": "adjective"
+  },
+  {
+    "word": "award",
+    "phonetic": "/əˈwɔːd/",
+    "definition": "奖品奖励",
+    "pos": "noun"
+  },
+  {
+    "word": "aware",
+    "phonetic": "/əˈweə/",
+    "definition": "意识到的",
+    "pos": "adjective"
+  },
+  {
+    "word": "awful",
+    "phonetic": "/ˈɔːfəl/",
+    "definition": "可怕的糟糕的",
+    "pos": "adjective"
+  },
+  {
+    "word": "baby",
+    "phonetic": "/ˈbeɪbi/",
+    "definition": "婴儿",
+    "pos": "noun"
+  },
+  {
+    "word": "back",
+    "phonetic": "/bæk/",
+    "definition": "背部后面",
+    "pos": "noun"
+  },
+  {
+    "word": "background",
+    "phonetic": "/ˈbækɡraʊnd/",
+    "definition": "背景",
+    "pos": "noun"
+  },
+  {
+    "word": "backward",
+    "phonetic": "/ˈbækwəd/",
+    "definition": "向后的",
+    "pos": "adjective"
+  },
+  {
+    "word": "bad",
+    "phonetic": "/bæd/",
+    "definition": "坏的差的",
+    "pos": "adjective"
+  },
+  {
+    "word": "badly",
+    "phonetic": "/ˈbædli/",
+    "definition": "糟糕地严重地",
+    "pos": "adverb"
+  },
+  {
+    "word": "bag",
+    "phonetic": "/bæɡ/",
+    "definition": "袋子包",
+    "pos": "noun"
+  },
+  {
+    "word": "balance",
+    "phonetic": "/ˈbæləns/",
+    "definition": "平衡余额",
+    "pos": "noun"
+  },
+  {
+    "word": "ball",
+    "phonetic": "/bɔːl/",
+    "definition": "球舞会",
+    "pos": "noun"
+  },
+  {
+    "word": "ban",
+    "phonetic": "/bæn/",
+    "definition": "禁止",
+    "pos": "verb"
+  },
+  {
+    "word": "band",
+    "phonetic": "/bænd/",
+    "definition": "乐队带子",
+    "pos": "noun"
+  },
+  {
+    "word": "bank",
+    "phonetic": "/bæŋk/",
+    "definition": "银行河岸",
+    "pos": "noun"
+  },
+  {
+    "word": "bar",
+    "phonetic": "/bɑː/",
+    "definition": "酒吧条",
+    "pos": "noun"
+  },
+  {
+    "word": "bare",
+    "phonetic": "/beə/",
+    "definition": "光秃的",
+    "pos": "adjective"
+  },
+  {
+    "word": "bargain",
+    "phonetic": "/ˈbɑːɡɪn/",
+    "definition": "便宜货交易",
+    "pos": "noun"
+  },
+  {
+    "word": "base",
+    "phonetic": "/beɪs/",
+    "definition": "基础底部",
+    "pos": "noun"
+  },
+  {
+    "word": "basic",
+    "phonetic": "/ˈbeɪsɪk/",
+    "definition": "基本的",
+    "pos": "adjective"
+  },
+  {
+    "word": "basin",
+    "phonetic": "/ˈbeɪsən/",
+    "definition": "盆盆地",
+    "pos": "noun"
+  },
+  {
+    "word": "basis",
+    "phonetic": "/ˈbeɪsɪs/",
+    "definition": "基础根据",
+    "pos": "noun"
+  },
+  {
+    "word": "basket",
+    "phonetic": "/ˈbɑːskɪt/",
+    "definition": "篮子",
+    "pos": "noun"
+  },
+  {
+    "word": "battle",
+    "phonetic": "/ˈbætəl/",
+    "definition": "战斗战役",
+    "pos": "noun"
+  },
+  {
+    "word": "bay",
+    "phonetic": "/beɪ/",
+    "definition": "海湾",
+    "pos": "noun"
+  },
+  {
+    "word": "beach",
+    "phonetic": "/biːtʃ/",
+    "definition": "海滩",
+    "pos": "noun"
+  },
+  {
+    "word": "bean",
+    "phonetic": "/biːn/",
+    "definition": "豆",
+    "pos": "noun"
+  },
+  {
+    "word": "bear",
+    "phonetic": "/beə/",
+    "definition": "熊承受",
+    "pos": "noun"
+  },
+  {
+    "word": "beard",
+    "phonetic": "/bɪəd/",
+    "definition": "胡须",
+    "pos": "noun"
+  },
+  {
+    "word": "beast",
+    "phonetic": "/biːst/",
+    "definition": "野兽",
+    "pos": "noun"
+  },
+  {
+    "word": "beat",
+    "phonetic": "/biːt/",
+    "definition": "打节拍",
+    "pos": "verb"
+  },
+  {
+    "word": "beautiful",
+    "phonetic": "/ˈbjuːtɪfəl/",
+    "definition": "美丽的",
+    "pos": "adjective"
+  },
+  {
+    "word": "beauty",
+    "phonetic": "/ˈbjuːti/",
+    "definition": "美丽美人",
+    "pos": "noun"
+  },
+  {
+    "word": "become",
+    "phonetic": "/bɪˈkʌm/",
+    "definition": "变成成为",
+    "pos": "verb"
+  },
+  {
+    "word": "beef",
+    "phonetic": "/biːf/",
+    "definition": "牛肉",
+    "pos": "noun"
+  },
+  {
+    "word": "beer",
+    "phonetic": "/bɪə/",
+    "definition": "啤酒",
+    "pos": "noun"
+  },
+  {
+    "word": "before",
+    "phonetic": "/bɪˈfɔː/",
+    "definition": "在…之前",
+    "pos": "preposition"
+  },
+  {
+    "word": "beg",
+    "phonetic": "/beɡ/",
+    "definition": "乞讨请求",
+    "pos": "verb"
+  },
+  {
+    "word": "begin",
+    "phonetic": "/bɪˈɡɪn/",
+    "definition": "开始",
+    "pos": "verb"
+  },
+  {
+    "word": "behalf",
+    "phonetic": "/bɪˈhɑːf/",
+    "definition": "代表利益",
+    "pos": "noun"
+  },
+  {
+    "word": "behave",
+    "phonetic": "/bɪˈheɪv/",
+    "definition": "行为表现",
+    "pos": "verb"
+  },
+  {
+    "word": "behavior",
+    "phonetic": "/bɪˈheɪvjə/",
+    "definition": "行为举止",
+    "pos": "noun"
+  },
+  {
+    "word": "behind",
+    "phonetic": "/bɪˈhaɪnd/",
+    "definition": "在…后面",
+    "pos": "preposition"
+  },
+  {
+    "word": "belief",
+    "phonetic": "/bɪˈliːf/",
+    "definition": "信念信仰",
+    "pos": "noun"
+  },
+  {
+    "word": "believe",
+    "phonetic": "/bɪˈliːv/",
+    "definition": "相信认为",
+    "pos": "verb"
+  },
+  {
+    "word": "bell",
+    "phonetic": "/bel/",
+    "definition": "铃钟",
+    "pos": "noun"
+  },
+  {
+    "word": "belong",
+    "phonetic": "/bɪˈlɒŋ/",
+    "definition": "属于",
+    "pos": "verb"
+  },
+  {
+    "word": "below",
+    "phonetic": "/bɪˈləʊ/",
+    "definition": "在…下面",
+    "pos": "preposition"
+  },
+  {
+    "word": "belt",
+    "phonetic": "/belt/",
+    "definition": "腰带地带",
+    "pos": "noun"
+  },
+  {
+    "word": "bench",
+    "phonetic": "/bentʃ/",
+    "definition": "长凳",
+    "pos": "noun"
+  },
+  {
+    "word": "bend",
+    "phonetic": "/bend/",
+    "definition": "弯曲",
+    "pos": "verb"
+  },
+  {
+    "word": "beneath",
+    "phonetic": "/bɪˈniːθ/",
+    "definition": "在…下方",
+    "pos": "preposition"
+  },
+  {
+    "word": "benefit",
+    "phonetic": "/ˈbenɪfɪt/",
+    "definition": "利益好处",
+    "pos": "noun"
+  },
+  {
+    "word": "beside",
+    "phonetic": "/bɪˈsaɪd/",
+    "definition": "在…旁边",
+    "pos": "preposition"
+  },
+  {
+    "word": "besides",
+    "phonetic": "/bɪˈsaɪdz/",
+    "definition": "此外",
+    "pos": "adverb"
+  },
+  {
+    "word": "best",
+    "phonetic": "/best/",
+    "definition": "最好的",
+    "pos": "adjective"
+  },
+  {
+    "word": "better",
+    "phonetic": "/ˈbetə/",
+    "definition": "更好的",
+    "pos": "adjective"
+  },
+  {
+    "word": "between",
+    "phonetic": "/bɪˈtwiːn/",
+    "definition": "在…之间",
+    "pos": "preposition"
+  },
+  {
+    "word": "beyond",
+    "phonetic": "/bɪˈjɒnd/",
+    "definition": "超出",
+    "pos": "preposition"
+  },
+  {
+    "word": "bicycle",
+    "phonetic": "/ˈbaɪsɪkəl/",
+    "definition": "自行车",
+    "pos": "noun"
+  },
+  {
+    "word": "big",
+    "phonetic": "/bɪɡ/",
+    "definition": "大的",
+    "pos": "adjective"
+  },
+  {
+    "word": "bill",
+    "phonetic": "/bɪl/",
+    "definition": "账单法案",
+    "pos": "noun"
+  },
+  {
+    "word": "bind",
+    "phonetic": "/baɪnd/",
+    "definition": "捆绑约束",
+    "pos": "verb"
+  },
+  {
+    "word": "bird",
+    "phonetic": "/bɜːd/",
+    "definition": "鸟",
+    "pos": "noun"
+  },
+  {
+    "word": "birth",
+    "phonetic": "/bɜːθ/",
+    "definition": "出生",
+    "pos": "noun"
+  },
+  {
+    "word": "bit",
+    "phonetic": "/bɪt/",
+    "definition": "一点小块",
+    "pos": "noun"
+  },
+  {
+    "word": "bite",
+    "phonetic": "/baɪt/",
+    "definition": "咬",
+    "pos": "verb"
+  },
+  {
+    "word": "bitter",
+    "phonetic": "/ˈbɪtə/",
+    "definition": "苦的痛苦的",
+    "pos": "adjective"
+  },
+  {
+    "word": "black",
+    "phonetic": "/blæk/",
+    "definition": "黑色的",
+    "pos": "adjective"
+  },
+  {
+    "word": "blade",
+    "phonetic": "/bleɪd/",
+    "definition": "刀片叶片",
+    "pos": "noun"
+  },
+  {
+    "word": "blame",
+    "phonetic": "/bleɪm/",
+    "definition": "责备",
+    "pos": "verb"
+  },
+  {
+    "word": "blank",
+    "phonetic": "/blæŋk/",
+    "definition": "空白的",
+    "pos": "adjective"
+  },
+  {
+    "word": "blind",
+    "phonetic": "/blaɪnd/",
+    "definition": "盲的瞎的",
+    "pos": "adjective"
+  },
+  {
+    "word": "block",
+    "phonetic": "/blɒk/",
+    "definition": "街区块",
+    "pos": "noun"
+  },
+  {
+    "word": "blood",
+    "phonetic": "/blʌd/",
+    "definition": "血液",
+    "pos": "noun"
+  },
+  {
+    "word": "blow",
+    "phonetic": "/bləʊ/",
+    "definition": "吹打击",
+    "pos": "verb"
+  },
+  {
+    "word": "blue",
+    "phonetic": "/bluː/",
+    "definition": "蓝色的",
+    "pos": "adjective"
+  },
+  {
+    "word": "board",
+    "phonetic": "/bɔːd/",
+    "definition": "木板董事会",
+    "pos": "noun"
+  },
+  {
+    "word": "boat",
+    "phonetic": "/bəʊt/",
+    "definition": "船",
+    "pos": "noun"
+  },
+  {
+    "word": "body",
+    "phonetic": "/ˈbɒdi/",
+    "definition": "身体",
+    "pos": "noun"
+  },
+  {
+    "word": "boil",
+    "phonetic": "/bɔɪl/",
+    "definition": "煮沸",
+    "pos": "verb"
+  },
+  {
+    "word": "bomb",
+    "phonetic": "/bɒm/",
+    "definition": "炸弹",
+    "pos": "noun"
+  },
+  {
+    "word": "bone",
+    "phonetic": "/bəʊn/",
+    "definition": "骨头",
+    "pos": "noun"
+  },
+  {
+    "word": "book",
+    "phonetic": "/bʊk/",
+    "definition": "书预订",
+    "pos": "noun"
+  },
+  {
+    "word": "border",
+    "phonetic": "/ˈbɔːdə/",
+    "definition": "边界边境",
+    "pos": "noun"
+  },
+  {
+    "word": "bore",
+    "phonetic": "/bɔː/",
+    "definition": "使厌烦",
+    "pos": "verb"
+  },
+  {
+    "word": "born",
+    "phonetic": "/bɔːn/",
+    "definition": "出生的",
+    "pos": "adjective"
+  },
+  {
+    "word": "borrow",
+    "phonetic": "/ˈbɒrəʊ/",
+    "definition": "借入",
+    "pos": "verb"
+  },
+  {
+    "word": "boss",
+    "phonetic": "/bɒs/",
+    "definition": "老板",
+    "pos": "noun"
+  },
+  {
+    "word": "both",
+    "phonetic": "/bəʊθ/",
+    "definition": "两者都",
+    "pos": "adjective"
+  },
+  {
+    "word": "bother",
+    "phonetic": "/ˈbɒðə/",
+    "definition": "打扰烦恼",
+    "pos": "verb"
+  },
+  {
+    "word": "bottle",
+    "phonetic": "/ˈbɒtəl/",
+    "definition": "瓶子",
+    "pos": "noun"
+  },
+  {
+    "word": "bottom",
+    "phonetic": "/ˈbɒtəm/",
+    "definition": "底部",
+    "pos": "noun"
+  },
+  {
+    "word": "bound",
+    "phonetic": "/baʊnd/",
+    "definition": "必定的一定的",
+    "pos": "adjective"
+  },
+  {
+    "word": "bowl",
+    "phonetic": "/bəʊl/",
+    "definition": "碗",
+    "pos": "noun"
+  },
+  {
+    "word": "box",
+    "phonetic": "/bɒks/",
+    "definition": "盒子箱子",
+    "pos": "noun"
+  },
+  {
+    "word": "boy",
+    "phonetic": "/bɔɪ/",
+    "definition": "男孩",
+    "pos": "noun"
+  },
+  {
+    "word": "brain",
+    "phonetic": "/breɪn/",
+    "definition": "大脑",
+    "pos": "noun"
+  },
+  {
+    "word": "branch",
+    "phonetic": "/brɑːntʃ/",
+    "definition": "分支树枝",
+    "pos": "noun"
+  },
+  {
+    "word": "brave",
+    "phonetic": "/breɪv/",
+    "definition": "勇敢的",
+    "pos": "adjective"
+  },
+  {
+    "word": "bread",
+    "phonetic": "/bred/",
+    "definition": "面包",
+    "pos": "noun"
+  },
+  {
+    "word": "break",
+    "phonetic": "/breɪk/",
+    "definition": "打破折断",
+    "pos": "verb"
+  },
+  {
+    "word": "breakfast",
+    "phonetic": "/ˈbrekfəst/",
+    "definition": "早餐",
+    "pos": "noun"
+  },
+  {
+    "word": "breath",
+    "phonetic": "/breθ/",
+    "definition": "呼吸气息",
+    "pos": "noun"
+  },
+  {
+    "word": "breathe",
+    "phonetic": "/briːð/",
+    "definition": "呼吸",
+    "pos": "verb"
+  },
+  {
+    "word": "breed",
+    "phonetic": "/briːd/",
+    "definition": "品种繁殖",
+    "pos": "verb"
+  },
+  {
+    "word": "brick",
+    "phonetic": "/brɪk/",
+    "definition": "砖",
+    "pos": "noun"
+  },
+  {
+    "word": "bridge",
+    "phonetic": "/brɪdʒ/",
+    "definition": "桥",
+    "pos": "noun"
+  },
+  {
+    "word": "brief",
+    "phonetic": "/briːf/",
+    "definition": "简短的",
+    "pos": "adjective"
+  },
+  {
+    "word": "bright",
+    "phonetic": "/braɪt/",
+    "definition": "明亮的聪明的",
+    "pos": "adjective"
+  },
+  {
+    "word": "bring",
+    "phonetic": "/brɪŋ/",
+    "definition": "带来",
+    "pos": "verb"
+  },
+  {
+    "word": "broad",
+    "phonetic": "/brɔːd/",
+    "definition": "宽广的",
+    "pos": "adjective"
+  },
+  {
+    "word": "broadcast",
+    "phonetic": "/ˈbrɔːdkɑːst/",
+    "definition": "广播",
+    "pos": "verb"
+  },
+  {
+    "word": "brother",
+    "phonetic": "/ˈbrʌðə/",
+    "definition": "兄弟",
+    "pos": "noun"
+  },
+  {
+    "word": "brown",
+    "phonetic": "/braʊn/",
+    "definition": "棕色的",
+    "pos": "adjective"
+  },
+  {
+    "word": "brush",
+    "phonetic": "/brʌʃ/",
+    "definition": "刷子画笔",
+    "pos": "noun"
+  },
+  {
+    "word": "build",
+    "phonetic": "/bɪld/",
+    "definition": "建造建立",
+    "pos": "verb"
+  },
+  {
+    "word": "bunch",
+    "phonetic": "/bʌntʃ/",
+    "definition": "束串群",
+    "pos": "noun"
+  },
+  {
+    "word": "burden",
+    "phonetic": "/ˈbɜːdən/",
+    "definition": "负担",
+    "pos": "noun"
+  },
+  {
+    "word": "burn",
+    "phonetic": "/bɜːn/",
+    "definition": "燃烧",
+    "pos": "verb"
+  },
+  {
+    "word": "burst",
+    "phonetic": "/bɜːst/",
+    "definition": "爆发破裂",
+    "pos": "verb"
+  },
+  {
+    "word": "bury",
+    "phonetic": "/ˈberi/",
+    "definition": "埋葬",
+    "pos": "verb"
+  },
+  {
+    "word": "bus",
+    "phonetic": "/bʌs/",
+    "definition": "公共汽车",
+    "pos": "noun"
+  },
+  {
+    "word": "bush",
+    "phonetic": "/bʊʃ/",
+    "definition": "灌木丛",
+    "pos": "noun"
+  },
+  {
+    "word": "business",
+    "phonetic": "/ˈbɪznəs/",
+    "definition": "商业生意",
+    "pos": "noun"
+  },
+  {
+    "word": "busy",
+    "phonetic": "/ˈbɪzi/",
+    "definition": "忙碌的",
+    "pos": "adjective"
+  },
+  {
+    "word": "butter",
+    "phonetic": "/ˈbʌtə/",
+    "definition": "黄油",
+    "pos": "noun"
+  },
+  {
+    "word": "button",
+    "phonetic": "/ˈbʌtən/",
+    "definition": "按钮扣子",
+    "pos": "noun"
+  },
+  {
+    "word": "buy",
+    "phonetic": "/baɪ/",
+    "definition": "买购买",
+    "pos": "verb"
+  },
+  {
+    "word": "cabbage",
+    "phonetic": "/ˈkæbɪdʒ/",
+    "definition": "卷心菜",
+    "pos": "noun"
+  },
+  {
+    "word": "cabin",
+    "phonetic": "/ˈkæbɪn/",
+    "definition": "小屋船舱",
+    "pos": "noun"
+  },
+  {
+    "word": "cable",
+    "phonetic": "/ˈkeɪbəl/",
+    "definition": "电缆电报",
+    "pos": "noun"
+  },
+  {
+    "word": "cake",
+    "phonetic": "/keɪk/",
+    "definition": "蛋糕",
+    "pos": "noun"
+  },
+  {
+    "word": "calculate",
+    "phonetic": "/ˈkælkjuleɪt/",
+    "definition": "计算",
+    "pos": "verb"
+  },
+  {
+    "word": "calm",
+    "phonetic": "/kɑːm/",
+    "definition": "平静的",
+    "pos": "adjective"
+  },
+  {
+    "word": "camera",
+    "phonetic": "/ˈkæmərə/",
+    "definition": "照相机",
+    "pos": "noun"
+  },
+  {
+    "word": "camp",
+    "phonetic": "/kæmp/",
+    "definition": "营地",
+    "pos": "noun"
+  },
+  {
+    "word": "campaign",
+    "phonetic": "/kæmˈpeɪn/",
+    "definition": "运动战役",
+    "pos": "noun"
+  },
+  {
+    "word": "campus",
+    "phonetic": "/ˈkæmpəs/",
+    "definition": "校园",
+    "pos": "noun"
+  },
+  {
+    "word": "cancel",
+    "phonetic": "/ˈkænsəl/",
+    "definition": "取消",
+    "pos": "verb"
+  },
+  {
+    "word": "cancer",
+    "phonetic": "/ˈkænsə/",
+    "definition": "癌症",
+    "pos": "noun"
+  },
+  {
+    "word": "candidate",
+    "phonetic": "/ˈkændɪdət/",
+    "definition": "候选人",
+    "pos": "noun"
+  },
+  {
+    "word": "capable",
+    "phonetic": "/ˈkeɪpəbəl/",
+    "definition": "有能力的",
+    "pos": "adjective"
+  },
+  {
+    "word": "capacity",
+    "phonetic": "/kəˈpæsəti/",
+    "definition": "容量能力",
+    "pos": "noun"
+  },
+  {
+    "word": "capital",
+    "phonetic": "/ˈkæpɪtəl/",
+    "definition": "首都资本",
+    "pos": "noun"
+  },
+  {
+    "word": "captain",
+    "phonetic": "/ˈkæptɪn/",
+    "definition": "船长上尉",
+    "pos": "noun"
+  },
+  {
+    "word": "capture",
+    "phonetic": "/ˈkæptʃə/",
+    "definition": "捕获俘获",
+    "pos": "verb"
+  },
+  {
+    "word": "carbon",
+    "phonetic": "/ˈkɑːbən/",
+    "definition": "碳",
+    "pos": "noun"
+  },
+  {
+    "word": "card",
+    "phonetic": "/kɑːd/",
+    "definition": "卡片纸牌",
+    "pos": "noun"
+  },
+  {
+    "word": "care",
+    "phonetic": "/keə/",
+    "definition": "关心小心",
+    "pos": "noun"
+  },
+  {
+    "word": "career",
+    "phonetic": "/kəˈrɪə/",
+    "definition": "职业生涯",
+    "pos": "noun"
+  },
+  {
+    "word": "careful",
+    "phonetic": "/ˈkeəfʊl/",
+    "definition": "仔细的小心的",
+    "pos": "adjective"
+  },
+  {
+    "word": "careless",
+    "phonetic": "/ˈkeələs/",
+    "definition": "粗心的",
+    "pos": "adjective"
+  },
+  {
+    "word": "carry",
+    "phonetic": "/ˈkæri/",
+    "definition": "携带搬运",
+    "pos": "verb"
+  },
+  {
+    "word": "case",
+    "phonetic": "/keɪs/",
+    "definition": "情况案例",
+    "pos": "noun"
+  },
+  {
+    "word": "cash",
+    "phonetic": "/kæʃ/",
+    "definition": "现金",
+    "pos": "noun"
+  },
+  {
+    "word": "cast",
+    "phonetic": "/kɑːst/",
+    "definition": "投掷铸造",
+    "pos": "verb"
+  },
+  {
+    "word": "casual",
+    "phonetic": "/ˈkæʒuəl/",
+    "definition": "随便的偶然的",
+    "pos": "adjective"
+  },
+  {
+    "word": "catch",
+    "phonetic": "/kætʃ/",
+    "definition": "抓住赶上",
+    "pos": "verb"
+  },
+  {
+    "word": "cattle",
+    "phonetic": "/ˈkætəl/",
+    "definition": "牛牲畜",
+    "pos": "noun"
+  },
+  {
+    "word": "cause",
+    "phonetic": "/kɔːz/",
+    "definition": "原因导致",
+    "pos": "verb"
+  },
+  {
+    "word": "celebrate",
+    "phonetic": "/ˈselɪbreɪt/",
+    "definition": "庆祝",
+    "pos": "verb"
+  },
+  {
+    "word": "cell",
+    "phonetic": "/sel/",
+    "definition": "细胞牢房",
+    "pos": "noun"
+  },
+  {
+    "word": "cent",
+    "phonetic": "/sent/",
+    "definition": "分钱",
+    "pos": "noun"
+  },
+  {
+    "word": "center",
+    "phonetic": "/ˈsentə/",
+    "definition": "中心中央",
+    "pos": "noun"
+  },
+  {
+    "word": "central",
+    "phonetic": "/ˈsentrəl/",
+    "definition": "中心的中央的",
+    "pos": "adjective"
+  },
+  {
+    "word": "century",
+    "phonetic": "/ˈsentʃəri/",
+    "definition": "世纪百年",
+    "pos": "noun"
+  },
+  {
+    "word": "ceremony",
+    "phonetic": "/ˈserɪməni/",
+    "definition": "典礼仪式",
+    "pos": "noun"
+  },
+  {
+    "word": "certain",
+    "phonetic": "/ˈsɜːtən/",
+    "definition": "确定的某个",
+    "pos": "adjective"
+  },
+  {
+    "word": "chain",
+    "phonetic": "/tʃeɪn/",
+    "definition": "链条连锁",
+    "pos": "noun"
+  },
+  {
+    "word": "chair",
+    "phonetic": "/tʃeə/",
+    "definition": "椅子",
+    "pos": "noun"
+  },
+  {
+    "word": "chairman",
+    "phonetic": "/ˈtʃeəmən/",
+    "definition": "主席",
+    "pos": "noun"
+  },
+  {
+    "word": "challenge",
+    "phonetic": "/ˈtʃælɪndʒ/",
+    "definition": "挑战",
+    "pos": "noun"
+  },
+  {
+    "word": "champion",
+    "phonetic": "/ˈtʃæmpiən/",
+    "definition": "冠军",
+    "pos": "noun"
+  },
+  {
+    "word": "chance",
+    "phonetic": "/tʃɑːns/",
+    "definition": "机会偶然",
+    "pos": "noun"
+  },
+  {
+    "word": "change",
+    "phonetic": "/tʃeɪndʒ/",
+    "definition": "改变变化",
+    "pos": "verb"
+  },
+  {
+    "word": "channel",
+    "phonetic": "/ˈtʃænəl/",
+    "definition": "频道渠道",
+    "pos": "noun"
+  },
+  {
+    "word": "chapter",
+    "phonetic": "/ˈtʃæptə/",
+    "definition": "章节",
+    "pos": "noun"
+  },
+  {
+    "word": "character",
+    "phonetic": "/ˈkærɪktə/",
+    "definition": "性格角色",
+    "pos": "noun"
+  },
+  {
+    "word": "charge",
+    "phonetic": "/tʃɑːdʒ/",
+    "definition": "收费指控",
+    "pos": "verb"
+  },
+  {
+    "word": "charity",
+    "phonetic": "/ˈtʃærəti/",
+    "definition": "慈善",
+    "pos": "noun"
+  },
+  {
+    "word": "chart",
+    "phonetic": "/tʃɑːt/",
+    "definition": "图表",
+    "pos": "noun"
+  },
+  {
+    "word": "chase",
+    "phonetic": "/tʃeɪs/",
+    "definition": "追逐",
+    "pos": "verb"
+  },
+  {
+    "word": "cheap",
+    "phonetic": "/tʃiːp/",
+    "definition": "便宜的",
+    "pos": "adjective"
+  },
+  {
+    "word": "cheat",
+    "phonetic": "/tʃiːt/",
+    "definition": "欺骗作弊",
+    "pos": "verb"
+  },
+  {
+    "word": "check",
+    "phonetic": "/tʃek/",
+    "definition": "检查支票",
+    "pos": "verb"
+  },
+  {
+    "word": "cheer",
+    "phonetic": "/tʃɪə/",
+    "definition": "欢呼加油",
+    "pos": "verb"
+  },
+  {
+    "word": "chemical",
+    "phonetic": "/ˈkemɪkəl/",
+    "definition": "化学的",
+    "pos": "adjective"
+  },
+  {
+    "word": "chest",
+    "phonetic": "/tʃest/",
+    "definition": "胸部箱子",
+    "pos": "noun"
+  },
+  {
+    "word": "chicken",
+    "phonetic": "/ˈtʃɪkɪn/",
+    "definition": "鸡肉小鸡",
+    "pos": "noun"
+  },
+  {
+    "word": "chief",
+    "phonetic": "/tʃiːf/",
+    "definition": "主要的首领",
+    "pos": "adjective"
+  },
+  {
+    "word": "childhood",
+    "phonetic": "/ˈtʃaɪldhʊd/",
+    "definition": "童年",
+    "pos": "noun"
+  },
+  {
+    "word": "chocolate",
+    "phonetic": "/ˈtʃɒklət/",
+    "definition": "巧克力",
+    "pos": "noun"
+  },
+  {
+    "word": "choice",
+    "phonetic": "/tʃɔɪs/",
+    "definition": "选择",
+    "pos": "noun"
+  },
+  {
+    "word": "choose",
+    "phonetic": "/tʃuːz/",
+    "definition": "选择",
+    "pos": "verb"
+  },
+  {
+    "word": "church",
+    "phonetic": "/tʃɜːtʃ/",
+    "definition": "教堂",
+    "pos": "noun"
+  },
+  {
+    "word": "cigarette",
+    "phonetic": "/ˌsɪɡəˈret/",
+    "definition": "香烟",
+    "pos": "noun"
+  },
+  {
+    "word": "circle",
+    "phonetic": "/ˈsɜːkəl/",
+    "definition": "圆圈循环",
+    "pos": "noun"
+  },
+  {
+    "word": "circumstance",
+    "phonetic": "/ˈsɜːkəmstəns/",
+    "definition": "环境情况",
+    "pos": "noun"
+  },
+  {
+    "word": "citizen",
+    "phonetic": "/ˈsɪtɪzən/",
+    "definition": "公民市民",
+    "pos": "noun"
+  },
+  {
+    "word": "civil",
+    "phonetic": "/ˈsɪvəl/",
+    "definition": "公民的民事的",
+    "pos": "adjective"
+  },
+  {
+    "word": "claim",
+    "phonetic": "/kleɪm/",
+    "definition": "声称要求",
+    "pos": "verb"
+  },
+  {
+    "word": "classic",
+    "phonetic": "/ˈklæsɪk/",
+    "definition": "经典的",
+    "pos": "adjective"
+  },
+  {
+    "word": "classroom",
+    "phonetic": "/ˈklɑːsruːm/",
+    "definition": "教室",
+    "pos": "noun"
+  },
+  {
+    "word": "clean",
+    "phonetic": "/kliːn/",
+    "definition": "干净的清洁",
+    "pos": "adjective"
+  },
+  {
+    "word": "clear",
+    "phonetic": "/klɪə/",
+    "definition": "清楚的清晰的",
+    "pos": "adjective"
+  },
+  {
+    "word": "clerk",
+    "phonetic": "/klɑːk/",
+    "definition": "职员店员",
+    "pos": "noun"
+  },
+  {
+    "word": "clever",
+    "phonetic": "/ˈklevə/",
+    "definition": "聪明的",
+    "pos": "adjective"
+  },
+  {
+    "word": "climate",
+    "phonetic": "/ˈklaɪmət/",
+    "definition": "气候",
+    "pos": "noun"
+  },
+  {
+    "word": "climb",
+    "phonetic": "/klaɪm/",
+    "definition": "攀登爬",
+    "pos": "verb"
+  },
+  {
+    "word": "clinic",
+    "phonetic": "/ˈklɪnɪk/",
+    "definition": "诊所",
+    "pos": "noun"
+  },
+  {
+    "word": "clock",
+    "phonetic": "/klɒk/",
+    "definition": "时钟",
+    "pos": "noun"
+  },
+  {
+    "word": "close",
+    "phonetic": "/kləʊz/",
+    "definition": "关闭接近的",
+    "pos": "verb"
+  },
+  {
+    "word": "cloth",
+    "phonetic": "/klɒθ/",
+    "definition": "布料",
+    "pos": "noun"
+  },
+  {
+    "word": "clothe",
+    "phonetic": "/kləʊð/",
+    "definition": "给…穿衣",
+    "pos": "verb"
+  },
+  {
+    "word": "cloud",
+    "phonetic": "/klaʊd/",
+    "definition": "云",
+    "pos": "noun"
+  },
+  {
+    "word": "club",
+    "phonetic": "/klʌb/",
+    "definition": "俱乐部",
+    "pos": "noun"
+  },
+  {
+    "word": "coach",
+    "phonetic": "/kəʊtʃ/",
+    "definition": "教练长途车",
+    "pos": "noun"
+  },
+  {
+    "word": "coal",
+    "phonetic": "/kəʊl/",
+    "definition": "煤",
+    "pos": "noun"
+  },
+  {
+    "word": "coast",
+    "phonetic": "/kəʊst/",
+    "definition": "海岸",
+    "pos": "noun"
+  },
+  {
+    "word": "code",
+    "phonetic": "/kəʊd/",
+    "definition": "代码准则",
+    "pos": "noun"
+  },
+  {
+    "word": "coffee",
+    "phonetic": "/ˈkɒfi/",
+    "definition": "咖啡",
+    "pos": "noun"
+  },
+  {
+    "word": "coin",
+    "phonetic": "/kɔɪn/",
+    "definition": "硬币",
+    "pos": "noun"
+  },
+  {
+    "word": "cold",
+    "phonetic": "/kəʊld/",
+    "definition": "冷的感冒",
+    "pos": "adjective"
+  },
+  {
+    "word": "collapse",
+    "phonetic": "/kəˈlæps/",
+    "definition": "倒塌崩溃",
+    "pos": "verb"
+  },
+  {
+    "word": "colleague",
+    "phonetic": "/ˈkɒliːɡ/",
+    "definition": "同事",
+    "pos": "noun"
+  },
+  {
+    "word": "collect",
+    "phonetic": "/kəˈlekt/",
+    "definition": "收集",
+    "pos": "verb"
+  },
+  {
+    "word": "college",
+    "phonetic": "/ˈkɒlɪdʒ/",
+    "definition": "大学学院",
+    "pos": "noun"
+  },
+  {
+    "word": "color",
+    "phonetic": "/ˈkʌlə/",
+    "definition": "颜色",
+    "pos": "noun"
+  },
+  {
+    "word": "combine",
+    "phonetic": "/kəmˈbaɪn/",
+    "definition": "结合联合",
+    "pos": "verb"
+  },
+  {
+    "word": "comfort",
+    "phonetic": "/ˈkʌmfət/",
+    "definition": "舒适安慰",
+    "pos": "noun"
+  },
+  {
+    "word": "command",
+    "phonetic": "/kəˈmɑːnd/",
+    "definition": "命令指挥",
+    "pos": "verb"
+  },
+  {
+    "word": "comment",
+    "phonetic": "/ˈkɒment/",
+    "definition": "评论意见",
+    "pos": "noun"
+  },
+  {
+    "word": "commerce",
+    "phonetic": "/ˈkɒmɜːs/",
+    "definition": "商业贸易",
+    "pos": "noun"
+  },
+  {
+    "word": "commission",
+    "phonetic": "/kəˈmɪʃən/",
+    "definition": "委员会佣金",
+    "pos": "noun"
+  },
+  {
+    "word": "commit",
+    "phonetic": "/kəˈmɪt/",
+    "definition": "犯(罪)承诺",
+    "pos": "verb"
+  },
+  {
+    "word": "committee",
+    "phonetic": "/kəˈmɪti/",
+    "definition": "委员会",
+    "pos": "noun"
+  },
+  {
+    "word": "common",
+    "phonetic": "/ˈkɒmən/",
+    "definition": "普通的共同的",
+    "pos": "adjective"
+  },
+  {
+    "word": "communicate",
+    "phonetic": "/kəˈmjuːnɪkeɪt/",
+    "definition": "交流沟通",
+    "pos": "verb"
+  },
+  {
+    "word": "community",
+    "phonetic": "/kəˈmjuːnəti/",
+    "definition": "社区团体",
+    "pos": "noun"
+  },
+  {
+    "word": "companion",
+    "phonetic": "/kəmˈpænjən/",
+    "definition": "同伴伴侣",
+    "pos": "noun"
+  },
+  {
+    "word": "compare",
+    "phonetic": "/kəmˈpeə/",
+    "definition": "比较对比",
+    "pos": "verb"
+  },
+  {
+    "word": "compete",
+    "phonetic": "/kəmˈpiːt/",
+    "definition": "竞争比赛",
+    "pos": "verb"
+  },
+  {
+    "word": "complain",
+    "phonetic": "/kəmˈpleɪn/",
+    "definition": "抱怨投诉",
+    "pos": "verb"
+  },
+  {
+    "word": "complete",
+    "phonetic": "/kəmˈpliːt/",
+    "definition": "完成完整的",
+    "pos": "verb"
+  },
+  {
+    "word": "complex",
+    "phonetic": "/ˈkɒmpleks/",
+    "definition": "复杂的",
+    "pos": "adjective"
+  },
+  {
+    "word": "compose",
+    "phonetic": "/kəmˈpəʊz/",
+    "definition": "组成创作",
+    "pos": "verb"
+  },
+  {
+    "word": "computer",
+    "phonetic": "/kəmˈpjuːtə/",
+    "definition": "电脑",
+    "pos": "noun"
+  },
+  {
+    "word": "concentrate",
+    "phonetic": "/ˈkɒnsəntreɪt/",
+    "definition": "集中专注",
+    "pos": "verb"
+  },
+  {
+    "word": "concept",
+    "phonetic": "/ˈkɒnsept/",
+    "definition": "概念观念",
+    "pos": "noun"
+  },
+  {
+    "word": "concern",
+    "phonetic": "/kənˈsɜːn/",
+    "definition": "关心涉及",
+    "pos": "verb"
+  },
+  {
+    "word": "conclude",
+    "phonetic": "/kənˈkluːd/",
+    "definition": "得出结论",
+    "pos": "verb"
+  },
+  {
+    "word": "condition",
+    "phonetic": "/kənˈdɪʃən/",
+    "definition": "条件状况",
+    "pos": "noun"
+  },
+  {
+    "word": "conduct",
+    "phonetic": "/kənˈdʌkt/",
+    "definition": "行为进行",
+    "pos": "verb"
+  },
+  {
+    "word": "conference",
+    "phonetic": "/ˈkɒnfərəns/",
+    "definition": "会议",
+    "pos": "noun"
+  },
+  {
+    "word": "confidence",
+    "phonetic": "/ˈkɒnfɪdəns/",
+    "definition": "信心信任",
+    "pos": "noun"
+  },
+  {
+    "word": "confirm",
+    "phonetic": "/kənˈfɜːm/",
+    "definition": "确认证实",
+    "pos": "verb"
+  },
+  {
+    "word": "conflict",
+    "phonetic": "/ˈkɒnflɪkt/",
+    "definition": "冲突矛盾",
+    "pos": "noun"
+  },
+  {
+    "word": "confuse",
+    "phonetic": "/kənˈfjuːz/",
+    "definition": "使困惑混淆",
+    "pos": "verb"
+  },
+  {
+    "word": "connect",
+    "phonetic": "/kəˈnekt/",
+    "definition": "连接联系",
+    "pos": "verb"
+  },
+  {
+    "word": "conscious",
+    "phonetic": "/ˈkɒnʃəs/",
+    "definition": "有意识的",
+    "pos": "adjective"
+  },
+  {
+    "word": "consequence",
+    "phonetic": "/ˈkɒnsɪkwəns/",
+    "definition": "结果后果",
+    "pos": "noun"
+  },
+  {
+    "word": "conservative",
+    "phonetic": "/kənˈsɜːvətɪv/",
+    "definition": "保守的",
+    "pos": "adjective"
+  },
+  {
+    "word": "consider",
+    "phonetic": "/kənˈsɪdə/",
+    "definition": "考虑认为",
+    "pos": "verb"
+  },
+  {
+    "word": "consist",
+    "phonetic": "/kənˈsɪst/",
+    "definition": "由…组成",
+    "pos": "verb"
+  },
+  {
+    "word": "constant",
+    "phonetic": "/ˈkɒnstənt/",
+    "definition": "不断的常数",
+    "pos": "adjective"
+  },
+  {
+    "word": "construct",
+    "phonetic": "/kənˈstrʌkt/",
+    "definition": "建造构建",
+    "pos": "verb"
+  },
+  {
+    "word": "consume",
+    "phonetic": "/kənˈsjuːm/",
+    "definition": "消费消耗",
+    "pos": "verb"
+  },
+  {
+    "word": "contact",
+    "phonetic": "/ˈkɒntækt/",
+    "definition": "接触联系",
+    "pos": "noun"
+  },
+  {
+    "word": "contain",
+    "phonetic": "/kənˈteɪn/",
+    "definition": "包含容纳",
+    "pos": "verb"
+  },
+  {
+    "word": "content",
+    "phonetic": "/kənˈtent/",
+    "definition": "内容满足的",
+    "pos": "noun"
+  },
+  {
+    "word": "contest",
+    "phonetic": "/ˈkɒntest/",
+    "definition": "比赛竞赛",
+    "pos": "noun"
+  },
+  {
+    "word": "context",
+    "phonetic": "/ˈkɒntekst/",
+    "definition": "上下文背景",
+    "pos": "noun"
+  },
+  {
+    "word": "continue",
+    "phonetic": "/kənˈtɪnjuː/",
+    "definition": "继续",
+    "pos": "verb"
+  },
+  {
+    "word": "contract",
+    "phonetic": "/ˈkɒntrækt/",
+    "definition": "合同契约",
+    "pos": "noun"
+  },
+  {
+    "word": "contrast",
+    "phonetic": "/ˈkɒntrɑːst/",
+    "definition": "对比对照",
+    "pos": "noun"
+  },
+  {
+    "word": "contribute",
+    "phonetic": "/kənˈtrɪbjuːt/",
+    "definition": "贡献捐献",
+    "pos": "verb"
+  },
+  {
+    "word": "control",
+    "phonetic": "/kənˈtrəʊl/",
+    "definition": "控制管理",
+    "pos": "verb"
+  },
+  {
+    "word": "convenient",
+    "phonetic": "/kənˈviːniənt/",
+    "definition": "方便的",
+    "pos": "adjective"
+  },
+  {
+    "word": "conversation",
+    "phonetic": "/ˌkɒnvəˈseɪʃən/",
+    "definition": "对话交谈",
+    "pos": "noun"
+  },
+  {
+    "word": "convince",
+    "phonetic": "/kənˈvɪns/",
+    "definition": "说服使确信",
+    "pos": "verb"
+  },
+  {
+    "word": "cook",
+    "phonetic": "/kʊk/",
+    "definition": "烹饪厨师",
+    "pos": "verb"
+  },
+  {
+    "word": "cool",
+    "phonetic": "/kuːl/",
+    "definition": "凉爽的酷的",
+    "pos": "adjective"
+  },
+  {
+    "word": "cooperate",
+    "phonetic": "/kəʊˈɒpəreɪt/",
+    "definition": "合作协作",
+    "pos": "verb"
+  },
+  {
+    "word": "cope",
+    "phonetic": "/kəʊp/",
+    "definition": "应对处理",
+    "pos": "verb"
+  },
+  {
+    "word": "copy",
+    "phonetic": "/ˈkɒpi/",
+    "definition": "复制副本",
+    "pos": "verb"
+  },
+  {
+    "word": "core",
+    "phonetic": "/kɔː/",
+    "definition": "核心",
+    "pos": "noun"
+  },
+  {
+    "word": "corn",
+    "phonetic": "/kɔːn/",
+    "definition": "玉米谷物",
+    "pos": "noun"
+  },
+  {
+    "word": "corner",
+    "phonetic": "/ˈkɔːnə/",
+    "definition": "角落",
+    "pos": "noun"
+  },
+  {
+    "word": "correct",
+    "phonetic": "/kəˈrekt/",
+    "definition": "正确的纠正",
+    "pos": "adjective"
+  },
+  {
+    "word": "cost",
+    "phonetic": "/kɒst/",
+    "definition": "成本费用",
+    "pos": "noun"
+  },
+  {
+    "word": "cottage",
+    "phonetic": "/ˈkɒtɪdʒ/",
+    "definition": "小屋村舍",
+    "pos": "noun"
+  },
+  {
+    "word": "cotton",
+    "phonetic": "/ˈkɒtən/",
+    "definition": "棉花棉布",
+    "pos": "noun"
+  },
+  {
+    "word": "cough",
+    "phonetic": "/kɒf/",
+    "definition": "咳嗽",
+    "pos": "verb"
+  },
+  {
+    "word": "count",
+    "phonetic": "/kaʊnt/",
+    "definition": "数计算",
+    "pos": "verb"
+  },
+  {
+    "word": "counter",
+    "phonetic": "/ˈkaʊntə/",
+    "definition": "柜台计数器",
+    "pos": "noun"
+  },
+  {
+    "word": "countryside",
+    "phonetic": "/ˈkʌntrisaɪd/",
+    "definition": "乡村",
+    "pos": "noun"
+  },
+  {
+    "word": "county",
+    "phonetic": "/ˈkaʊnti/",
+    "definition": "县郡",
+    "pos": "noun"
+  },
+  {
+    "word": "couple",
+    "phonetic": "/ˈkʌpəl/",
+    "definition": "夫妇一对",
+    "pos": "noun"
+  },
+  {
+    "word": "courage",
+    "phonetic": "/ˈkʌrɪdʒ/",
+    "definition": "勇气胆量",
+    "pos": "noun"
+  },
+  {
+    "word": "course",
+    "phonetic": "/kɔːs/",
+    "definition": "课程过程",
+    "pos": "noun"
+  },
+  {
+    "word": "court",
+    "phonetic": "/kɔːt/",
+    "definition": "法庭球场",
+    "pos": "noun"
+  },
+  {
+    "word": "cousin",
+    "phonetic": "/ˈkʌzən/",
+    "definition": "表兄弟姐妹",
+    "pos": "noun"
+  },
+  {
+    "word": "cover",
+    "phonetic": "/ˈkʌvə/",
+    "definition": "覆盖封面",
+    "pos": "verb"
+  },
+  {
+    "word": "crash",
+    "phonetic": "/kræʃ/",
+    "definition": "碰撞坠毁",
+    "pos": "verb"
+  },
+  {
+    "word": "crazy",
+    "phonetic": "/ˈkreɪzi/",
+    "definition": "疯狂的",
+    "pos": "adjective"
+  },
+  {
+    "word": "create",
+    "phonetic": "/kriˈeɪt/",
+    "definition": "创造创建",
+    "pos": "verb"
+  },
+  {
+    "word": "creative",
+    "phonetic": "/kriˈeɪtɪv/",
+    "definition": "有创造力的",
+    "pos": "adjective"
+  },
+  {
+    "word": "credit",
+    "phonetic": "/ˈkredɪt/",
+    "definition": "信用学分",
+    "pos": "noun"
+  },
+  {
+    "word": "crime",
+    "phonetic": "/kraɪm/",
+    "definition": "罪行犯罪",
+    "pos": "noun"
+  },
+  {
+    "word": "crisis",
+    "phonetic": "/ˈkraɪsɪs/",
+    "definition": "危机",
+    "pos": "noun"
+  },
+  {
+    "word": "critical",
+    "phonetic": "/ˈkrɪtɪkəl/",
+    "definition": "批评的关键的",
+    "pos": "adjective"
+  },
+  {
+    "word": "crop",
+    "phonetic": "/krɒp/",
+    "definition": "庄稼作物",
+    "pos": "noun"
+  },
+  {
+    "word": "cross",
+    "phonetic": "/krɒs/",
+    "definition": "穿过交叉",
+    "pos": "verb"
+  },
+  {
+    "word": "crowd",
+    "phonetic": "/kraʊd/",
+    "definition": "人群",
+    "pos": "noun"
+  },
+  {
+    "word": "crucial",
+    "phonetic": "/ˈkruːʃəl/",
+    "definition": "关键的",
+    "pos": "adjective"
+  },
+  {
+    "word": "cruel",
+    "phonetic": "/ˈkruːəl/",
+    "definition": "残忍的",
+    "pos": "adjective"
+  },
+  {
+    "word": "culture",
+    "phonetic": "/ˈkʌltʃə/",
+    "definition": "文化",
+    "pos": "noun"
+  },
+  {
+    "word": "cup",
+    "phonetic": "/kʌp/",
+    "definition": "杯子",
+    "pos": "noun"
+  },
+  {
+    "word": "cure",
+    "phonetic": "/kjʊə/",
+    "definition": "治疗治愈",
+    "pos": "verb"
+  },
+  {
+    "word": "curious",
+    "phonetic": "/ˈkjʊəriəs/",
+    "definition": "好奇的",
+    "pos": "adjective"
+  },
+  {
+    "word": "current",
+    "phonetic": "/ˈkʌrənt/",
+    "definition": "当前的电流",
+    "pos": "adjective"
+  },
+  {
+    "word": "curtain",
+    "phonetic": "/ˈkɜːtən/",
+    "definition": "窗帘",
+    "pos": "noun"
+  },
+  {
+    "word": "custom",
+    "phonetic": "/ˈkʌstəm/",
+    "definition": "习俗习惯",
+    "pos": "noun"
+  },
+  {
+    "word": "customer",
+    "phonetic": "/ˈkʌstəmə/",
+    "definition": "顾客",
+    "pos": "noun"
+  },
+  {
+    "word": "cut",
+    "phonetic": "/kʌt/",
+    "definition": "切割削减",
+    "pos": "verb"
+  },
+  {
+    "word": "cycle",
+    "phonetic": "/ˈsaɪkəl/",
+    "definition": "循环周期",
+    "pos": "noun"
+  },
+  {
+    "word": "daily",
+    "phonetic": "/ˈdeɪli/",
+    "definition": "每日的日常的",
+    "pos": "adjective"
+  },
+  {
+    "word": "damage",
+    "phonetic": "/ˈdæmɪdʒ/",
+    "definition": "损害破坏",
+    "pos": "verb"
+  },
+  {
+    "word": "danger",
+    "phonetic": "/ˈdeɪndʒə/",
+    "definition": "危险",
+    "pos": "noun"
+  },
+  {
+    "word": "dangerous",
+    "phonetic": "/ˈdeɪndʒərəs/",
+    "definition": "危险的",
+    "pos": "adjective"
+  },
+  {
+    "word": "dare",
+    "phonetic": "/deə/",
+    "definition": "敢胆敢",
+    "pos": "verb"
+  },
+  {
+    "word": "dark",
+    "phonetic": "/dɑːk/",
+    "definition": "黑暗的深色的",
+    "pos": "adjective"
+  },
+  {
+    "word": "data",
+    "phonetic": "/ˈdeɪtə/",
+    "definition": "数据资料",
+    "pos": "noun"
+  },
+  {
+    "word": "database",
+    "phonetic": "/ˈdeɪtəbeɪs/",
+    "definition": "数据库",
+    "pos": "noun"
+  },
+  {
+    "word": "date",
+    "phonetic": "/deɪt/",
+    "definition": "日期约会",
+    "pos": "noun"
+  },
+  {
+    "word": "daughter",
+    "phonetic": "/ˈdɔːtə/",
+    "definition": "女儿",
+    "pos": "noun"
+  },
+  {
+    "word": "dawn",
+    "phonetic": "/dɔːn/",
+    "definition": "黎明",
+    "pos": "noun"
+  },
+  {
+    "word": "dead",
+    "phonetic": "/ded/",
+    "definition": "死的",
+    "pos": "adjective"
+  },
+  {
+    "word": "deal",
+    "phonetic": "/diːl/",
+    "definition": "处理交易",
+    "pos": "verb"
+  },
+  {
+    "word": "dear",
+    "phonetic": "/dɪə/",
+    "definition": "亲爱的昂贵的",
+    "pos": "adjective"
+  },
+  {
+    "word": "death",
+    "phonetic": "/deθ/",
+    "definition": "死亡",
+    "pos": "noun"
+  },
+  {
+    "word": "debate",
+    "phonetic": "/dɪˈbeɪt/",
+    "definition": "辩论争论",
+    "pos": "noun"
+  },
+  {
+    "word": "debt",
+    "phonetic": "/det/",
+    "definition": "债务",
+    "pos": "noun"
+  },
+  {
+    "word": "decade",
+    "phonetic": "/ˈdekeɪd/",
+    "definition": "十年",
+    "pos": "noun"
+  },
+  {
+    "word": "decide",
+    "phonetic": "/dɪˈsaɪd/",
+    "definition": "决定",
+    "pos": "verb"
+  },
+  {
+    "word": "decision",
+    "phonetic": "/dɪˈsɪʒən/",
+    "definition": "决定",
+    "pos": "noun"
+  },
+  {
+    "word": "declare",
+    "phonetic": "/dɪˈkleə/",
+    "definition": "宣布声明",
+    "pos": "verb"
+  },
+  {
+    "word": "decline",
+    "phonetic": "/dɪˈklaɪn/",
+    "definition": "下降拒绝",
+    "pos": "verb"
+  },
+  {
+    "word": "decorate",
+    "phonetic": "/ˈdekəreɪt/",
+    "definition": "装饰",
+    "pos": "verb"
+  },
+  {
+    "word": "decrease",
+    "phonetic": "/dɪˈkriːs/",
+    "definition": "减少降低",
+    "pos": "verb"
+  },
+  {
+    "word": "deep",
+    "phonetic": "/diːp/",
+    "definition": "深的",
+    "pos": "adjective"
+  },
+  {
+    "word": "defeat",
+    "phonetic": "/dɪˈfiːt/",
+    "definition": "击败战胜",
+    "pos": "verb"
+  },
+  {
+    "word": "defend",
+    "phonetic": "/dɪˈfend/",
+    "definition": "防御保卫",
+    "pos": "verb"
+  },
+  {
+    "word": "define",
+    "phonetic": "/dɪˈfaɪn/",
+    "definition": "定义界定",
+    "pos": "verb"
+  },
+  {
+    "word": "definite",
+    "phonetic": "/ˈdefɪnət/",
+    "definition": "明确的肯定的",
+    "pos": "adjective"
+  },
+  {
+    "word": "degree",
+    "phonetic": "/dɪˈɡriː/",
+    "definition": "学位程度",
+    "pos": "noun"
+  },
+  {
+    "word": "delay",
+    "phonetic": "/dɪˈleɪ/",
+    "definition": "延迟耽搁",
+    "pos": "verb"
+  },
+  {
+    "word": "delicate",
+    "phonetic": "/ˈdelɪkət/",
+    "definition": "精致的微妙的",
+    "pos": "adjective"
+  },
+  {
+    "word": "delight",
+    "phonetic": "/dɪˈlaɪt/",
+    "definition": "快乐高兴",
+    "pos": "noun"
+  },
+  {
+    "word": "deliver",
+    "phonetic": "/dɪˈlɪvə/",
+    "definition": "递送交付",
+    "pos": "verb"
+  },
+  {
+    "word": "demand",
+    "phonetic": "/dɪˈmɑːnd/",
+    "definition": "要求需求",
+    "pos": "verb"
+  },
+  {
+    "word": "dentist",
+    "phonetic": "/ˈdentɪst/",
+    "definition": "牙医",
+    "pos": "noun"
+  },
+  {
+    "word": "deny",
+    "phonetic": "/dɪˈnaɪ/",
+    "definition": "否认拒绝",
+    "pos": "verb"
+  },
+  {
+    "word": "depart",
+    "phonetic": "/dɪˈpɑːt/",
+    "definition": "离开出发",
+    "pos": "verb"
+  },
+  {
+    "word": "department",
+    "phonetic": "/dɪˈpɑːtmənt/",
+    "definition": "部门系",
+    "pos": "noun"
+  },
+  {
+    "word": "depend",
+    "phonetic": "/dɪˈpend/",
+    "definition": "依靠取决于",
+    "pos": "verb"
+  },
+  {
+    "word": "deposit",
+    "phonetic": "/dɪˈpɒzɪt/",
+    "definition": "存放押金",
+    "pos": "verb"
+  },
+  {
+    "word": "describe",
+    "phonetic": "/dɪˈskraɪb/",
+    "definition": "描述形容",
+    "pos": "verb"
+  },
+  {
+    "word": "desert",
+    "phonetic": "/dɪˈzɜːt/",
+    "definition": "沙漠抛弃",
+    "pos": "noun"
+  },
+  {
+    "word": "deserve",
+    "phonetic": "/dɪˈzɜːv/",
+    "definition": "值得应得",
+    "pos": "verb"
+  },
+  {
+    "word": "design",
+    "phonetic": "/dɪˈzaɪn/",
+    "definition": "设计构思",
+    "pos": "verb"
+  },
+  {
+    "word": "desire",
+    "phonetic": "/dɪˈzaɪə/",
+    "definition": "渴望欲望",
+    "pos": "noun"
+  },
+  {
+    "word": "desk",
+    "phonetic": "/desk/",
+    "definition": "书桌",
+    "pos": "noun"
+  },
+  {
+    "word": "despite",
+    "phonetic": "/dɪˈspaɪt/",
+    "definition": "尽管不管",
+    "pos": "preposition"
+  },
+  {
+    "word": "destroy",
+    "phonetic": "/dɪˈstrɔɪ/",
+    "definition": "破坏摧毁",
+    "pos": "verb"
+  },
+  {
+    "word": "detail",
+    "phonetic": "/ˈdiːteɪl/",
+    "definition": "细节详情",
+    "pos": "noun"
+  },
+  {
+    "word": "detect",
+    "phonetic": "/dɪˈtekt/",
+    "definition": "发现察觉",
+    "pos": "verb"
+  },
+  {
+    "word": "determine",
+    "phonetic": "/dɪˈtɜːmɪn/",
+    "definition": "决定确定",
+    "pos": "verb"
+  },
+  {
+    "word": "develop",
+    "phonetic": "/dɪˈveləp/",
+    "definition": "发展开发",
+    "pos": "verb"
+  },
+  {
+    "word": "device",
+    "phonetic": "/dɪˈvaɪs/",
+    "definition": "设备装置",
+    "pos": "noun"
+  },
+  {
+    "word": "devote",
+    "phonetic": "/dɪˈvəʊt/",
+    "definition": "致力于奉献",
+    "pos": "verb"
+  },
+  {
+    "word": "dialogue",
+    "phonetic": "/ˈdaɪəlɒɡ/",
+    "definition": "对话",
+    "pos": "noun"
+  },
+  {
+    "word": "diamond",
+    "phonetic": "/ˈdaɪəmənd/",
+    "definition": "钻石",
+    "pos": "noun"
+  },
+  {
+    "word": "diet",
+    "phonetic": "/ˈdaɪət/",
+    "definition": "饮食",
+    "pos": "noun"
+  },
+  {
+    "word": "differ",
+    "phonetic": "/ˈdɪfə/",
+    "definition": "不同有区别",
+    "pos": "verb"
+  },
+  {
+    "word": "difficult",
+    "phonetic": "/ˈdɪfɪkəlt/",
+    "definition": "困难的",
+    "pos": "adjective"
+  },
+  {
+    "word": "dig",
+    "phonetic": "/dɪɡ/",
+    "definition": "挖掘",
+    "pos": "verb"
+  },
+  {
+    "word": "digital",
+    "phonetic": "/ˈdɪdʒɪtəl/",
+    "definition": "数字的",
+    "pos": "adjective"
+  },
+  {
+    "word": "dinner",
+    "phonetic": "/ˈdɪnə/",
+    "definition": "晚餐正餐",
+    "pos": "noun"
+  },
+  {
+    "word": "direct",
+    "phonetic": "/dɪˈrekt/",
+    "definition": "直接的指导",
+    "pos": "adjective"
+  },
+  {
+    "word": "dirty",
+    "phonetic": "/ˈdɜːti/",
+    "definition": "脏的",
+    "pos": "adjective"
+  },
+  {
+    "word": "disappear",
+    "phonetic": "/ˌdɪsəˈpɪə/",
+    "definition": "消失",
+    "pos": "verb"
+  },
+  {
+    "word": "discover",
+    "phonetic": "/dɪˈskʌvə/",
+    "definition": "发现",
+    "pos": "verb"
+  },
+  {
+    "word": "discuss",
+    "phonetic": "/dɪˈskʌs/",
+    "definition": "讨论",
+    "pos": "verb"
+  },
+  {
+    "word": "disease",
+    "phonetic": "/dɪˈziːz/",
+    "definition": "疾病",
+    "pos": "noun"
+  },
+  {
+    "word": "dismiss",
+    "phonetic": "/dɪsˈmɪs/",
+    "definition": "解雇解散",
+    "pos": "verb"
+  },
+  {
+    "word": "display",
+    "phonetic": "/dɪˈspleɪ/",
+    "definition": "展示显示",
+    "pos": "verb"
+  },
+  {
+    "word": "distance",
+    "phonetic": "/ˈdɪstəns/",
+    "definition": "距离",
+    "pos": "noun"
+  },
+  {
+    "word": "distant",
+    "phonetic": "/ˈdɪstənt/",
+    "definition": "遥远的",
+    "pos": "adjective"
+  },
+  {
+    "word": "distribute",
+    "phonetic": "/dɪˈstrɪbjuːt/",
+    "definition": "分配分发",
+    "pos": "verb"
+  },
+  {
+    "word": "district",
+    "phonetic": "/ˈdɪstrɪkt/",
+    "definition": "地区区域",
+    "pos": "noun"
+  },
+  {
+    "word": "disturb",
+    "phonetic": "/dɪˈstɜːb/",
+    "definition": "打扰扰乱",
+    "pos": "verb"
+  },
+  {
+    "word": "divide",
+    "phonetic": "/dɪˈvaɪd/",
+    "definition": "分开划分",
+    "pos": "verb"
+  },
+  {
+    "word": "document",
+    "phonetic": "/ˈdɒkjəmənt/",
+    "definition": "文件文档",
+    "pos": "noun"
+  },
+  {
+    "word": "donate",
+    "phonetic": "/dəʊˈneɪt/",
+    "definition": "捐赠",
+    "pos": "verb"
+  },
+  {
+    "word": "double",
+    "phonetic": "/ˈdʌbəl/",
+    "definition": "双倍的",
+    "pos": "adjective"
+  },
+  {
+    "word": "doubt",
+    "phonetic": "/daʊt/",
+    "definition": "怀疑疑问",
+    "pos": "noun"
+  },
+  {
+    "word": "downtown",
+    "phonetic": "/ˌdaʊnˈtaʊn/",
+    "definition": "市中心",
+    "pos": "adverb"
+  },
+  {
+    "word": "dozen",
+    "phonetic": "/ˈdʌzən/",
+    "definition": "一打十二个",
+    "pos": "noun"
+  },
+  {
+    "word": "drag",
+    "phonetic": "/dræɡ/",
+    "definition": "拖拽",
+    "pos": "verb"
+  },
+  {
+    "word": "drama",
+    "phonetic": "/ˈdrɑːmə/",
+    "definition": "戏剧",
+    "pos": "noun"
+  },
+  {
+    "word": "draw",
+    "phonetic": "/drɔː/",
+    "definition": "画拉",
+    "pos": "verb"
+  },
+  {
+    "word": "dream",
+    "phonetic": "/driːm/",
+    "definition": "梦想做梦",
+    "pos": "noun"
+  },
+  {
+    "word": "dress",
+    "phonetic": "/dres/",
+    "definition": "连衣裙穿衣",
+    "pos": "noun"
+  },
+  {
+    "word": "drink",
+    "phonetic": "/drɪŋk/",
+    "definition": "喝饮料",
+    "pos": "verb"
+  },
+  {
+    "word": "drive",
+    "phonetic": "/draɪv/",
+    "definition": "驾驶驱动",
+    "pos": "verb"
+  },
+  {
+    "word": "drop",
+    "phonetic": "/drɒp/",
+    "definition": "滴落下降",
+    "pos": "verb"
+  },
+  {
+    "word": "drug",
+    "phonetic": "/drʌɡ/",
+    "definition": "药物毒品",
+    "pos": "noun"
+  },
+  {
+    "word": "dry",
+    "phonetic": "/draɪ/",
+    "definition": "干的干燥的",
+    "pos": "adjective"
+  },
+  {
+    "word": "duck",
+    "phonetic": "/dʌk/",
+    "definition": "鸭子",
+    "pos": "noun"
+  },
+  {
+    "word": "due",
+    "phonetic": "/djuː/",
+    "definition": "由于到期的",
+    "pos": "adjective"
+  },
+  {
+    "word": "dull",
+    "phonetic": "/dʌl/",
+    "definition": "枯燥的迟钝的",
+    "pos": "adjective"
+  },
+  {
+    "word": "dump",
+    "phonetic": "/dʌmp/",
+    "definition": "倾倒垃圾场",
+    "pos": "verb"
+  },
+  {
+    "word": "during",
+    "phonetic": "/ˈdjʊərɪŋ/",
+    "definition": "在…期间",
+    "pos": "preposition"
+  },
+  {
+    "word": "dust",
+    "phonetic": "/dʌst/",
+    "definition": "灰尘",
+    "pos": "noun"
+  },
+  {
+    "word": "duty",
+    "phonetic": "/ˈdjuːti/",
+    "definition": "责任职责",
+    "pos": "noun"
+  },
+  {
+    "word": "eager",
+    "phonetic": "/ˈiːɡə/",
+    "definition": "渴望的热切的",
+    "pos": "adjective"
+  },
+  {
+    "word": "earn",
+    "phonetic": "/ɜːn/",
+    "definition": "赚得挣得",
+    "pos": "verb"
+  },
+  {
+    "word": "earth",
+    "phonetic": "/ɜːθ/",
+    "definition": "地球泥土",
+    "pos": "noun"
+  },
+  {
+    "word": "ease",
+    "phonetic": "/iːz/",
+    "definition": "容易舒适",
+    "pos": "noun"
+  },
+  {
+    "word": "eastern",
+    "phonetic": "/ˈiːstən/",
+    "definition": "东方的",
+    "pos": "adjective"
+  },
+  {
+    "word": "economic",
+    "phonetic": "/ˌiːkəˈnɒmɪk/",
+    "definition": "经济的",
+    "pos": "adjective"
+  },
+  {
+    "word": "economy",
+    "phonetic": "/ɪˈkɒnəmi/",
+    "definition": "经济",
+    "pos": "noun"
+  },
+  {
+    "word": "edge",
+    "phonetic": "/edʒ/",
+    "definition": "边缘刀刃",
+    "pos": "noun"
+  },
+  {
+    "word": "edit",
+    "phonetic": "/ˈedɪt/",
+    "definition": "编辑",
+    "pos": "verb"
+  },
+  {
+    "word": "edition",
+    "phonetic": "/ɪˈdɪʃən/",
+    "definition": "版本",
+    "pos": "noun"
+  },
+  {
+    "word": "editor",
+    "phonetic": "/ˈedɪtə/",
+    "definition": "编辑者",
+    "pos": "noun"
+  },
+  {
+    "word": "educate",
+    "phonetic": "/ˈedjukeɪt/",
+    "definition": "教育培养",
+    "pos": "verb"
+  },
+  {
+    "word": "effective",
+    "phonetic": "/ɪˈfektɪv/",
+    "definition": "有效的",
+    "pos": "adjective"
+  },
+  {
+    "word": "efficient",
+    "phonetic": "/ɪˈfɪʃənt/",
+    "definition": "高效的",
+    "pos": "adjective"
+  },
+  {
+    "word": "effort",
+    "phonetic": "/ˈefət/",
+    "definition": "努力",
+    "pos": "noun"
+  },
+  {
+    "word": "elect",
+    "phonetic": "/ɪˈlekt/",
+    "definition": "选举选择",
+    "pos": "verb"
+  },
+  {
+    "word": "electric",
+    "phonetic": "/ɪˈlektrɪk/",
+    "definition": "电的",
+    "pos": "adjective"
+  },
+  {
+    "word": "electronic",
+    "phonetic": "/ˌelɪkˈtrɒnɪk/",
+    "definition": "电子的",
+    "pos": "adjective"
+  },
+  {
+    "word": "element",
+    "phonetic": "/ˈelɪmənt/",
+    "definition": "元素要素",
+    "pos": "noun"
+  },
+  {
+    "word": "eliminate",
+    "phonetic": "/ɪˈlɪmɪneɪt/",
+    "definition": "消除淘汰",
+    "pos": "verb"
+  },
+  {
+    "word": "embrace",
+    "phonetic": "/ɪmˈbreɪs/",
+    "definition": "拥抱包含",
+    "pos": "verb"
+  },
+  {
+    "word": "emerge",
+    "phonetic": "/ɪˈmɜːdʒ/",
+    "definition": "出现浮现",
+    "pos": "verb"
+  },
+  {
+    "word": "emotion",
+    "phonetic": "/ɪˈməʊʃən/",
+    "definition": "情感情绪",
+    "pos": "noun"
+  },
+  {
+    "word": "emphasis",
+    "phonetic": "/ˈemfəsɪs/",
+    "definition": "强调重点",
+    "pos": "noun"
+  },
+  {
+    "word": "employ",
+    "phonetic": "/ɪmˈplɔɪ/",
+    "definition": "雇用使用",
+    "pos": "verb"
+  },
+  {
+    "word": "empty",
+    "phonetic": "/ˈempti/",
+    "definition": "空的",
+    "pos": "adjective"
+  },
+  {
+    "word": "enable",
+    "phonetic": "/ɪˈneɪbəl/",
+    "definition": "使能够",
+    "pos": "verb"
+  },
+  {
+    "word": "encounter",
+    "phonetic": "/ɪnˈkaʊntə/",
+    "definition": "遇到遭遇",
+    "pos": "verb"
+  },
+  {
+    "word": "encourage",
+    "phonetic": "/ɪnˈkʌrɪdʒ/",
+    "definition": "鼓励",
+    "pos": "verb"
+  },
+  {
+    "word": "enemy",
+    "phonetic": "/ˈenəmi/",
+    "definition": "敌人",
+    "pos": "noun"
+  },
+  {
+    "word": "energy",
+    "phonetic": "/ˈenədʒi/",
+    "definition": "能量精力",
+    "pos": "noun"
+  },
+  {
+    "word": "engage",
+    "phonetic": "/ɪnˈɡeɪdʒ/",
+    "definition": "从事吸引",
+    "pos": "verb"
+  },
+  {
+    "word": "engine",
+    "phonetic": "/ˈendʒɪn/",
+    "definition": "发动机引擎",
+    "pos": "noun"
+  },
+  {
+    "word": "engineer",
+    "phonetic": "/ˌendʒɪˈnɪə/",
+    "definition": "工程师",
+    "pos": "noun"
+  },
+  {
+    "word": "enjoy",
+    "phonetic": "/ɪnˈdʒɔɪ/",
+    "definition": "享受喜欢",
+    "pos": "verb"
+  },
+  {
+    "word": "enormous",
+    "phonetic": "/ɪˈnɔːməs/",
+    "definition": "巨大的",
+    "pos": "adjective"
+  },
+  {
+    "word": "enough",
+    "phonetic": "/ɪˈnʌf/",
+    "definition": "足够的",
+    "pos": "adjective"
+  },
+  {
+    "word": "ensure",
+    "phonetic": "/ɪnˈʃʊə/",
+    "definition": "确保保证",
+    "pos": "verb"
+  },
+  {
+    "word": "enter",
+    "phonetic": "/ˈentə/",
+    "definition": "进入",
+    "pos": "verb"
+  },
+  {
+    "word": "entertain",
+    "phonetic": "/ˌentəˈteɪn/",
+    "definition": "娱乐招待",
+    "pos": "verb"
+  },
+  {
+    "word": "enthusiasm",
+    "phonetic": "/ɪnˈθjuːziæzəm/",
+    "definition": "热情热心",
+    "pos": "noun"
+  },
+  {
+    "word": "entire",
+    "phonetic": "/ɪnˈtaɪə/",
+    "definition": "整个的全部的",
+    "pos": "adjective"
+  },
+  {
+    "word": "entry",
+    "phonetic": "/ˈentri/",
+    "definition": "进入条目",
+    "pos": "noun"
+  },
+  {
+    "word": "environment",
+    "phonetic": "/ɪnˈvaɪrənmənt/",
+    "definition": "环境",
+    "pos": "noun"
+  },
+  {
+    "word": "equal",
+    "phonetic": "/ˈiːkwəl/",
+    "definition": "相等的平等的",
+    "pos": "adjective"
+  },
+  {
+    "word": "equip",
+    "phonetic": "/ɪˈkwɪp/",
+    "definition": "装备配备",
+    "pos": "verb"
+  },
+  {
+    "word": "error",
+    "phonetic": "/ˈerə/",
+    "definition": "错误",
+    "pos": "noun"
+  },
+  {
+    "word": "escape",
+    "phonetic": "/ɪˈskeɪp/",
+    "definition": "逃跑逃避",
+    "pos": "verb"
+  },
+  {
+    "word": "especially",
+    "phonetic": "/ɪˈspeʃəli/",
+    "definition": "特别尤其",
+    "pos": "adverb"
+  },
+  {
+    "word": "essential",
+    "phonetic": "/ɪˈsenʃəl/",
+    "definition": "必要的本质的",
+    "pos": "adjective"
+  },
+  {
+    "word": "establish",
+    "phonetic": "/ɪˈstæblɪʃ/",
+    "definition": "建立设立",
+    "pos": "verb"
+  },
+  {
+    "word": "estate",
+    "phonetic": "/ɪˈsteɪt/",
+    "definition": "地产财产",
+    "pos": "noun"
+  },
+  {
+    "word": "estimate",
+    "phonetic": "/ˈestɪmeɪt/",
+    "definition": "估计评估",
+    "pos": "verb"
+  },
+  {
+    "word": "evaluate",
+    "phonetic": "/ɪˈvæljueɪt/",
+    "definition": "评价评估",
+    "pos": "verb"
+  },
+  {
+    "word": "event",
+    "phonetic": "/ɪˈvent/",
+    "definition": "事件活动",
+    "pos": "noun"
+  },
+  {
+    "word": "eventually",
+    "phonetic": "/ɪˈventʃuəli/",
+    "definition": "最终",
+    "pos": "adverb"
+  },
+  {
+    "word": "evidence",
+    "phonetic": "/ˈevɪdəns/",
+    "definition": "证据",
+    "pos": "noun"
+  },
+  {
+    "word": "evil",
+    "phonetic": "/ˈiːvəl/",
+    "definition": "邪恶的坏的",
+    "pos": "adjective"
+  },
+  {
+    "word": "exact",
+    "phonetic": "/ɪɡˈzækt/",
+    "definition": "精确的准确的",
+    "pos": "adjective"
+  },
+  {
+    "word": "examine",
+    "phonetic": "/ɪɡˈzæmɪn/",
+    "definition": "检查考试",
+    "pos": "verb"
+  },
+  {
+    "word": "example",
+    "phonetic": "/ɪɡˈzɑːmpəl/",
+    "definition": "例子榜样",
+    "pos": "noun"
+  },
+  {
+    "word": "excellent",
+    "phonetic": "/ˈeksələnt/",
+    "definition": "优秀的",
+    "pos": "adjective"
+  },
+  {
+    "word": "exchange",
+    "phonetic": "/ɪksˈtʃeɪndʒ/",
+    "definition": "交换兑换",
+    "pos": "verb"
+  },
+  {
+    "word": "excite",
+    "phonetic": "/ɪkˈsaɪt/",
+    "definition": "使兴奋",
+    "pos": "verb"
+  },
+  {
+    "word": "exclude",
+    "phonetic": "/ɪksˈkluːd/",
+    "definition": "排除",
+    "pos": "verb"
+  },
+  {
+    "word": "excuse",
+    "phonetic": "/ɪksˈkjuːz/",
+    "definition": "借口原谅",
+    "pos": "verb"
+  },
+  {
+    "word": "exercise",
+    "phonetic": "/ˈeksəsaɪz/",
+    "definition": "锻炼练习",
+    "pos": "noun"
+  },
+  {
+    "word": "exhibit",
+    "phonetic": "/ɪɡˈzɪbɪt/",
+    "definition": "展览展示",
+    "pos": "verb"
+  },
+  {
+    "word": "exist",
+    "phonetic": "/ɪɡˈzɪst/",
+    "definition": "存在生存",
+    "pos": "verb"
+  },
+  {
+    "word": "expand",
+    "phonetic": "/ɪkˈspænd/",
+    "definition": "扩展膨胀",
+    "pos": "verb"
+  },
+  {
+    "word": "expect",
+    "phonetic": "/ɪkˈspekt/",
+    "definition": "期待期望",
+    "pos": "verb"
+  },
+  {
+    "word": "expense",
+    "phonetic": "/ɪkˈspens/",
+    "definition": "花费费用",
+    "pos": "noun"
+  },
+  {
+    "word": "expensive",
+    "phonetic": "/ɪkˈspensɪv/",
+    "definition": "昂贵的",
+    "pos": "adjective"
+  },
+  {
+    "word": "experience",
+    "phonetic": "/ɪkˈspɪəriəns/",
+    "definition": "经验经历",
+    "pos": "noun"
+  },
+  {
+    "word": "experiment",
+    "phonetic": "/ɪkˈsperɪmənt/",
+    "definition": "实验试验",
+    "pos": "noun"
+  },
+  {
+    "word": "expert",
+    "phonetic": "/ˈekspɜːt/",
+    "definition": "专家熟练的",
+    "pos": "noun"
+  },
+  {
+    "word": "explain",
+    "phonetic": "/ɪkˈspleɪn/",
+    "definition": "解释说明",
+    "pos": "verb"
+  },
+  {
+    "word": "explode",
+    "phonetic": "/ɪkˈspləʊd/",
+    "definition": "爆炸",
+    "pos": "verb"
+  },
+  {
+    "word": "explore",
+    "phonetic": "/ɪkˈsplɔː/",
+    "definition": "探索探险",
+    "pos": "verb"
+  },
+  {
+    "word": "export",
+    "phonetic": "/ɪkˈspɔːt/",
+    "definition": "出口输出",
+    "pos": "verb"
+  },
+  {
+    "word": "express",
+    "phonetic": "/ɪkˈspres/",
+    "definition": "表达快递",
+    "pos": "verb"
+  },
+  {
+    "word": "extend",
+    "phonetic": "/ɪkˈstend/",
+    "definition": "延伸扩展",
+    "pos": "verb"
+  },
+  {
+    "word": "extra",
+    "phonetic": "/ˈekstrə/",
+    "definition": "额外的",
+    "pos": "adjective"
+  },
+  {
+    "word": "extraordinary",
+    "phonetic": "/ɪkˈstrɔːdɪnəri/",
+    "definition": "非凡的",
+    "pos": "adjective"
+  },
+  {
+    "word": "extreme",
+    "phonetic": "/ɪkˈstriːm/",
+    "definition": "极端的极度的",
+    "pos": "adjective"
+  },
+  {
+    "word": "facility",
+    "phonetic": "/fəˈsɪləti/",
+    "definition": "设施设备",
+    "pos": "noun"
+  },
+  {
+    "word": "fact",
+    "phonetic": "/fækt/",
+    "definition": "事实真相",
+    "pos": "noun"
+  },
+  {
+    "word": "factor",
+    "phonetic": "/ˈfæktə/",
+    "definition": "因素要素",
+    "pos": "noun"
+  },
+  {
+    "word": "factory",
+    "phonetic": "/ˈfæktəri/",
+    "definition": "工厂",
+    "pos": "noun"
+  },
+  {
+    "word": "fail",
+    "phonetic": "/feɪl/",
+    "definition": "失败不及格",
+    "pos": "verb"
+  },
+  {
+    "word": "failure",
+    "phonetic": "/ˈfeɪljə/",
+    "definition": "失败",
+    "pos": "noun"
+  },
+  {
+    "word": "fair",
+    "phonetic": "/feə/",
+    "definition": "公平的集市",
+    "pos": "adjective"
+  },
+  {
+    "word": "faith",
+    "phonetic": "/feɪθ/",
+    "definition": "信仰信念",
+    "pos": "noun"
+  },
+  {
+    "word": "fall",
+    "phonetic": "/fɔːl/",
+    "definition": "落下秋天",
+    "pos": "verb"
+  },
+  {
+    "word": "false",
+    "phonetic": "/fɔːls/",
+    "definition": "虚假的错误",
+    "pos": "adjective"
+  },
+  {
+    "word": "familiar",
+    "phonetic": "/fəˈmɪliə/",
+    "definition": "熟悉的",
+    "pos": "adjective"
+  },
+  {
+    "word": "fan",
+    "phonetic": "/fæn/",
+    "definition": "风扇迷",
+    "pos": "noun"
+  },
+  {
+    "word": "fancy",
+    "phonetic": "/ˈfænsi/",
+    "definition": "想象喜爱",
+    "pos": "verb"
+  },
+  {
+    "word": "fantastic",
+    "phonetic": "/fænˈtæstɪk/",
+    "definition": "极好的",
+    "pos": "adjective"
+  },
+  {
+    "word": "far",
+    "phonetic": "/fɑː/",
+    "definition": "远的",
+    "pos": "adjective"
+  },
+  {
+    "word": "fashion",
+    "phonetic": "/ˈfæʃən/",
+    "definition": "时尚方式",
+    "pos": "noun"
+  },
+  {
+    "word": "fast",
+    "phonetic": "/fɑːst/",
+    "definition": "快的快速的",
+    "pos": "adjective"
+  },
+  {
+    "word": "fat",
+    "phonetic": "/fæt/",
+    "definition": "胖的脂肪",
+    "pos": "adjective"
+  },
+  {
+    "word": "fate",
+    "phonetic": "/feɪt/",
+    "definition": "命运",
+    "pos": "noun"
+  },
+  {
+    "word": "fault",
+    "phonetic": "/fɔːlt/",
+    "definition": "缺点错误",
+    "pos": "noun"
+  },
+  {
+    "word": "favor",
+    "phonetic": "/ˈfeɪvə/",
+    "definition": "喜爱恩惠",
+    "pos": "noun"
+  },
+  {
+    "word": "fear",
+    "phonetic": "/fɪə/",
+    "definition": "害怕恐惧",
+    "pos": "noun"
+  },
+  {
+    "word": "feature",
+    "phonetic": "/ˈfiːtʃə/",
+    "definition": "特征特点",
+    "pos": "noun"
+  },
+  {
+    "word": "federal",
+    "phonetic": "/ˈfedərəl/",
+    "definition": "联邦的",
+    "pos": "adjective"
+  },
+  {
+    "word": "fee",
+    "phonetic": "/fiː/",
+    "definition": "费用",
+    "pos": "noun"
+  },
+  {
+    "word": "feed",
+    "phonetic": "/fiːd/",
+    "definition": "喂养饲养",
+    "pos": "verb"
+  },
+  {
+    "word": "female",
+    "phonetic": "/ˈfiːmeɪl/",
+    "definition": "女性的",
+    "pos": "adjective"
+  },
+  {
+    "word": "fence",
+    "phonetic": "/fens/",
+    "definition": "栅栏篱笆",
+    "pos": "noun"
+  },
+  {
+    "word": "fiction",
+    "phonetic": "/ˈfɪkʃən/",
+    "definition": "小说虚构",
+    "pos": "noun"
+  },
+  {
+    "word": "field",
+    "phonetic": "/fiːld/",
+    "definition": "田野领域",
+    "pos": "noun"
+  },
+  {
+    "word": "fierce",
+    "phonetic": "/fɪəs/",
+    "definition": "凶猛的激烈的",
+    "pos": "adjective"
+  },
+  {
+    "word": "fight",
+    "phonetic": "/faɪt/",
+    "definition": "战斗打架",
+    "pos": "verb"
+  },
+  {
+    "word": "figure",
+    "phonetic": "/ˈfɪɡə/",
+    "definition": "数字人物图形",
+    "pos": "noun"
+  },
+  {
+    "word": "file",
+    "phonetic": "/faɪl/",
+    "definition": "文件档案",
+    "pos": "noun"
+  },
+  {
+    "word": "fill",
+    "phonetic": "/fɪl/",
+    "definition": "填满装满",
+    "pos": "verb"
+  },
+  {
+    "word": "final",
+    "phonetic": "/ˈfaɪnəl/",
+    "definition": "最后的最终的",
+    "pos": "adjective"
+  },
+  {
+    "word": "finance",
+    "phonetic": "/faɪˈnæns/",
+    "definition": "财政金融",
+    "pos": "noun"
+  },
+  {
+    "word": "financial",
+    "phonetic": "/faɪˈnænʃəl/",
+    "definition": "财政的",
+    "pos": "adjective"
+  },
+  {
+    "word": "firm",
+    "phonetic": "/fɜːm/",
+    "definition": "公司坚定的",
+    "pos": "noun"
+  },
+  {
+    "word": "fist",
+    "phonetic": "/fɪst/",
+    "definition": "拳头",
+    "pos": "noun"
+  },
+  {
+    "word": "fix",
+    "phonetic": "/fɪks/",
+    "definition": "修理固定",
+    "pos": "verb"
+  },
+  {
+    "word": "flag",
+    "phonetic": "/flæɡ/",
+    "definition": "旗帜",
+    "pos": "noun"
+  },
+  {
+    "word": "flame",
+    "phonetic": "/fleɪm/",
+    "definition": "火焰",
+    "pos": "noun"
+  },
+  {
+    "word": "flash",
+    "phonetic": "/flæʃ/",
+    "definition": "闪光闪现",
+    "pos": "verb"
+  },
+  {
+    "word": "flat",
+    "phonetic": "/flæt/",
+    "definition": "平坦的公寓",
+    "pos": "adjective"
+  },
+  {
+    "word": "flee",
+    "phonetic": "/fliː/",
+    "definition": "逃跑",
+    "pos": "verb"
+  },
+  {
+    "word": "flexible",
+    "phonetic": "/ˈfleksɪbəl/",
+    "definition": "灵活的",
+    "pos": "adjective"
+  },
+  {
+    "word": "flight",
+    "phonetic": "/flaɪt/",
+    "definition": "航班飞行",
+    "pos": "noun"
+  },
+  {
+    "word": "float",
+    "phonetic": "/fləʊt/",
+    "definition": "漂浮浮动",
+    "pos": "verb"
+  },
+  {
+    "word": "flood",
+    "phonetic": "/flʌd/",
+    "definition": "洪水",
+    "pos": "noun"
+  },
+  {
+    "word": "flow",
+    "phonetic": "/fləʊ/",
+    "definition": "流动",
+    "pos": "verb"
+  },
+  {
+    "word": "flower",
+    "phonetic": "/ˈflaʊə/",
+    "definition": "花",
+    "pos": "noun"
+  },
+  {
+    "word": "focus",
+    "phonetic": "/ˈfəʊkəs/",
+    "definition": "焦点集中",
+    "pos": "verb"
+  },
+  {
+    "word": "fold",
+    "phonetic": "/fəʊld/",
+    "definition": "折叠",
+    "pos": "verb"
+  },
+  {
+    "word": "folk",
+    "phonetic": "/fəʊk/",
+    "definition": "人们民间的",
+    "pos": "noun"
+  },
+  {
+    "word": "follow",
+    "phonetic": "/ˈfɒləʊ/",
+    "definition": "跟随遵循",
+    "pos": "verb"
+  },
+  {
+    "word": "fond",
+    "phonetic": "/fɒnd/",
+    "definition": "喜欢的",
+    "pos": "adjective"
+  },
+  {
+    "word": "fool",
+    "phonetic": "/fuːl/",
+    "definition": "傻瓜愚弄",
+    "pos": "noun"
+  },
+  {
+    "word": "forbid",
+    "phonetic": "/fəˈbɪd/",
+    "definition": "禁止",
+    "pos": "verb"
+  },
+  {
+    "word": "force",
+    "phonetic": "/fɔːs/",
+    "definition": "力量武力强迫",
+    "pos": "noun"
+  },
+  {
+    "word": "forecast",
+    "phonetic": "/ˈfɔːkɑːst/",
+    "definition": "预报预测",
+    "pos": "verb"
+  },
+  {
+    "word": "foreign",
+    "phonetic": "/ˈfɒrɪn/",
+    "definition": "外国的",
+    "pos": "adjective"
+  },
+  {
+    "word": "forest",
+    "phonetic": "/ˈfɒrɪst/",
+    "definition": "森林",
+    "pos": "noun"
+  },
+  {
+    "word": "forever",
+    "phonetic": "/fərˈevə/",
+    "definition": "永远",
+    "pos": "adverb"
+  },
+  {
+    "word": "forget",
+    "phonetic": "/fəˈɡet/",
+    "definition": "忘记",
+    "pos": "verb"
+  },
+  {
+    "word": "forgive",
+    "phonetic": "/fəˈɡɪv/",
+    "definition": "原谅宽恕",
+    "pos": "verb"
+  },
+  {
+    "word": "formal",
+    "phonetic": "/ˈfɔːməl/",
+    "definition": "正式的",
+    "pos": "adjective"
+  },
+  {
+    "word": "former",
+    "phonetic": "/ˈfɔːmə/",
+    "definition": "以前的",
+    "pos": "adjective"
+  },
+  {
+    "word": "fortune",
+    "phonetic": "/ˈfɔːtʃuːn/",
+    "definition": "财富运气",
+    "pos": "noun"
+  },
+  {
+    "word": "forward",
+    "phonetic": "/ˈfɔːwəd/",
+    "definition": "向前",
+    "pos": "adverb"
+  },
+  {
+    "word": "found",
+    "phonetic": "/faʊnd/",
+    "definition": "创立建立",
+    "pos": "verb"
+  },
+  {
+    "word": "frame",
+    "phonetic": "/freɪm/",
+    "definition": "框架结构",
+    "pos": "noun"
+  },
+  {
+    "word": "freedom",
+    "phonetic": "/ˈfriːdəm/",
+    "definition": "自由",
+    "pos": "noun"
+  },
+  {
+    "word": "freeze",
+    "phonetic": "/friːz/",
+    "definition": "冻结结冰",
+    "pos": "verb"
+  },
+  {
+    "word": "frequent",
+    "phonetic": "/ˈfriːkwənt/",
+    "definition": "频繁的",
+    "pos": "adjective"
+  },
+  {
+    "word": "fresh",
+    "phonetic": "/freʃ/",
+    "definition": "新鲜的",
+    "pos": "adjective"
+  },
+  {
+    "word": "friendly",
+    "phonetic": "/ˈfrendli/",
+    "definition": "友好的",
+    "pos": "adjective"
+  },
+  {
+    "word": "frighten",
+    "phonetic": "/ˈfraɪtən/",
+    "definition": "使害怕",
+    "pos": "verb"
+  },
+  {
+    "word": "frontier",
+    "phonetic": "/ˈfrʌntɪə/",
+    "definition": "边境前沿",
+    "pos": "noun"
+  },
+  {
+    "word": "fruit",
+    "phonetic": "/fruːt/",
+    "definition": "水果",
+    "pos": "noun"
+  },
+  {
+    "word": "fuel",
+    "phonetic": "/ˈfjuːəl/",
+    "definition": "燃料",
+    "pos": "noun"
+  },
+  {
+    "word": "fulfill",
+    "phonetic": "/fʊlˈfɪl/",
+    "definition": "完成实现",
+    "pos": "verb"
+  },
+  {
+    "word": "function",
+    "phonetic": "/ˈfʌŋkʃən/",
+    "definition": "功能函数",
+    "pos": "noun"
+  },
+  {
+    "word": "fund",
+    "phonetic": "/fʌnd/",
+    "definition": "基金资金",
+    "pos": "noun"
+  },
+  {
+    "word": "funny",
+    "phonetic": "/ˈfʌni/",
+    "definition": "有趣的滑稽的",
+    "pos": "adjective"
+  },
+  {
+    "word": "furniture",
+    "phonetic": "/ˈfɜːnɪtʃə/",
+    "definition": "家具",
+    "pos": "noun"
+  },
+  {
+    "word": "further",
+    "phonetic": "/ˈfɜːðə/",
+    "definition": "进一步的更远",
+    "pos": "adjective"
+  },
+  {
+    "word": "future",
+    "phonetic": "/ˈfjuːtʃə/",
+    "definition": "未来将来",
+    "pos": "noun"
+  },
+  {
+    "word": "gain",
+    "phonetic": "/ɡeɪn/",
+    "definition": "获得收益",
+    "pos": "verb"
+  },
+  {
+    "word": "gap",
+    "phonetic": "/ɡæp/",
+    "definition": "差距缺口",
+    "pos": "noun"
+  },
+  {
+    "word": "garage",
+    "phonetic": "/ˈɡærɪdʒ/",
+    "definition": "车库",
+    "pos": "noun"
+  },
+  {
+    "word": "garden",
+    "phonetic": "/ˈɡɑːdən/",
+    "definition": "花园",
+    "pos": "noun"
+  },
+  {
+    "word": "gas",
+    "phonetic": "/ɡæs/",
+    "definition": "气体汽油",
+    "pos": "noun"
+  },
+  {
+    "word": "gate",
+    "phonetic": "/ɡeɪt/",
+    "definition": "大门",
+    "pos": "noun"
+  },
+  {
+    "word": "gather",
+    "phonetic": "/ˈɡæðə/",
+    "definition": "收集聚集",
+    "pos": "verb"
+  },
+  {
+    "word": "general",
+    "phonetic": "/ˈdʒenərəl/",
+    "definition": "一般的将军",
+    "pos": "adjective"
+  },
+  {
+    "word": "generate",
+    "phonetic": "/ˈdʒenəreɪt/",
+    "definition": "产生生成",
+    "pos": "verb"
+  },
+  {
+    "word": "generous",
+    "phonetic": "/ˈdʒenərəs/",
+    "definition": "慷慨的",
+    "pos": "adjective"
+  },
+  {
+    "word": "genius",
+    "phonetic": "/ˈdʒiːniəs/",
+    "definition": "天才",
+    "pos": "noun"
+  },
+  {
+    "word": "gentle",
+    "phonetic": "/ˈdʒentəl/",
+    "definition": "温和的轻柔的",
+    "pos": "adjective"
+  },
+  {
+    "word": "genuine",
+    "phonetic": "/ˈdʒenjuɪn/",
+    "definition": "真正的真诚的",
+    "pos": "adjective"
+  },
+  {
+    "word": "gesture",
+    "phonetic": "/ˈdʒestʃə/",
+    "definition": "手势姿态",
+    "pos": "noun"
+  },
+  {
+    "word": "giant",
+    "phonetic": "/ˈdʒaɪənt/",
+    "definition": "巨人巨大的",
+    "pos": "noun"
+  },
+  {
+    "word": "gift",
+    "phonetic": "/ɡɪft/",
+    "definition": "礼物天赋",
+    "pos": "noun"
+  },
+  {
+    "word": "glad",
+    "phonetic": "/ɡlæd/",
+    "definition": "高兴的",
+    "pos": "adjective"
+  },
+  {
+    "word": "glance",
+    "phonetic": "/ɡlɑːns/",
+    "definition": "一瞥扫视",
+    "pos": "verb"
+  },
+  {
+    "word": "global",
+    "phonetic": "/ˈɡləʊbəl/",
+    "definition": "全球的",
+    "pos": "adjective"
+  },
+  {
+    "word": "glory",
+    "phonetic": "/ˈɡlɔːri/",
+    "definition": "光荣荣耀",
+    "pos": "noun"
+  },
+  {
+    "word": "goal",
+    "phonetic": "/ɡəʊl/",
+    "definition": "目标球门",
+    "pos": "noun"
+  },
+  {
+    "word": "golden",
+    "phonetic": "/ˈɡəʊldən/",
+    "definition": "金色的",
+    "pos": "adjective"
+  },
+  {
+    "word": "goods",
+    "phonetic": "/ɡʊdz/",
+    "definition": "商品货物",
+    "pos": "noun"
+  },
+  {
+    "word": "govern",
+    "phonetic": "/ˈɡʌvən/",
+    "definition": "统治管理",
+    "pos": "verb"
+  },
+  {
+    "word": "grab",
+    "phonetic": "/ɡræb/",
+    "definition": "抓住抢夺",
+    "pos": "verb"
+  },
+  {
+    "word": "grace",
+    "phonetic": "/ɡreɪs/",
+    "definition": "优雅恩典",
+    "pos": "noun"
+  },
+  {
+    "word": "grade",
+    "phonetic": "/ɡreɪd/",
+    "definition": "等级年级",
+    "pos": "noun"
+  },
+  {
+    "word": "gradual",
+    "phonetic": "/ˈɡrædʒuəl/",
+    "definition": "逐渐的",
+    "pos": "adjective"
+  },
+  {
+    "word": "grain",
+    "phonetic": "/ɡreɪn/",
+    "definition": "谷物颗粒",
+    "pos": "noun"
+  },
+  {
+    "word": "grand",
+    "phonetic": "/ɡrænd/",
+    "definition": "宏伟的盛大的",
+    "pos": "adjective"
+  },
+  {
+    "word": "grant",
+    "phonetic": "/ɡrɑːnt/",
+    "definition": "授予准许",
+    "pos": "verb"
+  },
+  {
+    "word": "grasp",
+    "phonetic": "/ɡrɑːsp/",
+    "definition": "抓住理解",
+    "pos": "verb"
+  },
+  {
+    "word": "grateful",
+    "phonetic": "/ˈɡreɪtfʊl/",
+    "definition": "感激的",
+    "pos": "adjective"
+  },
+  {
+    "word": "grave",
+    "phonetic": "/ɡreɪv/",
+    "definition": "坟墓严重的",
+    "pos": "noun"
+  },
+  {
+    "word": "green",
+    "phonetic": "/ɡriːn/",
+    "definition": "绿色的",
+    "pos": "adjective"
+  },
+  {
+    "word": "greet",
+    "phonetic": "/ɡriːt/",
+    "definition": "问候迎接",
+    "pos": "verb"
+  },
+  {
+    "word": "grocery",
+    "phonetic": "/ˈɡrəʊsəri/",
+    "definition": "杂货店",
+    "pos": "noun"
+  },
+  {
+    "word": "ground",
+    "phonetic": "/ɡraʊnd/",
+    "definition": "地面根据",
+    "pos": "noun"
+  },
+  {
+    "word": "growth",
+    "phonetic": "/ɡrəʊθ/",
+    "definition": "增长成长",
+    "pos": "noun"
+  },
+  {
+    "word": "guard",
+    "phonetic": "/ɡɑːd/",
+    "definition": "守卫警卫",
+    "pos": "verb"
+  },
+  {
+    "word": "guess",
+    "phonetic": "/ɡes/",
+    "definition": "猜测猜想",
+    "pos": "verb"
+  },
+  {
+    "word": "guest",
+    "phonetic": "/ɡest/",
+    "definition": "客人宾客",
+    "pos": "noun"
+  },
+  {
+    "word": "guide",
+    "phonetic": "/ɡaɪd/",
+    "definition": "指导导游",
+    "pos": "verb"
+  },
+  {
+    "word": "guilty",
+    "phonetic": "/ˈɡɪlti/",
+    "definition": "有罪的",
+    "pos": "adjective"
+  },
+  {
+    "word": "gun",
+    "phonetic": "/ɡʌn/",
+    "definition": "枪炮",
+    "pos": "noun"
+  }
+]
