@@ -296,3 +296,4 @@ npm run package:mac
 1. 在 `src/main/database/migrations/` 创建新的 SQL 迁移文件
 2. 更新 `migrations.ts` 引入新迁移
 3. 下次启动应用时自动执行
+# Git 练习
