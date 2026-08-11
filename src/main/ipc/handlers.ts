@@ -1,74 +1,17 @@
 import { ipcMain, dialog } from 'electron'
 import { getDatabase, saveDatabase } from '../database/connection'
+import { queryAll, queryOne, runSQL } from '../database/utils'
 import { ParserFactory } from '../parser/parser.factory'
 import { type ColumnMapping } from '../parser/parser.types'
 import { validateAndLog } from '../validation/validator'
-import { autoCompleteAll, autoCompleteCount, autoCompleteBatch } from '../validation/autoComplete'
+import { autoCompleteCount, autoCompleteBatch } from '../validation/autoComplete'
 import { classifyAll, getClassificationStats } from '../classification/classifier'
 import { createAIService, type AIConfig } from '../ai/aiService'
 
-/**
- * Helper: query all rows as objects.
- * sql.js db.exec() returns {columns, values} — convert to plain objects.
- */
-function queryAll(sql: string, params: unknown[] = []): Record<string, unknown>[] {
-  const db = getDatabase()
-
-  if (params.length > 0) {
-    const stmt = db.prepare(sql)
-    try {
-      stmt.bind(params)
-      const results: Record<string, unknown>[] = []
-      while (stmt.step()) {
-        results.push(stmt.getAsObject())
-      }
-      return results
-    } finally {
-      stmt.free()
-    }
-  } else {
-    const result = db.exec(sql)
-    if (result.length === 0) return []
-    const { columns, values } = result[0]
-    return values.map((row) => {
-      const obj: Record<string, unknown> = {}
-      columns.forEach((col, i) => {
-        obj[col] = row[i]
-      })
-      return obj
-    })
-  }
-}
-
-/**
- * Helper: query one row as an object, or null.
- */
-function queryOne(sql: string, params: unknown[] = []): Record<string, unknown> | null {
-  const rows = queryAll(sql, params)
-  return rows.length > 0 ? rows[0] : null
-}
-
-/**
- * Helper: run a SQL statement that modifies data (INSERT, UPDATE, DELETE).
- */
-function runSQL(sql: string, params: unknown[] = []): void {
-  const db = getDatabase()
-
-  if (params.length > 0) {
-    const stmt = db.prepare(sql)
-    try {
-      stmt.bind(params)
-      stmt.step()
-    } finally {
-      stmt.free()
-    }
-  } else {
-    db.run(sql)
-  }
-
-  // Auto-save after every write operation
-  saveDatabase()
-}
+// Wrap runSQL to auto-save after writes
+const runSQLWithSave = (sql: string, params: unknown[] = []) => { runSQL(getDatabase(), sql, params); saveDatabase() }
+const queryAll_ = (sql: string, params?: unknown[]) => queryAll(getDatabase(), sql, params)
+const queryOne_ = (sql: string, params?: unknown[]) => queryOne(getDatabase(), sql, params)
 
 /**
  * Register all IPC handlers — the communication bridge between UI and backend.
@@ -104,10 +47,10 @@ export function registerIpcHandlers(): void {
   // Word statistics
   // ============================================
   ipcMain.handle('words:getStats', () => {
-    const totalWords = queryOne('SELECT COUNT(*) as count FROM words')
-    const totalCategories = queryOne('SELECT COUNT(*) as count FROM categories')
-    const totalExamples = queryOne('SELECT COUNT(*) as count FROM examples')
-    const lastImport = queryOne(
+    const totalWords = queryOne_('SELECT COUNT(*) as count FROM words')
+    const totalCategories = queryOne_('SELECT COUNT(*) as count FROM categories')
+    const totalExamples = queryOne_('SELECT COUNT(*) as count FROM examples')
+    const lastImport = queryOne_(
       'SELECT file_name, imported_at FROM import_history ORDER BY imported_at DESC LIMIT 1'
     )
 
@@ -123,7 +66,7 @@ export function registerIpcHandlers(): void {
   // Categories: get all
   // ============================================
   ipcMain.handle('categories:getAll', () => {
-    return queryAll(
+    return queryAll_(
       `SELECT c.*, COUNT(wc.word_id) as word_count
        FROM categories c
        LEFT JOIN word_categories wc ON c.id = wc.category_id
@@ -165,13 +108,13 @@ export function registerIpcHandlers(): void {
       params.push(options.difficulty)
     }
 
-    const countResult = queryOne(
+    const countResult = queryOne_(
       `SELECT COUNT(*) as total FROM words w ${where}`,
       params
     )
     const total = (countResult?.total as number) ?? 0
 
-    const words = queryAll(
+    const words = queryAll_(
       `SELECT w.*, GROUP_CONCAT(c.name_cn, ', ') as categories
        FROM words w
        LEFT JOIN word_categories wc ON w.id = wc.word_id
@@ -196,11 +139,11 @@ export function registerIpcHandlers(): void {
   // Words: get single word with examples
   // ============================================
   ipcMain.handle('words:getOne', (_event, wordId: number) => {
-    const word = queryOne('SELECT * FROM words WHERE id = ?', [wordId])
+    const word = queryOne_('SELECT * FROM words WHERE id = ?', [wordId])
     if (!word) return null
 
-    const examples = queryAll('SELECT * FROM examples WHERE word_id = ?', [wordId])
-    const categories = queryAll(
+    const examples = queryAll_('SELECT * FROM examples WHERE word_id = ?', [wordId])
+    const categories = queryAll_(
       `SELECT c.* FROM categories c
        JOIN word_categories wc ON c.id = wc.category_id
        WHERE wc.word_id = ?`,
@@ -234,7 +177,7 @@ export function registerIpcHandlers(): void {
     sets.push('updated_at = CURRENT_TIMESTAMP')
     params.push(wordId)
 
-    runSQL(`UPDATE words SET ${sets.join(', ')} WHERE id = ?`, params)
+    runSQLWithSave(`UPDATE words SET ${sets.join(', ')} WHERE id = ?`, params)
     return true
   })
 
@@ -243,7 +186,7 @@ export function registerIpcHandlers(): void {
   // ============================================
   ipcMain.handle('words:delete', (_event, wordId: number) => {
     // Foreign keys with ON DELETE CASCADE handle related records
-    runSQL('DELETE FROM words WHERE id = ?', [wordId])
+    runSQLWithSave('DELETE FROM words WHERE id = ?', [wordId])
     return true
   })
 
@@ -251,7 +194,7 @@ export function registerIpcHandlers(): void {
   // Words: add an example sentence to a word
   // ============================================
   ipcMain.handle('words:addExample', (_event, wordId: number, sentenceEn: string, sentenceCn?: string) => {
-    runSQL(
+    runSQLWithSave(
       'INSERT INTO examples (word_id, sentence_en, sentence_cn) VALUES (?, ?, ?)',
       [wordId, sentenceEn, sentenceCn ?? null]
     )
@@ -262,7 +205,7 @@ export function registerIpcHandlers(): void {
   // Words: delete an example sentence
   // ============================================
   ipcMain.handle('words:deleteExample', (_event, exampleId: number) => {
-    runSQL('DELETE FROM examples WHERE id = ?', [exampleId])
+    runSQLWithSave('DELETE FROM examples WHERE id = ?', [exampleId])
     return true
   })
 
@@ -271,11 +214,11 @@ export function registerIpcHandlers(): void {
   // ============================================
   ipcMain.handle('words:setCategories', (_event, wordId: number, categoryIds: number[]) => {
     // Remove existing associations
-    runSQL('DELETE FROM word_categories WHERE word_id = ? AND is_manual = 1', [wordId])
+    runSQLWithSave('DELETE FROM word_categories WHERE word_id = ? AND is_manual = 1', [wordId])
 
     // Add new ones
     for (const catId of categoryIds) {
-      runSQL(
+      runSQLWithSave(
         'INSERT OR IGNORE INTO word_categories (word_id, category_id, is_manual) VALUES (?, ?, 1)',
         [wordId, catId]
       )
@@ -287,7 +230,7 @@ export function registerIpcHandlers(): void {
   // Words: get all distinct difficulties for filter dropdown
   // ============================================
   ipcMain.handle('words:getDifficulties', () => {
-    return queryAll('SELECT DISTINCT difficulty FROM words WHERE difficulty IS NOT NULL ORDER BY difficulty')
+    return queryAll_('SELECT DISTINCT difficulty FROM words WHERE difficulty IS NOT NULL ORDER BY difficulty')
   })
 
   // ============================================
@@ -313,7 +256,7 @@ export function registerIpcHandlers(): void {
     const parseResult = await ParserFactory.parse(filePath)
 
     // Create import history record
-    runSQL(
+    runSQLWithSave(
       `INSERT INTO import_history (file_name, file_path, file_format, rows_total, rows_imported)
        VALUES (?, ?, ?, ?, 0)`,
       [
@@ -325,7 +268,7 @@ export function registerIpcHandlers(): void {
     )
 
     // Get the last inserted row ID
-    const lastId = queryOne('SELECT last_insert_rowid() as id')
+    const lastId = queryOne_('SELECT last_insert_rowid() as id')
     const historyId = (lastId?.id as number) ?? 0
 
     let imported = 0
@@ -340,7 +283,7 @@ export function registerIpcHandlers(): void {
       }
 
       // Check for duplicate
-      const existing = queryOne('SELECT id FROM words WHERE word = ? AND language = ?', [word, 'en'])
+      const existing = queryOne_('SELECT id FROM words WHERE word = ? AND language = ?', [word, 'en'])
       if (existing) {
         skipped++
         messages.push(`跳过重复: ${word}`)
@@ -364,7 +307,7 @@ export function registerIpcHandlers(): void {
       }
 
       // Insert word
-      runSQL(
+      runSQLWithSave(
         `INSERT INTO words (word, language, phonetic_uk, phonetic_us, part_of_speech,
           definition_cn, definition_en, difficulty, source_file, source_row)
          VALUES (?, 'en', ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -377,12 +320,12 @@ export function registerIpcHandlers(): void {
       )
 
       // Get the newly inserted word ID
-      const wordIdResult = queryOne('SELECT last_insert_rowid() as id')
+      const wordIdResult = queryOne_('SELECT last_insert_rowid() as id')
       const wordId = (wordIdResult?.id as number) ?? 0
 
       // Insert example sentence if provided
       if (exampleEn && wordId > 0) {
-        runSQL(
+        runSQLWithSave(
           'INSERT INTO examples (word_id, sentence_en, sentence_cn) VALUES (?, ?, ?)',
           [wordId, exampleEn, exampleCn]
         )
@@ -392,7 +335,7 @@ export function registerIpcHandlers(): void {
     }
 
     // Update import history with actual counts
-    runSQL(
+    runSQLWithSave(
       'UPDATE import_history SET rows_imported = ?, rows_skipped = ? WHERE id = ?',
       [imported, skipped, historyId]
     )
@@ -412,7 +355,7 @@ export function registerIpcHandlers(): void {
   // Import: get import history
   // ============================================
   ipcMain.handle('import:getHistory', () => {
-    return queryAll(
+    return queryAll_(
       'SELECT * FROM import_history ORDER BY imported_at DESC LIMIT 20'
     )
   })
@@ -477,7 +420,7 @@ export function registerIpcHandlers(): void {
       params.push(options.difficulty)
     }
 
-    const words = queryAll(
+    const words = queryAll_(
       `SELECT w.word, w.phonetic_uk, w.phonetic_us, w.part_of_speech,
               w.definition_cn, w.definition_en, w.difficulty,
               GROUP_CONCAT(c.name_cn, ', ') as categories
@@ -492,7 +435,7 @@ export function registerIpcHandlers(): void {
 
     // Also get examples for each word
     const enrichedWords = words.map((w: Record<string, unknown>) => {
-      const examples = queryAll(
+      const examples = queryAll_(
         'SELECT sentence_en, sentence_cn FROM examples WHERE word_id = (SELECT id FROM words WHERE word = ? LIMIT 1)',
         [w.word]
       )
@@ -536,10 +479,10 @@ export function registerIpcHandlers(): void {
   // AI: get current config
   // ============================================
   function getAIConfig(): AIConfig {
-    const provider = (queryOne('SELECT value FROM settings WHERE key = ?', ['ai_provider'])?.value as string) || 'ollama'
-    const ollamaUrl = (queryOne('SELECT value FROM settings WHERE key = ?', ['ai_ollama_url'])?.value as string) || 'http://localhost:11434'
-    const apiKey = (queryOne('SELECT value FROM settings WHERE key = ?', ['ai_api_key'])?.value as string) || ''
-    const model = (queryOne('SELECT value FROM settings WHERE key = ?', ['ai_model'])?.value as string) || ''
+    const provider = (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_provider'])?.value as string) || 'ollama'
+    const ollamaUrl = (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_ollama_url'])?.value as string) || 'http://localhost:11434'
+    const apiKey = (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_api_key'])?.value as string) || ''
+    const model = (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_model'])?.value as string) || ''
     return { provider: provider as 'ollama' | 'deepseek', ollamaUrl, apiKey, model }
   }
 
@@ -564,10 +507,10 @@ export function registerIpcHandlers(): void {
   })
 
   ipcMain.handle('ai:getConfig', () => ({
-    provider: (queryOne('SELECT value FROM settings WHERE key = ?', ['ai_provider'])?.value as string) || 'ollama',
-    ollamaUrl: (queryOne('SELECT value FROM settings WHERE key = ?', ['ai_ollama_url'])?.value as string) || 'http://localhost:11434',
-    apiKey: (queryOne('SELECT value FROM settings WHERE key = ?', ['ai_api_key'])?.value as string) || '',
-    model: (queryOne('SELECT value FROM settings WHERE key = ?', ['ai_model'])?.value as string) || '',
+    provider: (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_provider'])?.value as string) || 'ollama',
+    ollamaUrl: (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_ollama_url'])?.value as string) || 'http://localhost:11434',
+    apiKey: (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_api_key'])?.value as string) || '',
+    model: (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_model'])?.value as string) || '',
   }))
 
   ipcMain.handle('ai:completeWord', async (_event, word: string) => {
@@ -638,12 +581,12 @@ export function registerIpcHandlers(): void {
   // Settings
   // ============================================
   ipcMain.handle('settings:get', (_event, key: string) => {
-    const row = queryOne('SELECT value FROM settings WHERE key = ?', [key])
+    const row = queryOne_('SELECT value FROM settings WHERE key = ?', [key])
     return row?.value ?? null
   })
 
   ipcMain.handle('settings:set', (_event, key: string, value: string) => {
-    runSQL(
+    runSQLWithSave(
       `INSERT INTO settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)
        ON CONFLICT(key) DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP`,
       [key, value, value]
@@ -652,7 +595,7 @@ export function registerIpcHandlers(): void {
   })
 
   ipcMain.handle('settings:getAll', () => {
-    const rows = queryAll('SELECT key, value FROM settings')
+    const rows = queryAll_('SELECT key, value FROM settings')
     const result: Record<string, string> = {}
     for (const row of rows) {
       result[row.key as string] = row.value as string
