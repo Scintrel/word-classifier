@@ -21,8 +21,15 @@ Thumbs.db
 *.log
 .tmp/
 
-# 大词典文件（可以重新下载）
+# 大词典文件（可以重新下载/生成）
 resources/ecdict.json
 resources/ecdict-dict.json
+resources/ecdict.csv
 resources/DB.Browser.for.SQLite.zip
 node_modules
+
+# 用户旅程测试截图
+shots/
+
+# 编辑器个人配置
+.vscode/

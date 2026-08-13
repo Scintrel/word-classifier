@@ -1,4 +1,5 @@
 import { getDatabase } from '../database/connection'
+import { queryAll } from '../database/utils'
 import { readFileSync, existsSync } from 'fs'
 import { join } from 'path'
 
@@ -7,15 +8,36 @@ interface DictEntry { word: string; phonetic: string; definition: string; pos: s
 let DICT_MAP: Map<string, DictEntry> | null = null
 let dictLoaded = false
 
+/**
+ * Resolve possible resource directories without using __dirname
+ * (which is not available in electron-vite's ESM bundle context).
+ */
+function getResourceDirs(): string[] {
+  const dirs: string[] = []
+
+  // 1. Electron app path (works in both dev and packaged)
+  try {
+    const { app } = require('electron')
+    if (app.isPackaged) {
+      // Packaged: resources/ is alongside the app.asar
+      dirs.push(join(process.resourcesPath!, 'resources'))
+    }
+    dirs.push(join(app.getAppPath(), 'resources'))
+    // Also try parent of app path (for electron-vite dev where appPath is out/main)
+    dirs.push(join(app.getAppPath(), '..', 'resources'))
+  } catch {}
+
+  // 2. Current working directory (dev mode from project root)
+  dirs.push(join(process.cwd(), 'resources'))
+  dirs.push(join(process.cwd(), 'out', 'resources'))
+
+  return dirs
+}
+
 function loadDictionary(): void {
   if (dictLoaded) return
   dictLoaded = true
-  const dirs = [
-    join(__dirname, '..', 'resources'),
-    join(__dirname, '..', '..', 'resources'),
-    join(__dirname, '..', '..', '..', 'resources'),
-  ]
-  try { const { app } = require('electron'); dirs.push(join(app.getAppPath(), 'resources')) } catch {}
+  const dirs = getResourceDirs()
   const fns = ['ecdict-dict.json', 'dictionary.json']
   for (const dir of dirs) {
     for (const fn of fns) {
@@ -25,7 +47,8 @@ function loadDictionary(): void {
         const data = JSON.parse(readFileSync(p, 'utf-8'))
         if (Array.isArray(data) && data.length > 0) {
           const map = new Map<string, DictEntry>()
-          for (const e of data) { const k = (e.word || '').toLowerCase().trim(); if (k && !map.has(k)) map.set(k, e) }
+          // 保留原始大小写作为键（China ≠ china），不用 toLowerCase 合并
+          for (const e of data) { const k = (e.word || '').trim(); if (k && !map.has(k)) map.set(k, e) }
           DICT_MAP = map
           console.log(`Dict: ${map.size} entries from ${p}`)
           return
@@ -33,14 +56,25 @@ function loadDictionary(): void {
       } catch (e) { console.warn('Dict parse error:', e) }
     }
   }
+  // All paths failed — allow retry on next call (e.g. user added dict file)
   DICT_MAP = new Map()
+  dictLoaded = false
   console.warn('Dict not found, searched:', dirs)
 }
 
 export function lookupWord(word: string): DictEntry | null {
   loadDictionary()
   if (!DICT_MAP) return null
-  return DICT_MAP.get(word.toLowerCase().trim()) ?? null
+  const t = word.trim()
+  // 1. 精确匹配（区分大小写：China ≠ china）
+  const exact = DICT_MAP.get(t)
+  if (exact) return exact
+  // 2. 全小写回退（单词表常用小写，词典词条可能大写开头）
+  const lower = DICT_MAP.get(t.toLowerCase())
+  if (lower) return lower
+  // 3. 首字母大写回退（词典只有 China，用户写 china）
+  const cap = t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()
+  return DICT_MAP.get(cap) ?? null
 }
 
 /** Pattern-based POS guessing from word suffixes. */
@@ -96,7 +130,8 @@ export function getAutoComplete(word: string, existingDef?: string): {
     return {
       phoneticUk: entry.phonetic,
       definitionCn: entry.definition,
-      partOfSpeech: entry.pos || guessPOS(word) || undefined,
+      // 词性优先级：词典 pos 字段 → 从词典释义开头提取（如 "vt. 放弃" → verb）→ 后缀规则
+      partOfSpeech: entry.pos || extractPOSFromDef(entry.definition) || guessPOS(word) || undefined,
       foundInDict: true
     }
   }
@@ -109,7 +144,6 @@ export function getAutoComplete(word: string, existingDef?: string): {
   return { partOfSpeech: pos ?? undefined, foundInDict: false }
 }
 
-/** Run auto-complete on all incomplete words. */
 /** Count how many words need auto-completion. */
 export function autoCompleteCount(): number {
   const db = getDatabase()
@@ -117,7 +151,8 @@ export function autoCompleteCount(): number {
     `SELECT COUNT(*) as c FROM words
      WHERE phonetic_uk IS NULL OR phonetic_uk = ''
         OR definition_cn IS NULL OR definition_cn = ''
-        OR part_of_speech IS NULL OR part_of_speech = ''`
+        OR part_of_speech IS NULL OR part_of_speech = ''
+        OR part_of_speech = 'unknown'`
   )
   return (rows[0]?.values[0]?.[0] as number) ?? 0
 }
@@ -125,21 +160,23 @@ export function autoCompleteCount(): number {
 /** Process one batch of auto-completion. Returns { fixed, details, done }. */
 export function autoCompleteBatch(batchSize: number): { fixed: number; details: string[]; done: boolean } {
   const db = getDatabase()
-  // Get next batch of incomplete words, ordered by id
-  const rows = db.exec(
+  // 先尝试加载词典（首次调用时 DICT_MAP 还是 null），再检查是否加载成功
+  loadDictionary()
+  // If dictionary failed to load, don't pretend to fix — only POS guessing would run
+  if (!DICT_MAP || DICT_MAP.size === 0) {
+    return { fixed: -1, details: ['词典文件未找到，无法补全音标和释义。请将词典文件放入 resources/ 目录。'], done: true }
+  }
+  // Get next batch of incomplete words, ordered by id (参数化查询，防止注入)
+  const words = queryAll(db,
     `SELECT id, word, phonetic_uk, part_of_speech, definition_cn, definition_en FROM words
      WHERE phonetic_uk IS NULL OR phonetic_uk = ''
         OR definition_cn IS NULL OR definition_cn = ''
         OR part_of_speech IS NULL OR part_of_speech = ''
-     ORDER BY id LIMIT ${batchSize}`
+        OR part_of_speech = 'unknown'
+     ORDER BY id LIMIT ?`,
+    [batchSize]
   )
-  if (rows.length === 0 || rows[0].values.length === 0) return { fixed: 0, details: [], done: true }
-
-  const words = rows[0].values.map(row => {
-    const obj: Record<string, unknown> = {}
-    rows[0].columns.forEach((col, i) => { obj[col] = row[i] })
-    return obj
-  })
+  if (words.length === 0) return { fixed: 0, details: [], done: true }
 
   let fixed = 0
   const details: string[] = []
@@ -157,7 +194,6 @@ export function autoCompleteBatch(batchSize: number): { fixed: number; details: 
     if (auto.partOfSpeech) { sets.push('part_of_speech = ?'); params.push(auto.partOfSpeech) }
     if (sets.length === 0) continue
     sets.push('updated_at = CURRENT_TIMESTAMP')
-    params.push(wordId)
     // If pos still null, try to fill it so word won't be re-selected
     if (!auto.partOfSpeech && (row.part_of_speech === null || (row.part_of_speech as string) === '')) {
       const defPos = extractPOSFromDef(existingDef)
@@ -165,6 +201,9 @@ export function autoCompleteBatch(batchSize: number): { fixed: number; details: 
       const fallbackPos = defPos || suffixPos || 'unknown'
       sets.push('part_of_speech = ?'); params.push(fallbackPos)
     }
+    // ⚠️ wordId 必须最后推入：SQL 里它对应 WHERE id = ? 的最后一个占位符。
+    // 若推在中间，后面的占位符会错位——UPDATE 匹配不到任何行，假报"已修复"但什么都没改。
+    params.push(wordId)
     db.run(`UPDATE words SET ${sets.join(', ')} WHERE id = ?`, params)
     fixed++
     const parts: string[] = []
@@ -173,6 +212,7 @@ export function autoCompleteBatch(batchSize: number): { fixed: number; details: 
     if (auto.partOfSpeech || (row.part_of_speech === null) || ((row.part_of_speech as string) === '')) parts.push('词性')
     details.push(`${word}: ${parts.join('、')}${auto.foundInDict ? ' (词典)' : ' (规则推测)'}`)
   }
-  return { fixed, details, done: words.length < batchSize }
+  // 本批什么都没修成时，把 done 置为 true——否则下一批还会选中同样的词，界面会无限循环
+  return { fixed, details, done: fixed === 0 || words.length < batchSize }
 }
 

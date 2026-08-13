@@ -73,15 +73,23 @@ function looksLikeMojibake(text: string): boolean {
  * Check if a phonetic string looks like valid IPA.
  * IPA typically contains slashes, special characters like æ, θ, ð, ʃ, ʒ, ŋ, etc.
  * Very basic check: if it has slashes or IPA-specific chars.
+ *
+ * 兼容 ECDICT 词典的音标风格：
+ * - ә / є 是西里尔字母（长得像 ə / ɛ），ECDICT 大量使用
+ * - ' 重音符号、, 次重音、: 长音标记
+ * - 部分 ECDICT 音标只有普通字母（如 "eik"），只要不含中文/数字/奇怪符号就接受
  */
 function looksLikePhonetic(text: string): boolean {
   if (!text || text.length < 2) return false
 
-  // Common IPA patterns
+  // Common IPA patterns（含 ECDICT 变体字符）
   const hasSlashes = /^\/.*\/$/.test(text.trim())
-  const hasIpaChars = /[æθðʃʒŋɒɔəɛʌɑɪʊɡɜːˈˌ]/.test(text)
+  const hasIpaChars = /[æθðʃʒŋɒɔəәɛєʌɑɪʊɡɜːˈˌ]/.test(text)
 
-  return hasSlashes || hasIpaChars
+  // ECDICT 风格的"轻量音标"：字母 + 重音符号 + 冒号，不含中文和数字
+  const isLightPhonetic = /^[a-zA-Zәє',.:\s]+$/.test(text.trim())
+
+  return hasSlashes || hasIpaChars || isLightPhonetic
 }
 
 /**
@@ -123,9 +131,10 @@ export function validateAllWords(): ValidationResult {
   const issues: ValidationIssue[] = []
 
   // Track words for duplicate detection
+  // 注意：按拼写完全一致（含大小写）才算重复——China 和 china 是不同的单词
   const wordMap = new Map<string, number[]>()
   for (const row of rows) {
-    const word = (row.word as string)?.toLowerCase().trim()
+    const word = (row.word as string)?.trim()
     if (!word) continue
     if (!wordMap.has(word)) wordMap.set(word, [])
     wordMap.get(word)!.push(row.id as number)

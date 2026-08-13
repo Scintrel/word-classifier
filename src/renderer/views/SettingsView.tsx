@@ -6,11 +6,13 @@ import { Settings, Sun, Moon, Monitor, FileDown, Database, Cpu, CheckCircle2, XC
  *
  * App preferences: theme, language, export format,
  * classification settings, and data management.
+ * 所有设置通过 settings 表持久化，重启应用后依然生效。
  */
 export default function SettingsView() {
   const [theme, setTheme] = useState('system')
   const [language, setLanguage] = useState('zh')
   const [exportFormat, setExportFormat] = useState('csv')
+  const [autoClassify, setAutoClassify] = useState(true)
 
   // AI config
   const [aiProvider, setAiProvider] = useState('ollama')
@@ -23,6 +25,7 @@ export default function SettingsView() {
 
   useEffect(() => {
     loadAIConfig()
+    loadAppSettings()
   }, [])
 
   async function loadAIConfig() {
@@ -32,7 +35,41 @@ export default function SettingsView() {
       if (cfg.ollamaUrl) setAiOllamaUrl(cfg.ollamaUrl)
       if (cfg.apiKey) setAiApiKey(cfg.apiKey)
       if (cfg.model) setAiModel(cfg.model)
-    } catch {}
+    } catch (err) {
+      // 加载失败不阻塞页面，但记录日志方便排查
+      console.error('加载 AI 配置失败:', err)
+    }
+  }
+
+  // 从数据库 settings 表加载应用偏好（主题/语言/导出格式/自动分类）
+  async function loadAppSettings() {
+    try {
+      const all = await window.api.getAllSettings()
+      if (all.theme) setTheme(all.theme)
+      if (all.language) setLanguage(all.language)
+      if (all.export_format) setExportFormat(all.export_format)
+      if (all.auto_classify !== undefined) setAutoClassify(all.auto_classify === 'true')
+    } catch (err) {
+      console.error('加载应用设置失败:', err)
+    }
+  }
+
+  // 切换主题：立即生效（和顶部栏的月亮按钮用同一套机制）+ 存库
+  function applyTheme(value: string) {
+    setTheme(value)
+    window.api.setSetting('theme', value)
+    if (value === 'dark') {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('app-theme', 'dark')
+    } else if (value === 'light') {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('app-theme', 'light')
+    } else {
+      // 跟随系统：按系统当前设置切换
+      const mq = window.matchMedia('(prefers-color-scheme: dark)')
+      document.documentElement.classList.toggle('dark', mq.matches)
+      localStorage.setItem('app-theme', 'system')
+    }
   }
 
   async function handleTestAI() {
@@ -76,7 +113,7 @@ export default function SettingsView() {
           ].map(({ value, label, icon: Icon }) => (
             <button
               key={value}
-              onClick={() => setTheme(value)}
+              onClick={() => applyTheme(value)}
               className={`flex items-center gap-2 rounded-md border px-4 py-2.5 text-sm font-medium transition-colors ${
                 theme === value
                   ? 'border-primary bg-primary/10 text-primary'
@@ -103,7 +140,7 @@ export default function SettingsView() {
           ].map(({ value, label }) => (
             <button
               key={value}
-              onClick={() => setLanguage(value)}
+              onClick={() => { setLanguage(value); window.api.setSetting('language', value) }}
               className={`rounded-md border px-4 py-2.5 text-sm font-medium transition-colors ${
                 language === value
                   ? 'border-primary bg-primary/10 text-primary'
@@ -130,7 +167,7 @@ export default function SettingsView() {
           ].map(({ value, label }) => (
             <button
               key={value}
-              onClick={() => setExportFormat(value)}
+              onClick={() => { setExportFormat(value); window.api.setSetting('export_format', value) }}
               className={`rounded-md border px-4 py-2.5 text-sm font-medium transition-colors ${
                 exportFormat === value
                   ? 'border-primary bg-primary/10 text-primary'
@@ -150,7 +187,9 @@ export default function SettingsView() {
           <h2 className="font-semibold">分类设置</h2>
         </div>
         <label className="flex items-center gap-3 text-sm">
-          <input type="checkbox" defaultChecked className="h-4 w-4 rounded" />
+          <input type="checkbox" checked={autoClassify}
+            onChange={e => { setAutoClassify(e.target.checked); window.api.setSetting('auto_classify', String(e.target.checked)) }}
+            className="h-4 w-4 rounded" />
           <div>
             <p className="font-medium">导入后自动分类</p>
             <p className="text-muted-foreground">
@@ -243,22 +282,42 @@ export default function SettingsView() {
           <h2 className="font-semibold">导出数据</h2>
         </div>
         <p className="mb-3 text-sm text-muted-foreground">
-          将分类好的单词表导出为 JSON 文件。
+          按上方选择的格式导出分类好的单词表。Excel 格式以 CSV 导出（Excel 可直接打开）。
         </p>
         <button
           onClick={async () => {
             try {
               const words = await window.api.exportWords()
-              const blob = new Blob([JSON.stringify(words, null, 2)], { type: 'application/json' })
+              let blob: Blob
+              let fileName: string
+              if (exportFormat === 'json') {
+                // JSON：结构化格式，适合程序读取或备份
+                blob = new Blob([JSON.stringify(words, null, 2)], { type: 'application/json' })
+                fileName = 'words-all.json'
+              } else {
+                // CSV（含 xlsx 选择）：Excel 和各类表格软件都能直接打开
+                const esc = (v: unknown) => {
+                  const s = String(v ?? '')
+                  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
+                }
+                const headers = ['单词', '英式音标', '美式音标', '词性', '中文释义', '英文释义', '难度', '分类']
+                const lines = [headers.join(',')]
+                for (const w of words) {
+                  lines.push([w.word, w.phonetic_uk, w.phonetic_us, w.part_of_speech,
+                    w.definition_cn, w.definition_en, w.difficulty, w.categories].map(esc).join(','))
+                }
+                blob = new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' })
+                fileName = 'words-all.csv'
+              }
               const url = URL.createObjectURL(blob)
               const a = document.createElement('a')
-              a.href = url; a.download = 'words-all.json'; a.click()
+              a.href = url; a.download = fileName; a.click()
               URL.revokeObjectURL(url)
             } catch (err) { console.error('Export failed:', err) }
           }}
           className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
-          导出全部单词 (JSON)
+          导出全部单词 ({exportFormat === 'json' ? 'JSON' : 'CSV'})
         </button>
       </section>
 

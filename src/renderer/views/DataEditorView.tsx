@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import {
-  Edit3, AlertTriangle, CheckCircle2, RefreshCw,
+  Edit3, AlertTriangle, AlertCircle, CheckCircle2,
   Search, XCircle, Zap, ChevronDown, ChevronRight, Cpu
 } from 'lucide-react'
+import WordDetailPanel from '../components/WordDetailPanel'
 
 interface ValidationStats {
   complete: number
@@ -64,6 +65,8 @@ export default function DataEditorView() {
   const [aiFixResult, setAiFixResult] = useState<{ filled: number; words: string[] } | null>(null)
   const [filterType, setFilterType] = useState<string | null>(null)
   const [expandedIssues, setExpandedIssues] = useState<Set<number>>(new Set())
+  // 正在编辑的单词（点「手动编辑」时在本页滑出编辑面板）
+  const [editWordId, setEditWordId] = useState<number | null>(null)
 
   async function handleCheck() {
     setChecking(true)
@@ -87,16 +90,26 @@ export default function DataEditorView() {
       setDictProgress({ current: 0, total })
       let allDetails: string[] = []
       let totalFixed = 0
-      while (true) {
+      let attempts = 0
+      // 防卡死：最多循环"总单词数/每批300"批 + 2 批余量
+      const maxAttempts = Math.ceil(total / 300) + 2
+      while (attempts < maxAttempts) {
         const data = await window.api.autoFixBatch(300)
+        // 词典未加载的错误（fixed = -1），直接显示错误并退出
+        if (data.fixed === -1) { setFixResult({ fixed: -1, details: data.details }); break }
         totalFixed += data.fixed
         allDetails = [...allDetails, ...data.details]
         setDictProgress({ current: totalFixed, total })
+        attempts++
         if (data.done) break
+        // 本批没有进展，避免无限循环
+        if (data.fixed === 0 && attempts > 1) break
       }
-      setFixResult({ fixed: totalFixed, details: allDetails })
-      const updated = await window.api.checkValidation()
-      setResult(updated as ValidationResult)
+      if (totalFixed >= 0) {
+        setFixResult({ fixed: totalFixed, details: allDetails })
+        const updated = await window.api.checkValidation()
+        setResult(updated as ValidationResult)
+      }
     } catch (err) {
       console.error('Auto-fix failed:', err)
     } finally {
@@ -161,7 +174,7 @@ export default function DataEditorView() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">数据编辑</h1>
+          <h1 className="text-2xl font-bold">单词检修</h1>
           <p className="text-muted-foreground">
             检查和修复单词数据中的问题
           </p>
@@ -260,7 +273,18 @@ export default function DataEditorView() {
           )}
 
           {/* Fix result message */}
-          {fixResult && (
+          {fixResult && fixResult.fixed === -1 && (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4">
+              <div className="flex items-center gap-2">
+                <XCircle className="h-5 w-5 text-red-500" />
+                <span className="font-medium text-red-800">词典补全失败</span>
+              </div>
+              <div className="mt-2 text-sm text-red-700">
+                {fixResult.details[0] || '未知错误'}
+              </div>
+            </div>
+          )}
+          {fixResult && fixResult.fixed >= 0 && (
             <div className={`mb-4 rounded-lg p-4 ${fixResult.fixed > 0 ? 'bg-green-50 border border-green-200' : 'bg-muted border border-border'}`}>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-green-600" />
@@ -436,17 +460,13 @@ export default function DataEditorView() {
                           </div>
                         </div>
 
-                        {/* Quick action */}
-                        {issue.autoFixable && (
-                          <button
-                            onClick={() => {
-                              window.location.hash = `#/words`
-                            }}
-                            className="shrink-0 rounded-md border border-input px-2.5 py-1 text-xs hover:bg-accent ml-3"
-                          >
-                            手动编辑
-                          </button>
-                        )}
+                        {/* Quick action：直接在本页滑出编辑面板，不再跳转 */}
+                        <button
+                          onClick={() => setEditWordId(issue.wordId)}
+                          className="shrink-0 rounded-md border border-input px-2.5 py-1 text-xs hover:bg-accent ml-3"
+                        >
+                          手动编辑
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -455,6 +475,23 @@ export default function DataEditorView() {
             </>
           )}
         </>
+      )}
+
+      {/* 单词编辑面板（点「手动编辑」时在本页滑出） */}
+      {editWordId !== null && (
+        <WordDetailPanel
+          wordId={editWordId}
+          onClose={() => setEditWordId(null)}
+          onSaved={async () => {
+            // 保存后重新检查，刷新问题列表和统计
+            try {
+              const updated = await window.api.checkValidation()
+              setResult(updated as ValidationResult)
+            } catch (err) {
+              console.error('Re-validation failed:', err)
+            }
+          }}
+        />
       )}
     </div>
   )

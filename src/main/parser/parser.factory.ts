@@ -6,7 +6,13 @@ import { TxtParser } from './txt.parser'
 import { JsonParser } from './json.parser'
 import { PdfParser } from './pdf.parser'
 
+/**
+ * 解析器工厂：根据文件扩展名挑选合适的解析器。
+ * 你拖进来一个文件，这里负责判断它是 CSV 还是 Excel 还是别的，
+ * 然后交给对应的解析器去读内容。
+ */
 export class ParserFactory {
+  // 所有可用的解析器（每新增一种文件格式，就在这里注册一个）
   private static parsers: IParser[] = [
     new CsvParser(),
     new ExcelParser(),
@@ -15,6 +21,7 @@ export class ParserFactory {
     new PdfParser()
   ]
 
+  /** 根据文件扩展名判断格式，不支持的类型返回 null */
   static detectFormat(filePath: string): FileFormat | null {
     const ext = filePath.split('.').pop()?.toLowerCase()
     switch (ext) {
@@ -28,6 +35,7 @@ export class ParserFactory {
     }
   }
 
+  /** 找到能处理该文件的解析器；格式不支持时抛出带提示的错误 */
   static getParser(filePath: string): IParser {
     const format = ParserFactory.detectFormat(filePath)
     if (!format) {
@@ -46,16 +54,14 @@ export class ParserFactory {
     return parser
   }
 
+  /** 解析文件的统一入口：判断格式 → 交给对应解析器 → 返回结构化数据 */
   static async parse(filePath: string): Promise<ParseResult> {
     const parser = ParserFactory.getParser(filePath)
     return parser.parse(filePath)
   }
 
+  /** 判断文件格式是否被支持（供 IPC 层做文件校验用） */
   static isSupported(filePath: string): boolean {
     return ParserFactory.detectFormat(filePath) !== null
-  }
-
-  static getSupportedExtensions(): string[] {
-    return ['csv', 'xlsx', 'xls', 'txt', 'json', 'pdf']
   }
 }

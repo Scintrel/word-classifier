@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Search, Filter, BookOpen } from 'lucide-react'
+import { Search, BookOpen } from 'lucide-react'
 
 /**
  * SearchView - 搜索页面
  *
- * Full-text search across words, definitions, and examples.
- * Results shown in card layout with highlighting.
+ * 搜索单词拼写和释义（中英文释义都搜）。
+ * 结果以卡片列表展示。
  */
 export default function SearchView() {
   const [query, setQuery] = useState('')
@@ -31,7 +31,7 @@ export default function SearchView() {
     <div>
       <h1 className="mb-2 text-2xl font-bold">搜索</h1>
       <p className="mb-6 text-muted-foreground">
-        搜索单词、释义或例句内容
+        搜索单词拼写或释义（中文、英文释义都可以搜）
       </p>
 
       {/* Search input area */}
@@ -40,7 +40,7 @@ export default function SearchView() {
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
-            placeholder="输入单词、释义关键词或例句内容..."
+            placeholder="输入单词或释义关键词..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -53,24 +53,6 @@ export default function SearchView() {
         >
           搜索
         </button>
-      </div>
-
-      {/* Search filters */}
-      <div className="mb-4 flex items-center gap-3 text-sm">
-        <Filter className="h-4 w-4 text-muted-foreground" />
-        <span className="text-muted-foreground">搜索范围：</span>
-        <label className="flex items-center gap-1.5">
-          <input type="checkbox" defaultChecked className="rounded" />
-          单词
-        </label>
-        <label className="flex items-center gap-1.5">
-          <input type="checkbox" defaultChecked className="rounded" />
-          释义
-        </label>
-        <label className="flex items-center gap-1.5">
-          <input type="checkbox" defaultChecked className="rounded" />
-          例句
-        </label>
       </div>
 
       {/* Results */}

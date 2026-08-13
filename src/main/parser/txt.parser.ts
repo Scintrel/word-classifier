@@ -35,9 +35,6 @@ export class TxtParser implements IParser {
     const sample = lines.slice(0, Math.min(5, lines.length))
     const format = this.detectFormat(sample)
 
-    let headers: string[]
-    let rows: Record<string, string>[]
-
     switch (format) {
       case 'tab-separated':
         return this.parseTabSeparated(lines, encoding)

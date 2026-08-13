@@ -4,7 +4,7 @@ import {
   BookOpen,
   FolderTree,
   Search,
-  Edit3,
+  Wrench,
   Settings,
   Sparkles
 } from 'lucide-react'
@@ -15,10 +15,10 @@ import {
  */
 const navItems = [
   { to: '/import',      label: '导入单词', icon: Upload },
+  { to: '/editor',      label: '单词检修', icon: Wrench },
   { to: '/words',       label: '单词列表', icon: BookOpen },
   { to: '/categories',  label: '分类浏览', icon: FolderTree },
   { to: '/search',      label: '搜索',     icon: Search },
-  { to: '/editor',      label: '数据编辑', icon: Edit3 },
   { to: '/settings',    label: '设置',     icon: Settings },
 ]
 

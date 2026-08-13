@@ -84,7 +84,6 @@ export interface ElectronAPI {
 
   // Validation
   checkValidation: () => Promise<unknown>
-  autoFix: () => Promise<{ fixed: number; details: string[] }>
   autoFixCount: () => Promise<number>
   autoFixBatch: (batchSize?: number) => Promise<{ fixed: number; details: string[]; done: boolean }>
 
@@ -141,7 +140,6 @@ const api: ElectronAPI = {
 
   // Validation
   checkValidation: () => ipcRenderer.invoke('validation:check'),
-  autoFix: () => ipcRenderer.invoke('validation:autoFix'),
   autoFixCount: () => ipcRenderer.invoke('validation:autoFixCount'),
   autoFixBatch: (batchSize?) => ipcRenderer.invoke('validation:autoFixBatch', batchSize),
 

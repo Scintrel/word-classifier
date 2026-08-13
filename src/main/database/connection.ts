@@ -1,7 +1,7 @@
 import initSqlJs, { type Database as SqlJsDatabase, type SqlJsStatic } from 'sql.js'
 import { app } from 'electron'
 import { join } from 'path'
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync } from 'fs'
 
 let SQL: SqlJsStatic | null = null
 let db: SqlJsDatabase | null = null
@@ -50,12 +50,16 @@ export async function initDatabase(): Promise<SqlJsDatabase> {
  * Save the in-memory database to disk.
  * sql.js keeps the entire database in memory, so we need to
  * explicitly write it to disk to persist changes.
+ *
+ * 原子写入：先写到临时文件再改名，避免写入中途断电/崩溃导致数据库文件损坏
  */
 export function saveDatabase(): void {
   if (!db) return
   const data = db.export()
   const buffer = Buffer.from(data)
-  writeFileSync(dbPath, buffer)
+  const tmpPath = dbPath + '.tmp'
+  writeFileSync(tmpPath, buffer)
+  renameSync(tmpPath, dbPath)
 }
 
 /**

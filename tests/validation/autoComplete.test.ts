@@ -41,7 +41,8 @@ describe('AutoComplete', () => {
       expect(getAutoComplete('modernize').partOfSpeech).toBe('verb')
     })
     it('should return empty for unknown short word', () => {
-      const r = getAutoComplete('xyz')
+      // 用乱造的单词（完整 ECDICT 词典里连 xyz 都有，改用真正不存在的词）
+      const r = getAutoComplete('zzqqxx')
       expect(r.foundInDict).toBe(false)
       expect(r.partOfSpeech).toBeUndefined()
     })

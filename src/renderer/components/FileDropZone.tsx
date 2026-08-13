@@ -37,7 +37,6 @@ export default function FileDropZone({ onFileSelected, selectedFile }: FileDropZ
 
     const files = e.dataTransfer.files
     if (files.length > 0) {
-      const file = files[0]
       // In Electron with contextIsolation, we can't get the full path
       // from the drop event. Instead, use the file name as a hint and
       // prompt the user through the dialog.

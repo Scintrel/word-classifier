@@ -237,6 +237,10 @@ export function registerIpcHandlers(): void {
   // Import: parse a file and return preview data
   // ============================================
   ipcMain.handle('import:parseFile', async (_event, filePath: string) => {
+    // 安全校验：只接受支持的文件格式，防止界面被攻破后读取任意文件
+    if (!ParserFactory.isSupported(filePath)) {
+      throw new Error('不支持的文件格式，仅支持 CSV / Excel / TXT / JSON / PDF')
+    }
     const result = await ParserFactory.parse(filePath)
     // Only return first 20 rows for preview
     return {
@@ -253,6 +257,10 @@ export function registerIpcHandlers(): void {
   // ============================================
   ipcMain.handle('import:runImport', async (_event, filePath: string, mapping: ColumnMapping) => {
     const db = getDatabase()
+    // 安全校验：同 parseFile，拒绝不支持的格式
+    if (!ParserFactory.isSupported(filePath)) {
+      throw new Error('不支持的文件格式，仅支持 CSV / Excel / TXT / JSON / PDF')
+    }
     const parseResult = await ParserFactory.parse(filePath)
 
     // Create import history record
@@ -300,20 +308,15 @@ export function registerIpcHandlers(): void {
       const exampleEn = mapping.exampleSentenceEn ? row[mapping.exampleSentenceEn]?.trim() || null : null
       const exampleCn = mapping.exampleSentenceCn ? row[mapping.exampleSentenceCn]?.trim() || null : null
 
-      // Auto-detect difficulty if not mapped
-      let finalDifficulty = difficulty
-      if (!mapping.difficulty || difficulty === 'unknown') {
-        finalDifficulty = 'unknown'
-      }
-
-      // Insert word
-      runSQLWithSave(
+      // Insert word —— 循环内用 runSQL（不写盘），全部导入完成后统一 saveDatabase 一次，
+      // 否则每个单词都要把整个数据库导出写盘一次，导入 5 万词会慢到不可用
+      runSQL(getDatabase(),
         `INSERT INTO words (word, language, phonetic_uk, phonetic_us, part_of_speech,
           definition_cn, definition_en, difficulty, source_file, source_row)
          VALUES (?, 'en', ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           word, phoneticUk, phoneticUs, partOfSpeech,
-          definitionCn, definitionEn, finalDifficulty,
+          definitionCn, definitionEn, difficulty,
           filePath.split(/[/\\]/).pop() ?? filePath,
           imported + skipped
         ]
@@ -325,7 +328,7 @@ export function registerIpcHandlers(): void {
 
       // Insert example sentence if provided
       if (exampleEn && wordId > 0) {
-        runSQLWithSave(
+        runSQL(getDatabase(),
           'INSERT INTO examples (word_id, sentence_en, sentence_cn) VALUES (?, ?, ?)',
           [wordId, exampleEn, exampleCn]
         )
@@ -335,11 +338,12 @@ export function registerIpcHandlers(): void {
     }
 
     // Update import history with actual counts
-    runSQLWithSave(
+    runSQL(getDatabase(),
       'UPDATE import_history SET rows_imported = ?, rows_skipped = ? WHERE id = ?',
       [imported, skipped, historyId]
     )
 
+    // 整个导入流程只写盘这一次
     saveDatabase()
 
     return {
@@ -372,12 +376,6 @@ export function registerIpcHandlers(): void {
   // ============================================
   ipcMain.handle('validation:autoFixCount', () => {
     return autoCompleteCount()
-  })
-
-  ipcMain.handle('validation:autoFix', () => {
-    const result = autoCompleteAll()
-    saveDatabase()
-    return result
   })
 
   ipcMain.handle('validation:autoFixBatch', (_event, batchSize?: number) => {
@@ -524,24 +522,27 @@ export function registerIpcHandlers(): void {
   })
 
   ipcMain.handle('ai:autoFillCount', () => {
-    const db = getDatabase()
-    const rows = db.exec(
+    return queryOne_(
       `SELECT COUNT(*) as c FROM words WHERE language = 'en'
-       AND (phonetic_uk IS NULL OR phonetic_uk = '' OR definition_cn IS NULL OR definition_cn = '')`
-    )
-    return (rows[0]?.values[0]?.[0] as number) ?? 0
+       AND (phonetic_uk IS NULL OR phonetic_uk = ''
+         OR definition_cn IS NULL OR definition_cn = ''
+         OR part_of_speech IS NULL OR part_of_speech = '')`
+    )?.c as number ?? 0
   })
 
   ipcMain.handle('ai:autoFillAll', async (_event, batchSize?: number) => {
     const db = getDatabase()
     const size = batchSize || 10
-    const rows = db.exec(
+    const rows = queryAll_(
       `SELECT word FROM words WHERE language = 'en'
-       AND (phonetic_uk IS NULL OR phonetic_uk = '' OR definition_cn IS NULL OR definition_cn = '')
-       ORDER BY id LIMIT ${size}`
+       AND (phonetic_uk IS NULL OR phonetic_uk = ''
+         OR definition_cn IS NULL OR definition_cn = ''
+         OR part_of_speech IS NULL OR part_of_speech = '')
+       ORDER BY id LIMIT ?`,
+      [size]
     )
-    if (rows.length === 0 || rows[0].values.length === 0) return { filled: 0, words: [], done: true }
-    const words = rows[0].values.map(r => r[0] as string).slice(0, size)
+    if (rows.length === 0) return { filled: 0, words: [], done: true }
+    const words = rows.map(r => r.word as string)
     const ai = createAIService(getAIConfig())
     const results = await ai.completeWordsBatch(words)
 
