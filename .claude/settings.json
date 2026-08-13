@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm run *)",
       "Bash(npm ls *)",
-      "Bash(node scripts/user-journey.mjs)"
+      "Bash(node scripts/user-journey.mjs)",
+      "Bash(npx vitest *)"
     ]
   }
 }

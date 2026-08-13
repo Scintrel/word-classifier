@@ -13,9 +13,12 @@ interface ClassificationResult {
 /**
  * 关键词匹配：英文关键词按整词匹配（避免 art 匹配到 cart），
  * 中文关键词直接包含匹配。
+ * 注意：单字中文关键词太宽泛（'的'、'到'、'加' 几乎匹配任何句子），
+ * 强制要求至少 2 个字才参与匹配。
  */
 function keywordMatch(text: string, kw: string): boolean {
   if (/[一-鿿]/.test(kw)) {
+    if (kw.length < 2) return false
     return text.includes(kw)
   }
   const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -38,7 +41,8 @@ function classifyWord(
   wordId: number,
   word: string,
   definitionCn: string | null,
-  definitionEn: string | null
+  definitionEn: string | null,
+  partOfSpeech: string | null
 ): ClassificationResult[] {
   const wordLower = word.toLowerCase().trim()
   const defCnLower = (definitionCn ?? '').toLowerCase()
@@ -59,8 +63,8 @@ function classifyWord(
     const rootMatches = cat.keywords.filter(kw =>
       keywordMatch(searchTextEn, kw)
     )
-    // 中文关键词：匹配中文释义
-    const cnMatches = cat.cnKeywords.filter(kw => defCnLower.includes(kw))
+    // 中文关键词：匹配中文释义（走 keywordMatch，内含"至少2字"守卫）
+    const cnMatches = cat.cnKeywords.filter(kw => keywordMatch(defCnLower, kw))
     let score = rootMatches.length + cnMatches.length
 
     // Check sub-categories（英文整词 + 中文包含）
@@ -69,7 +73,7 @@ function classifyWord(
       for (const sub of cat.subCategories) {
         const subMatches = [
           ...sub.keywords.filter(kw => keywordMatch(searchTextEn, kw)),
-          ...sub.cnKeywords.filter(kw => defCnLower.includes(kw))
+          ...sub.cnKeywords.filter(kw => keywordMatch(defCnLower, kw))
         ]
         if (subMatches.length > subScore) {
           subScore = subMatches.length
@@ -86,7 +90,22 @@ function classifyWord(
     }
   }
 
-  if (matches.length === 0) return []
+  if (matches.length === 0) {
+    // 词性兜底：关键词完全匹配不上的词，按词性分入抽象分类根类。
+    // 一词多词性时（如 "verb,noun"）取第一个词性判断。
+    // 置信度固定 0.35（低于关键词匹配），matchedKeywords 标记来源。
+    const firstPos = (partOfSpeech ?? '').split(',')[0].trim()
+    const fallbackId = POS_FALLBACK_CATEGORY[firstPos]
+    if (!fallbackId) return []
+    return [{
+      wordId,
+      word,
+      categoryId: fallbackId,
+      categoryName: '',
+      confidence: 0.35,
+      matchedKeywords: [`词性兜底: ${firstPos}`]
+    }]
+  }
 
   // 按分数从高到低排序
   matches.sort((a, b) => b.score - a.score)
@@ -112,6 +131,26 @@ function classifyWord(
 }
 
 /**
+ * 词性兜底映射：关键词匹配不上的词按词性归入抽象分类根类。
+ * - 动词 → 动作行为；形容词 → 状态描述；副词 → 程度方式
+ * - 介词/连词/代词/冠词/数词/助动词/感叹词 → 逻辑连接（功能词）
+ * - 名词 → 抽象概念；unknown/空 → 保持无分类
+ */
+const POS_FALLBACK_CATEGORY: Record<string, number> = {
+  'verb': 52,
+  'adjective': 53,
+  'adverb': 54,
+  'preposition': 55,
+  'conjunction': 55,
+  'pronoun': 55,
+  'article': 55,
+  'numeral': 55,
+  'auxiliary': 55,
+  'interjection': 55,
+  'noun': 57
+}
+
+/**
  * Classify all unclassified words in the database.
  * Only classifies words that don't already have manual category assignments.
  */
@@ -120,7 +159,7 @@ export function classifyAll(): { classified: number; total: number; details: Cla
 
   // Get all words that are NOT manually categorized
   const rows = db.exec(
-    `SELECT w.id, w.word, w.definition_cn, w.definition_en
+    `SELECT w.id, w.word, w.definition_cn, w.definition_en, w.part_of_speech
      FROM words w
      WHERE w.id NOT IN (
        SELECT DISTINCT word_id FROM word_categories WHERE is_manual = 1
@@ -154,6 +193,7 @@ export function classifyAll(): { classified: number; total: number; details: Cla
     const word = (row.word as string).trim()
     const defCn = (row.definition_cn as string) ?? null
     const defEn = (row.definition_en as string) ?? null
+    const pos = (row.part_of_speech as string) ?? null
 
     // 先清掉旧的自动分类（无匹配的词也要清——否则旧规则的结果会残留，
     // 重跑分类后结果与当前关键词规则不一致）
@@ -162,7 +202,7 @@ export function classifyAll(): { classified: number; total: number; details: Cla
     deleteAuto.reset()
 
     // 一个词可能命中多个分类，返回结果是数组
-    const results = classifyWord(wordId, word, defCn, defEn)
+    const results = classifyWord(wordId, word, defCn, defEn, pos)
 
     if (results.length > 0) {
       // Insert all matched classifications（一词多类）

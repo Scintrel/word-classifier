@@ -44,8 +44,17 @@ const DIFFICULTY_OPTIONS = [
 
 const POS_OPTIONS = [
   'noun', 'verb', 'adjective', 'adverb', 'preposition',
-  'conjunction', 'pronoun', 'interjection', 'article'
+  'conjunction', 'pronoun', 'interjection', 'article',
+  'abbreviation', 'auxiliary', 'numeral', 'suffix', 'prefix'
 ]
+
+/** 词性的中文名（用于界面显示） */
+const POS_LABELS: Record<string, string> = {
+  'noun': '名词', 'verb': '动词', 'adjective': '形容词', 'adverb': '副词',
+  'preposition': '介词', 'conjunction': '连词', 'pronoun': '代词', 'interjection': '感叹词',
+  'article': '冠词', 'abbreviation': '缩写', 'auxiliary': '助动词',
+  'numeral': '数词', 'suffix': '后缀', 'prefix': '前缀',
+}
 
 /**
  * WordDetailPanel - slide-out panel for editing a word.
@@ -170,18 +179,41 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
     }
   }
 
-  /** Toggle a category assignment */
+  /** Toggle a category assignment（子类与父类联动） */
   function toggleCategory(cat: Category) {
     const isAssigned = wordCategories.some(c => c.id === cat.id)
     if (isAssigned) {
-      setWordCategories(prev => prev.filter(c => c.id !== cat.id))
+      // 取消父类时连带取消其所有子类
+      setWordCategories(prev => prev.filter(c => c.id !== cat.id && c.parent_id !== cat.id))
     } else {
-      setWordCategories(prev => [...prev, cat])
+      const next = [...wordCategories, cat]
+      // 选中子类时自动带上它的父类
+      if (cat.parent_id !== null) {
+        const parent = allCategories.find(c => c.id === cat.parent_id)
+        if (parent && !next.some(c => c.id === parent.id)) {
+          next.push(parent)
+        }
+      }
+      setWordCategories(next)
     }
   }
 
-  // Only show root categories and their children for simplicity
+  /** 切换词性（一词可多词性，逗号连接存储） */
+  function togglePos(pos: string) {
+    if (!word) return
+    const current = (word.part_of_speech ?? '').split(',').map(s => s.trim()).filter(Boolean)
+    const next = current.includes(pos)
+      ? current.filter(p => p !== pos)
+      : [...current, pos]
+    updateField('part_of_speech', next.join(','))
+  }
+
+  // 当前选中的词性列表
+  const wordPosList = (word?.part_of_speech ?? '').split(',').map(s => s.trim()).filter(Boolean)
+
+  // 根类（含其子类分组展示）
   const rootCategories = allCategories.filter(c => c.parent_id === null)
+  const childrenOf = (parentId: number) => allCategories.filter(c => c.parent_id === parentId)
 
   if (!wordId) return null
 
@@ -253,33 +285,37 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
             </div>
           </div>
 
-          {/* Part of speech + Difficulty */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1 block text-sm font-medium">词性</label>
-              <select
-                value={word.part_of_speech ?? ''}
-                onChange={(e) => updateField('part_of_speech', e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
-              >
-                <option value="">-- 未知 --</option>
-                {POS_OPTIONS.map(pos => (
-                  <option key={pos} value={pos}>{pos}</option>
-                ))}
-              </select>
+          {/* Part of speech（多选标签）+ Difficulty */}
+          <div>
+            <label className="mb-1 block text-sm font-medium">词性（可多选）</label>
+            <div className="flex flex-wrap gap-1.5">
+              {POS_OPTIONS.map(pos => (
+                <button
+                  key={pos}
+                  type="button"
+                  onClick={() => togglePos(pos)}
+                  className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                    wordPosList.includes(pos)
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground hover:bg-accent'
+                  }`}
+                >
+                  {POS_LABELS[pos] || pos}
+                </button>
+              ))}
             </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium">难度</label>
-              <select
-                value={word.difficulty ?? 'unknown'}
-                onChange={(e) => updateField('difficulty', e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
-              >
-                {DIFFICULTY_OPTIONS.map(d => (
-                  <option key={d.value} value={d.value}>{d.label}</option>
-                ))}
-              </select>
-            </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium">难度</label>
+            <select
+              value={word.difficulty ?? 'unknown'}
+              onChange={(e) => updateField('difficulty', e.target.value)}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+            >
+              {DIFFICULTY_OPTIONS.map(d => (
+                <option key={d.value} value={d.value}>{d.label}</option>
+              ))}
+            </select>
           </div>
 
           {/* Definitions */}
@@ -302,26 +338,51 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
             />
           </div>
 
-          {/* Categories */}
+          {/* Categories（大类 + 子类树形选择） */}
           <div>
-            <label className="mb-2 block text-sm font-medium">所属分类</label>
-            <div className="flex flex-wrap gap-2">
-              {rootCategories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => toggleCategory(cat)}
-                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                    wordCategories.some(c => c.id === cat.id)
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground hover:bg-accent'
-                  }`}
-                  style={wordCategories.some(c => c.id === cat.id) ? {
-                    backgroundColor: cat.color,
-                    borderColor: cat.color
-                  } : {}}
-                >
-                  {cat.name_cn || cat.name}
-                </button>
+            <label className="mb-2 block text-sm font-medium">所属分类（可选子类）</label>
+            <div className="space-y-2">
+              {rootCategories.map((root) => (
+                <div key={root.id}>
+                  <button
+                    type="button"
+                    onClick={() => toggleCategory(root)}
+                    className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                      wordCategories.some(c => c.id === root.id)
+                        ? 'text-white'
+                        : 'bg-muted text-muted-foreground hover:bg-accent'
+                    }`}
+                    style={wordCategories.some(c => c.id === root.id) ? {
+                      backgroundColor: root.color,
+                      borderColor: root.color
+                    } : {}}
+                  >
+                    {root.name_cn || root.name}
+                  </button>
+                  {/* 子类（缩进显示） */}
+                  {childrenOf(root.id).length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1.5 pl-4">
+                      {childrenOf(root.id).map((sub) => (
+                        <button
+                          key={sub.id}
+                          type="button"
+                          onClick={() => toggleCategory(sub)}
+                          className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
+                            wordCategories.some(c => c.id === sub.id)
+                              ? 'text-white'
+                              : 'bg-muted text-muted-foreground hover:bg-accent'
+                          }`}
+                          style={wordCategories.some(c => c.id === sub.id) ? {
+                            backgroundColor: sub.color,
+                            borderColor: sub.color
+                          } : {}}
+                        >
+                          {sub.name_cn || sub.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>

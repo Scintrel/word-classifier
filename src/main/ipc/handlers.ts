@@ -99,8 +99,13 @@ export function registerIpcHandlers(): void {
     }
 
     if (options?.categoryId) {
-      where += ' AND w.id IN (SELECT word_id FROM word_categories WHERE category_id = ?)'
-      params.push(options.categoryId)
+      // 11 = 未分类：筛选"没有任何分类"的单词（这些词在 word_categories 表里没有记录）
+      if (options.categoryId === 11) {
+        where += ' AND w.id NOT IN (SELECT word_id FROM word_categories)'
+      } else {
+        where += ' AND w.id IN (SELECT word_id FROM word_categories WHERE category_id = ?)'
+        params.push(options.categoryId)
+      }
     }
 
     if (options?.difficulty && options.difficulty !== 'all') {
@@ -410,8 +415,13 @@ export function registerIpcHandlers(): void {
     const params: unknown[] = []
 
     if (options?.categoryId) {
-      where += ' AND w.id IN (SELECT word_id FROM word_categories WHERE category_id = ?)'
-      params.push(options.categoryId)
+      // 11 = 未分类：筛选"没有任何分类"的单词（这些词在 word_categories 表里没有记录）
+      if (options.categoryId === 11) {
+        where += ' AND w.id NOT IN (SELECT word_id FROM word_categories)'
+      } else {
+        where += ' AND w.id IN (SELECT word_id FROM word_categories WHERE category_id = ?)'
+        params.push(options.categoryId)
+      }
     }
     if (options?.difficulty && options.difficulty !== 'all') {
       where += ' AND w.difficulty = ?'

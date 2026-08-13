@@ -50,7 +50,8 @@ describe('Database Migrations', () => {
   it('should be idempotent on re-run', () => {
     runMigrations(db)
     const r = db.exec('SELECT COUNT(*) as c FROM _migrations')
-    expect((r[0].values[0][0] as number)).toBe(2)
+    // 迁移数量 = MIGRATIONS 数组长度（001 初始 + 002 抽象分类）
+    expect((r[0].values[0][0] as number)).toBe(3)
   })
 
   it('should enforce foreign keys', () => {

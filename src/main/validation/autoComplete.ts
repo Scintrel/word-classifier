@@ -94,11 +94,15 @@ function guessPOS(word: string): string | null {
   return null
 }
 
-/** Extract POS from definition text like "n.能力" or "vt.丢弃" */
+/**
+ * Extract POS from definition text like "n.能力" or "vt.丢弃".
+ * 扫描整个释义，收集出现的所有词性（一个词可以有多个词性，
+ * 如 "vt. 放弃...；n. 放任" → "verb,noun"）。
+ */
 export function extractPOSFromDef(def: string): string | null {
   if (!def) return null
   const posMap: Record<string, string> = {
-    'n.': 'noun', 'noun': 'noun',
+    'n.': 'noun', 'noun': 'noun', 'pl.': 'noun', 'plural': 'noun',
     'v.': 'verb', 'verb': 'verb',
     'vt.': 'verb', 'vt': 'verb',
     'vi.': 'verb', 'vi': 'verb',
@@ -107,18 +111,27 @@ export function extractPOSFromDef(def: string): string | null {
     'prep.': 'preposition', 'prep': 'preposition',
     'pron.': 'pronoun', 'pron': 'pronoun',
     'conj.': 'conjunction', 'conj': 'conjunction',
-    'int.': 'interjection', 'interj': 'interjection',
+    'int.': 'interjection', 'interj': 'interjection', 'interj.': 'interjection',
     'art.': 'article',
     'abbr.': 'abbreviation', 'abbr': 'abbreviation',
     'aux.': 'auxiliary',
     'num.': 'numeral',
+    'suf.': 'suffix', 'suffix': 'suffix',
+    'pref.': 'prefix', 'prefix': 'prefix',
   }
-  const m = def.match(/^([a-z]+\.?)/i)
-  if (m) {
+  // 用全局正则扫描整个释义，收集所有词性标记（去重、保序）。
+  // 要求标记后跟点/空格/中文，避免 "vi" 误匹配 "video" 这类单词内部。
+  const found: string[] = []
+  const re = /([a-z]+\.?)(?=[\s.一-鿿]|$)/gi
+  let m: RegExpExecArray | null
+  while ((m = re.exec(def)) !== null) {
     const key = m[1].toLowerCase()
-    return posMap[key] || null
+    const pos = posMap[key]
+    if (pos && !found.includes(pos)) found.push(pos)
+    // 只扫描释义前半部分（后半部分通常是例句/补充说明，词性标记都集中在开头）
+    if (m.index > 120) break
   }
-  return null
+  return found.length > 0 ? found.join(',') : null
 }
 
 /** Get auto-completion suggestions for a word. */

@@ -184,6 +184,45 @@ INSERT OR IGNORE INTO settings (key, value) VALUES
 ('auto_classify_on_import', 'true'),
 ('strict_validation', 'false');
 `
+  },
+  {
+    // 抽象词分类：为不属于任何主题的词（able、accept、about 等）提供按词义/用途设计的分类
+    name: '002_abstract_categories.sql',
+    sql: `
+INSERT OR IGNORE INTO categories (id, name, name_cn, description, color, sort_order) VALUES
+(52, 'Basic Actions',      '动作行为', 'Abstract verbs: doing, changing, achieving', '#0ea5e9', 11),
+(53, 'States & Qualities', '状态描述', 'Adjectives describing states and qualities', '#a855f7', 12),
+(54, 'Degree & Manner',    '程度方式', 'Adverbs of degree, frequency, and manner',   '#f472b6', 13),
+(55, 'Logic & Connection', '逻辑连接', 'Prepositions and conjunctions',              '#94a3b8', 14),
+(56, 'Thinking & Cognition','认知思考', 'Verbs of thinking, believing, understanding','#facc15', 15),
+(57, 'Abstract Concepts',  '抽象概念', 'Abstract nouns: qualities, time, quantity',  '#64748b', 16);
+
+INSERT OR IGNORE INTO categories (id, name, name_cn, parent_id, description, color, sort_order) VALUES
+(58, 'Begin & End',        '开始结束', 52, 'Start, stop, finish, continue',        '#0ea5e9', 1),
+(59, 'Give & Receive',     '获得给予', 52, 'Accept, receive, obtain, provide',     '#0ea5e9', 2),
+(60, 'Change & Adjust',    '改变调整', 52, 'Change, adjust, adapt, modify',        '#0ea5e9', 3),
+(61, 'Achieve & Complete', '完成达到', 52, 'Achieve, accomplish, complete',        '#0ea5e9', 4),
+(62, 'Good & Bad',         '好坏优劣', 53, 'Good, bad, excellent, terrible',       '#a855f7', 1),
+(63, 'Size & Degree',      '大小程度', 53, 'Big, small, huge, deep, wide',         '#a855f7', 2),
+(64, 'Easy & Hard',        '难易简繁', 53, 'Easy, hard, simple, complex',          '#a855f7', 3),
+(65, 'New & Old',          '新旧久暂', 53, 'New, old, ancient, modern, permanent', '#a855f7', 4),
+(66, 'Frequency',          '频率',     54, 'Always, often, sometimes, rarely',     '#f472b6', 1),
+(67, 'Degree',             '程度',     54, 'Very, quite, extremely, almost',       '#f472b6', 2),
+(68, 'Manner',             '方式',     54, 'Quickly, slowly, carefully, suddenly', '#f472b6', 3),
+(69, 'Time & Order',       '时间顺序', 54, 'First, then, finally, eventually',     '#f472b6', 4),
+(70, 'Contrast',           '转折让步', 55, 'But, however, although, despite',      '#94a3b8', 1),
+(71, 'Cause & Effect',     '因果',     55, 'Because, therefore, thus, hence',      '#94a3b8', 2),
+(72, 'Addition',           '并列递进', 55, 'And, also, moreover, besides',         '#94a3b8', 3),
+(73, 'Space & Time',       '时空方位', 55, 'Above, below, before, after, through', '#94a3b8', 4),
+(74, 'Knowledge & Memory', '知识记忆', 56, 'Know, remember, recall, forget',      '#facc15', 1),
+(75, 'Thinking & Judging', '思考判断', 56, 'Think, consider, judge, conclude',     '#facc15', 2),
+(76, 'Belief & Doubt',     '相信怀疑', 56, 'Believe, trust, doubt, suspect',       '#facc15', 3),
+(77, 'Understanding',      '理解领悟', 56, 'Understand, realize, recognize, grasp','#facc15', 4),
+(78, 'Qualities & Traits', '品质特征', 57, 'Quality, feature, character, property','#64748b', 1),
+(79, 'Time & Space',       '时间空间', 57, 'Time, moment, period, space, position','#64748b', 2),
+(80, 'Quantity & Units',   '数量单位', 57, 'Number, amount, total, unit, part',    '#64748b', 3),
+(81, 'Relations & Structure','关系结构',57, 'Relation, connection, structure, system','#64748b', 4);
+`
   }
 ]
 
