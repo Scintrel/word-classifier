@@ -47,26 +47,24 @@ export class TxtParser implements IParser {
 
   /**
    * Detect whether the file is tab-separated or one-word-per-line.
+   * 只有真的包含制表符才算 tab 分隔——旧版的"平均长度>40"启发式
+   * 会把长单词的单列文件误判成 tab 格式，导致第一个单词被当成表头丢掉。
    */
   private detectFormat(lines: string[]): 'one-word-per-line' | 'tab-separated' {
-    // If any of the first lines contain a tab, treat as tab-separated
-    const hasTabs = lines.some(line => line.includes('\t'))
-    if (hasTabs) return 'tab-separated'
-
-    // If lines are very long with multiple spaces, likely tab/space separated
-    // (but using spaces instead of tabs)
-    const avgLength = lines.reduce((sum, l) => sum + l.length, 0) / lines.length
-    if (avgLength > 40) return 'tab-separated'
-
-    return 'one-word-per-line'
+    return lines.some(line => line.includes('\t')) ? 'tab-separated' : 'one-word-per-line'
   }
+
+  /** 纯单词模式里可能出现的表头行（明确命中才剥掉，绝不按长度猜） */
+  private static readonly WORD_HEADER_RE = /^(word|words|单词|词汇|vocabulary|wordlist|word list|spelling|拼写)$/i
 
   /**
    * Parse one-word-per-line format.
    * Creates a single "word" column.
+   * 第一行如果明确是表头词（"单词"/"word" 等）才跳过，否则每一行都是单词。
    */
   private parseOneWordPerLine(lines: string[], encoding: string): ParseResult {
-    const rows = lines.map(word => ({ word }))
+    const dataLines = lines.length > 1 && TxtParser.WORD_HEADER_RE.test(lines[0]) ? lines.slice(1) : lines
+    const rows = dataLines.map(word => ({ word }))
     return {
       headers: ['word'],
       rows,
@@ -76,30 +74,33 @@ export class TxtParser implements IParser {
     }
   }
 
+  /** tab 文件里可能出现的表头列名 */
+  private static readonly TAB_HEADER_RE = /^(word|单词|vocabulary|词汇|phonetic|音标|definition|释义|meaning|意思|example|例句|pos|词性|part|difficulty|难度|level|等级)$/i
+
   /**
    * Parse tab-separated format.
-   * First non-empty line is treated as the header row if it looks like headers,
-   * otherwise auto-generates column names.
+   * 第一行只有在"有多列"且"列名明确命中表头词"时才视为表头——
+   * 旧版的"每列长度≤10"启发式会把无表头文件的第一行数据误当成表头。
    */
   private parseTabSeparated(lines: string[], encoding: string): ParseResult {
     // Split first line to determine column count
     const firstColumns = lines[0].split('\t').map(c => c.trim())
+    // 用前 5 行的最大列数做表头数，兼容中间行列数不齐的文件
+    const maxCols = Math.max(1, ...lines.slice(0, 5).map(l => l.split('\t').length))
 
-    // Decide if first row looks like a header
-    // Headers are typically short (1-5 chars) and contain common field names
-    const looksLikeHeader = firstColumns.some(
-      c => /^(word|单词|vocabulary|词汇|phonetic|音标|definition|释义|meaning|意思|example|例句|pos|词性|part|difficulty|难度|level)$/i.test(c)
-    ) || firstColumns.every(c => c.length <= 10)
+    const looksLikeHeader = firstColumns.length > 1 &&
+      firstColumns.some(c => TxtParser.TAB_HEADER_RE.test(c))
 
     let headers: string[]
     let dataLines: string[]
 
     if (looksLikeHeader) {
-      headers = firstColumns
+      // 表头列数不足 maxCols 时自动补"列N"，避免后面更宽的数据行丢列
+      headers = Array.from({ length: maxCols }, (_, i) => firstColumns[i] ?? `列${i + 1}`)
       dataLines = lines.slice(1)
     } else {
       // Auto-generate headers
-      headers = firstColumns.map((_, i) => `列${i + 1}`)
+      headers = Array.from({ length: maxCols }, (_, i) => `列${i + 1}`)
       dataLines = lines
     }
 

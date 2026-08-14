@@ -5,6 +5,7 @@ import {
 } from 'lucide-react'
 import FileDropZone from '../components/FileDropZone'
 import ColumnMapper from '../components/ColumnMapper'
+import HelpTip from '../components/HelpTip'
 import type { FilePreview, ColumnMapping, ImportResult } from '../../preload/index'
 
 /**
@@ -171,8 +172,14 @@ export default function ImportView() {
                 <div className="h-6 w-11 rounded-full bg-muted peer-checked:bg-purple-500 peer-focus:ring-2 peer-focus:ring-purple-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:after:translate-x-full" />
               </label>
               <div>
-                <span className="text-sm font-medium">纯单词模式</span>
-                <p className="text-xs text-muted-foreground">文件只包含单词列，导入后使用 AI 补全音标和释义</p>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm font-medium">纯单词模式</span>
+                  <HelpTip title="纯单词模式">
+                    如果文件只有一列单词（每行一个），勾选后可以跳过「列映射」直接导入。<br />
+                    导入后单词只有拼写，音标和释义可到「单词检修」页用「词典补全」免费填充（无需联网），或用「AI 补全」生成更详细的信息。
+                  </HelpTip>
+                </div>
+                <p className="text-xs text-muted-foreground">文件只包含单词列，导入后使用词典或 AI 补全音标和释义</p>
               </div>
             </div>
             <FileDropZone
@@ -267,11 +274,21 @@ export default function ImportView() {
             Step 3: Column Mapping
             ============================================ */}
         {step === 'mapping' && preview && (
-          <ColumnMapper
-            headers={preview.headers}
-            onConfirm={handleConfirmMapping}
-            onBack={() => setStep('preview')}
-          />
+          <div>
+            <div className="mb-3 flex items-center gap-1.5">
+              <span className="text-sm font-medium">把文件里的列对应到单词字段</span>
+              <HelpTip title="列映射说明">
+                列映射就是告诉程序：文件里哪一列是单词、哪一列是音标、哪一列是释义。<br />
+                程序会先自动猜一个匹配，你可以用每列的下拉框调整。<br />
+                没有的字段选择「不使用」即可。
+              </HelpTip>
+            </div>
+            <ColumnMapper
+              headers={preview.headers}
+              onConfirm={handleConfirmMapping}
+              onBack={() => setStep('preview')}
+            />
+          </div>
         )}
 
         {/* ============================================

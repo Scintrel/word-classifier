@@ -24,7 +24,6 @@ export interface WordCompletion {
   definitionEn: string
   partOfSpeech: string
   examples: { en: string; cn: string }[]
-  difficulty: string
 }
 
 export interface ClassificationSuggestion {
@@ -54,8 +53,7 @@ function buildCompleteWordPrompt(word: string): string {
   "examples": [
     { "en": "英文例句1", "cn": "中文翻译1" },
     { "en": "英文例句2", "cn": "中文翻译2" }
-  ],
-  "difficulty": "难度(beginner/intermediate/advanced)"
+  ]
 }
 
 注意:
@@ -160,8 +158,7 @@ export function createAIService(config: AIConfig) {
         definitionCn: parsed.definitionCn || '',
         definitionEn: parsed.definitionEn || '',
         partOfSpeech: parsed.partOfSpeech || '',
-        examples: Array.isArray(parsed.examples) ? parsed.examples : [],
-        difficulty: parsed.difficulty || 'unknown'
+        examples: Array.isArray(parsed.examples) ? parsed.examples : []
       }
     } catch (err) {
       console.error(`AI completeWord failed for "${word}":`, err)
@@ -205,8 +202,7 @@ export function createAIService(config: AIConfig) {
     "definitionCn": "中文释义",
     "definitionEn": "English definition",
     "partOfSpeech": "noun/verb/adjective等",
-    "examples": [{ "en": "...", "cn": "..." }],
-    "difficulty": "beginner/intermediate/advanced"
+    "examples": [{ "en": "...", "cn": "..." }]
   },
   ...
 ]
@@ -230,8 +226,7 @@ export function createAIService(config: AIConfig) {
         definitionCn: (item.definitionCn as string) || '',
         definitionEn: (item.definitionEn as string) || '',
         partOfSpeech: (item.partOfSpeech as string) || '',
-        examples: Array.isArray(item.examples) ? item.examples as { en: string; cn: string }[] : [],
-        difficulty: (item.difficulty as string) || 'unknown'
+        examples: Array.isArray(item.examples) ? item.examples as { en: string; cn: string }[] : []
       }))
     } catch (err) {
       console.error('AI batch complete failed:', err)

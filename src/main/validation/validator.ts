@@ -182,13 +182,16 @@ export function validateAllWords(): ValidationResult {
       })
     }
 
-    // 3. Missing phonetics
-    if (!phoneticUk && !phoneticUs) {
+    // 3. Missing phonetics（英式或美式任一为空都算问题，描述注明缺哪一侧）
+    const missingSide = !phoneticUk && !phoneticUs ? '英式和美式均为空'
+      : !phoneticUk ? '英式为空' : !phoneticUs ? '美式为空' : null
+    if (missingSide) {
       issues.push({
         wordId, word, field: 'phonetic',
         issueType: 'missing_phonetic',
-        description: '缺少音标（英式和美式均为空）',
-        currentValue: null, suggestion: null,
+        description: `缺少音标（${missingSide}）`,
+        currentValue: [phoneticUk, phoneticUs].filter(Boolean).join(' / ') || null,
+        suggestion: null,
         autoFixable: true  // Can be auto-completed from dictionary
       })
     }

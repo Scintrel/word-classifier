@@ -2,6 +2,10 @@ import { useState, useEffect, useCallback } from 'react'
 import { BookOpen, Search, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import WordFilterBar from '../components/WordFilterBar'
 import WordDetailPanel from '../components/WordDetailPanel'
+import CategoryBadges from '../components/CategoryBadges'
+import { LevelBadges, FreqBadge } from '../components/WordLevelBadges'
+import HelpTip from '../components/HelpTip'
+import { POS_LABELS } from '../constants/wordMeta'
 
 interface WordRow {
   id: number
@@ -12,7 +16,8 @@ interface WordRow {
   definition_en?: string
   part_of_speech?: string
   difficulty?: string
-  categories?: string
+  frequency?: number | null
+  category_badges?: string
 }
 
 interface Category {
@@ -21,6 +26,13 @@ interface Category {
   name_cn: string
   parent_id: number | null
   word_count?: number
+}
+
+/** 词性显示为中文标签（noun,verb → 名词、动词） */
+function posLabels(pos?: string): string {
+  if (!pos) return ''
+  return pos.split(',').map(s => s.trim()).filter(Boolean)
+    .map(s => POS_LABELS[s] || s).join('、')
 }
 
 /**
@@ -40,7 +52,9 @@ export default function WordListView() {
   // Filters
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
-  const [selectedDifficulty, setSelectedDifficulty] = useState('all')
+  const [selectedLevel, setSelectedLevel] = useState('all')
+  const [selectedFrequency, setSelectedFrequency] = useState('all')
+  const [selectedPos, setSelectedPos] = useState('all')
 
   // Detail panel
   const [selectedWordId, setSelectedWordId] = useState<number | null>(null)
@@ -55,7 +69,7 @@ export default function WordListView() {
   // Load words when page or filters change
   useEffect(() => {
     loadWords()
-  }, [page, selectedCategory, selectedDifficulty])
+  }, [page, selectedCategory, selectedLevel, selectedFrequency, selectedPos])
 
   async function loadCategories() {
     try {
@@ -74,7 +88,9 @@ export default function WordListView() {
         pageSize,
         search: search || undefined,
         categoryId: selectedCategory ?? undefined,
-        difficulty: selectedDifficulty !== 'all' ? selectedDifficulty : undefined
+        difficulty: selectedLevel !== 'all' ? selectedLevel : undefined,
+        frequency: selectedFrequency !== 'all' ? selectedFrequency : undefined,
+        partOfSpeech: selectedPos !== 'all' ? selectedPos : undefined
       })
       setWords(result.words as WordRow[])
       setTotal(result.total)
@@ -100,8 +116,18 @@ export default function WordListView() {
     setPage(1)
   }, [])
 
-  const handleDifficultyChange = useCallback((diff: string) => {
-    setSelectedDifficulty(diff)
+  const handleLevelChange = useCallback((level: string) => {
+    setSelectedLevel(level)
+    setPage(1)
+  }, [])
+
+  const handleFrequencyChange = useCallback((band: string) => {
+    setSelectedFrequency(band)
+    setPage(1)
+  }, [])
+
+  const handlePosChange = useCallback((pos: string) => {
+    setSelectedPos(pos)
     setPage(1)
   }, [])
 
@@ -109,15 +135,8 @@ export default function WordListView() {
     loadWords()
   }
 
-  /** Get difficulty badge style */
-  function getDifficultyBadge(difficulty?: string) {
-    switch (difficulty) {
-      case 'beginner': return 'bg-green-100 text-green-700'
-      case 'intermediate': return 'bg-yellow-100 text-yellow-700'
-      case 'advanced': return 'bg-red-100 text-red-700'
-      default: return 'bg-gray-100 text-gray-500'
-    }
-  }
+  const hasFilter = selectedCategory !== null ||
+    selectedLevel !== 'all' || selectedFrequency !== 'all' || selectedPos !== 'all'
 
   return (
     <div>
@@ -127,8 +146,7 @@ export default function WordListView() {
           <h1 className="text-2xl font-bold">单词列表</h1>
           <p className="text-muted-foreground">
             共 {total} 个单词
-            {selectedCategory !== null && ' · 已筛选'}
-            {selectedDifficulty !== 'all' && ' · 已筛选'}
+            {hasFilter && ' · 已筛选'}
           </p>
         </div>
 
@@ -155,14 +173,24 @@ export default function WordListView() {
       </div>
 
       {/* Filter bar */}
-      <div className="mb-4">
+      <div className="mb-4 flex items-center gap-2">
         <WordFilterBar
           categories={categories}
           selectedCategory={selectedCategory}
-          selectedDifficulty={selectedDifficulty}
+          selectedLevel={selectedLevel}
+          selectedFrequency={selectedFrequency}
+          selectedPos={selectedPos}
           onCategoryChange={handleCategoryChange}
-          onDifficultyChange={handleDifficultyChange}
+          onLevelChange={handleLevelChange}
+          onFrequencyChange={handleFrequencyChange}
+          onPosChange={handlePosChange}
         />
+        <HelpTip title="筛选说明">
+          分类：按主分类筛选（自动包含其子分类里的单词）。<br />
+          等级：按考试等级标签筛选（初中/高中/CET4/CET6/考研/托福/雅思/GRE），选「其他」= 没有等级标签的词。<br />
+          词频：按 COCA 语料库词频排名区间筛选（数字越小越常用）。<br />
+          词性：按词性筛选（一词多词性时命中任意一个即匹配）。
+        </HelpTip>
       </div>
 
       {/* Word table */}
@@ -173,25 +201,26 @@ export default function WordListView() {
               <th className="px-4 py-3 w-32">单词</th>
               <th className="px-4 py-3 w-28">音标</th>
               <th className="px-4 py-3">释义</th>
-              <th className="px-4 py-3 w-20">词性</th>
+              <th className="px-4 py-3 w-24">词性</th>
               <th className="px-4 py-3 w-36">分类</th>
-              <th className="px-4 py-3 w-20">难度</th>
+              <th className="px-4 py-3 w-52">等级</th>
+              <th className="px-4 py-3 w-20">词频</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className="px-4 py-16 text-center">
+                <td colSpan={7} className="px-4 py-16 text-center">
                   <Loader2 className="mx-auto mb-2 h-6 w-6 animate-spin text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">加载中...</span>
                 </td>
               </tr>
             ) : words.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-16 text-center">
+                <td colSpan={7} className="px-4 py-16 text-center">
                   <BookOpen className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
                   <p className="text-muted-foreground">
-                    {search || selectedCategory || selectedDifficulty !== 'all'
+                    {search || hasFilter
                       ? '没有找到匹配的单词，试试调整筛选条件'
                       : '还没有单词。去「导入单词」页面导入你的第一个单词表吧！'
                     }
@@ -217,29 +246,20 @@ export default function WordListView() {
                   <td className="px-4 py-3">
                     {word.part_of_speech ? (
                       <span className="text-xs italic text-muted-foreground">
-                        {word.part_of_speech}
+                        {posLabels(word.part_of_speech)}
                       </span>
                     ) : (
                       <span className="text-xs text-muted-foreground/50">-</span>
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    {word.categories ? (
-                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                        {word.categories}
-                      </span>
-                    ) : (
-                      <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                        未分类
-                      </span>
-                    )}
+                    <CategoryBadges raw={word.category_badges} />
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${getDifficultyBadge(word.difficulty)}`}>
-                      {word.difficulty === 'beginner' ? '初级' :
-                       word.difficulty === 'intermediate' ? '中级' :
-                       word.difficulty === 'advanced' ? '高级' : '未知'}
-                    </span>
+                    <LevelBadges difficulty={word.difficulty} />
+                  </td>
+                  <td className="px-4 py-3">
+                    <FreqBadge frequency={word.frequency} />
                   </td>
                 </tr>
               ))

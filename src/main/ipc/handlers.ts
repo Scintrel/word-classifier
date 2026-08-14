@@ -4,7 +4,11 @@ import { queryAll, queryOne, runSQL } from '../database/utils'
 import { ParserFactory } from '../parser/parser.factory'
 import { type ColumnMapping } from '../parser/parser.types'
 import { validateAndLog } from '../validation/validator'
-import { autoCompleteCount, autoCompleteBatch } from '../validation/autoComplete'
+import {
+  autoCompleteCount, autoCompleteBatch, lookupWord,
+  normalizePhoneticsCount, normalizePhoneticsBatch,
+  refillLevelsCount, refillLevelsBatch
+} from '../validation/autoComplete'
 import { classifyAll, getClassificationStats } from '../classification/classifier'
 import { createAIService, type AIConfig } from '../ai/aiService'
 
@@ -12,6 +16,16 @@ import { createAIService, type AIConfig } from '../ai/aiService'
 const runSQLWithSave = (sql: string, params: unknown[] = []) => { runSQL(getDatabase(), sql, params); saveDatabase() }
 const queryAll_ = (sql: string, params?: unknown[]) => queryAll(getDatabase(), sql, params)
 const queryOne_ = (sql: string, params?: unknown[]) => queryOne(getDatabase(), sql, params)
+
+// 词频档位区间（COCA 词频排名：数字越小越常用）。
+// ⚠️ 渲染端 src/renderer/constants/wordMeta.ts 的 freqBand() 保持同一套数值。
+const FREQ_BAND_RANGES: Record<string, [number, number]> = {
+  top: [1, 1000],
+  high: [1001, 3000],
+  mid: [3001, 8000],
+  low: [8001, 20000],
+  rare: [20001, Number.MAX_SAFE_INTEGER]
+}
 
 /**
  * Register all IPC handlers — the communication bridge between UI and backend.
@@ -84,6 +98,8 @@ export function registerIpcHandlers(): void {
     search?: string
     categoryId?: number
     difficulty?: string
+    frequency?: string
+    partOfSpeech?: string
   }) => {
     const page = options?.page ?? 1
     const pageSize = options?.pageSize ?? 50
@@ -103,14 +119,36 @@ export function registerIpcHandlers(): void {
       if (options.categoryId === 11) {
         where += ' AND w.id NOT IN (SELECT word_id FROM word_categories)'
       } else {
-        where += ' AND w.id IN (SELECT word_id FROM word_categories WHERE category_id = ?)'
-        params.push(options.categoryId)
+        // 选中根分类时自动包含它的全部子分类（子分类没有下级，等价于精确匹配）
+        where += ` AND w.id IN (SELECT word_id FROM word_categories
+                   WHERE category_id = ? OR category_id IN (SELECT id FROM categories WHERE parent_id = ?))`
+        params.push(options.categoryId, options.categoryId)
       }
     }
 
-    if (options?.difficulty && options.difficulty !== 'all') {
-      where += ' AND w.difficulty = ?'
-      params.push(options.difficulty)
+    // 等级筛选：difficulty 存逗号连接的考试标签（如 "gk,cet4,cet6"），无标签为 'none'
+    if (options?.difficulty === 'other') {
+      where += " AND (w.difficulty IS NULL OR w.difficulty = '' OR w.difficulty = 'unknown' OR w.difficulty = 'none')"
+    } else if (options?.difficulty && options.difficulty !== 'all') {
+      where += " AND (',' || w.difficulty || ',') LIKE ?"
+      params.push(`%,${options.difficulty},%`)
+    }
+
+    // 词频筛选：按 COCA 排名区间
+    if (options?.frequency && options.frequency !== 'all') {
+      if (options.frequency === 'none') {
+        where += ' AND (w.frequency IS NULL OR w.frequency = 0)'
+      } else {
+        const range = FREQ_BAND_RANGES[options.frequency]
+        where += ' AND w.frequency >= ? AND w.frequency <= ?'
+        params.push(range[0], range[1])
+      }
+    }
+
+    // 词性筛选：一词多词性时逗号连接存储，用首尾加逗号避免误匹配（"verb" 不会命中 "adverb"... 等）
+    if (options?.partOfSpeech && options.partOfSpeech !== 'all') {
+      where += " AND (',' || w.part_of_speech || ',') LIKE ?"
+      params.push(`%,${options.partOfSpeech},%`)
     }
 
     const countResult = queryOne_(
@@ -119,16 +157,28 @@ export function registerIpcHandlers(): void {
     )
     const total = (countResult?.total as number) ?? 0
 
+    // 搜索时的排序参数单独追加到列表查询里（计数查询不需要），且必须在 LIMIT/OFFSET 之前
+    const listParams = [...params]
+    let orderBy = 'w.updated_at DESC'
+    if (options?.search) {
+      // 完全匹配 → 前缀匹配 → 其余包含；同级按词频（越常用越靠前），再按 id
+      orderBy = `CASE WHEN LOWER(w.word) = LOWER(?) THEN 0
+                 WHEN LOWER(w.word) LIKE LOWER(?) || '%' THEN 1
+                 ELSE 2 END,
+                 COALESCE(w.frequency, 999999), w.id`
+      listParams.push(options.search, options.search)
+    }
+
     const words = queryAll_(
-      `SELECT w.*, GROUP_CONCAT(c.name_cn, ', ') as categories
+      `SELECT w.*, GROUP_CONCAT(c.name_cn || '|' || COALESCE(c.color, ''), '||') as category_badges
        FROM words w
        LEFT JOIN word_categories wc ON w.id = wc.word_id
        LEFT JOIN categories c ON wc.category_id = c.id
        ${where}
        GROUP BY w.id
-       ORDER BY w.updated_at DESC
+       ORDER BY ${orderBy}
        LIMIT ? OFFSET ?`,
-      [...params, pageSize, offset]
+      [...listParams, pageSize, offset]
     )
 
     return {
@@ -232,13 +282,6 @@ export function registerIpcHandlers(): void {
   })
 
   // ============================================
-  // Words: get all distinct difficulties for filter dropdown
-  // ============================================
-  ipcMain.handle('words:getDifficulties', () => {
-    return queryAll_('SELECT DISTINCT difficulty FROM words WHERE difficulty IS NOT NULL ORDER BY difficulty')
-  })
-
-  // ============================================
   // Import: parse a file and return preview data
   // ============================================
   ipcMain.handle('import:parseFile', async (_event, filePath: string) => {
@@ -309,19 +352,25 @@ export function registerIpcHandlers(): void {
       const definitionCn = mapping.definitionCn ? row[mapping.definitionCn]?.trim() || null : null
       const definitionEn = mapping.definitionEn ? row[mapping.definitionEn]?.trim() || null : null
       const partOfSpeech = mapping.partOfSpeech ? row[mapping.partOfSpeech]?.trim() || null : null
-      const difficulty = mapping.difficulty ? row[mapping.difficulty]?.trim() || 'unknown' : 'unknown'
       const exampleEn = mapping.exampleSentenceEn ? row[mapping.exampleSentenceEn]?.trim() || null : null
       const exampleCn = mapping.exampleSentenceCn ? row[mapping.exampleSentenceCn]?.trim() || null : null
+
+      // 等级与词频：文件里有对应列就用文件的，没有就从词典推导，查不到存 'none'
+      const dictEntry = lookupWord(word)
+      const mappedDifficulty = mapping.difficulty ? row[mapping.difficulty]?.trim() || '' : ''
+      const difficulty = mappedDifficulty
+        || (dictEntry?.tag ? dictEntry.tag.split(/\s+/).filter(Boolean).join(',') : 'none')
+      const frequency = (dictEntry?.frq != null && dictEntry.frq > 0) ? dictEntry.frq : null
 
       // Insert word —— 循环内用 runSQL（不写盘），全部导入完成后统一 saveDatabase 一次，
       // 否则每个单词都要把整个数据库导出写盘一次，导入 5 万词会慢到不可用
       runSQL(getDatabase(),
         `INSERT INTO words (word, language, phonetic_uk, phonetic_us, part_of_speech,
-          definition_cn, definition_en, difficulty, source_file, source_row)
-         VALUES (?, 'en', ?, ?, ?, ?, ?, ?, ?, ?)`,
+          definition_cn, definition_en, difficulty, frequency, source_file, source_row)
+         VALUES (?, 'en', ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           word, phoneticUk, phoneticUs, partOfSpeech,
-          definitionCn, definitionEn, difficulty,
+          definitionCn, definitionEn, difficulty, frequency,
           filePath.split(/[/\\]/).pop() ?? filePath,
           imported + skipped
         ]
@@ -390,6 +439,32 @@ export function registerIpcHandlers(): void {
   })
 
   // ============================================
+  // Validation: 音标规范化（存量音标补 // 与修正特殊字符）
+  // ============================================
+  ipcMain.handle('validation:normalizePhoneticsCount', () => {
+    return normalizePhoneticsCount()
+  })
+
+  ipcMain.handle('validation:normalizePhoneticsBatch', (_event, batchSize?: number) => {
+    const result = normalizePhoneticsBatch(batchSize || 300)
+    saveDatabase()
+    return result
+  })
+
+  // ============================================
+  // Validation: 等级/词频回填（词典 tag/frq → difficulty/frequency）
+  // ============================================
+  ipcMain.handle('validation:refillLevelsCount', () => {
+    return refillLevelsCount()
+  })
+
+  ipcMain.handle('validation:refillLevelsBatch', (_event, batchSize?: number) => {
+    const result = refillLevelsBatch(batchSize || 300)
+    saveDatabase()
+    return result
+  })
+
+  // ============================================
   // Classification: auto-classify all unclassified words
   // ============================================
   ipcMain.handle('classification:run', () => {
@@ -410,6 +485,7 @@ export function registerIpcHandlers(): void {
   ipcMain.handle('export:words', (_event, options?: {
     categoryId?: number
     difficulty?: string
+    frequency?: string
   }) => {
     let where = 'WHERE 1=1'
     const params: unknown[] = []
@@ -419,18 +495,32 @@ export function registerIpcHandlers(): void {
       if (options.categoryId === 11) {
         where += ' AND w.id NOT IN (SELECT word_id FROM word_categories)'
       } else {
-        where += ' AND w.id IN (SELECT word_id FROM word_categories WHERE category_id = ?)'
-        params.push(options.categoryId)
+        where += ` AND w.id IN (SELECT word_id FROM word_categories
+                   WHERE category_id = ? OR category_id IN (SELECT id FROM categories WHERE parent_id = ?))`
+        params.push(options.categoryId, options.categoryId)
       }
     }
-    if (options?.difficulty && options.difficulty !== 'all') {
-      where += ' AND w.difficulty = ?'
-      params.push(options.difficulty)
+    // 等级筛选：与 words:list 同一套语义
+    if (options?.difficulty === 'other') {
+      where += " AND (w.difficulty IS NULL OR w.difficulty = '' OR w.difficulty = 'unknown' OR w.difficulty = 'none')"
+    } else if (options?.difficulty && options.difficulty !== 'all') {
+      where += " AND (',' || w.difficulty || ',') LIKE ?"
+      params.push(`%,${options.difficulty},%`)
+    }
+    // 词频筛选：与 words:list 同一套区间
+    if (options?.frequency && options.frequency !== 'all') {
+      if (options.frequency === 'none') {
+        where += ' AND (w.frequency IS NULL OR w.frequency = 0)'
+      } else {
+        const range = FREQ_BAND_RANGES[options.frequency]
+        where += ' AND w.frequency >= ? AND w.frequency <= ?'
+        params.push(range[0], range[1])
+      }
     }
 
     const words = queryAll_(
       `SELECT w.word, w.phonetic_uk, w.phonetic_us, w.part_of_speech,
-              w.definition_cn, w.definition_en, w.difficulty,
+              w.definition_cn, w.definition_en, w.difficulty, w.frequency,
               GROUP_CONCAT(c.name_cn, ', ') as categories
        FROM words w
        LEFT JOIN word_categories wc ON w.id = wc.word_id
@@ -476,8 +566,11 @@ export function registerIpcHandlers(): void {
     const db = getDatabase()
     db.run('DELETE FROM word_categories')
     db.run('DELETE FROM categories')
+    // ⚠️ 必须清空迁移记录再重跑——否则 runMigrations 认为种子迁移已执行过，
+    // 直接跳过，重置后 categories 表就是空的
+    db.run('DELETE FROM _migrations')
     saveDatabase()
-    // Re-run category seed migration
+    // Re-run all migrations (CREATE TABLE IF NOT EXISTS + 分类种子 + 调色板)
     const { runMigrations } = require('../database/migrations')
     runMigrations(db)
     return true
@@ -558,14 +651,15 @@ export function registerIpcHandlers(): void {
 
     let filled = 0
     if (results.length > 0) {
+      // 难度已改为等级标签+词频体系，AI 不再写 difficulty（等级/词频只来自词典）
       const stmt = db.prepare(
         `UPDATE words SET phonetic_uk = ?, phonetic_us = ?, definition_cn = ?,
-         definition_en = ?, part_of_speech = ?, difficulty = ?, updated_at = CURRENT_TIMESTAMP
+         definition_en = ?, part_of_speech = ?, updated_at = CURRENT_TIMESTAMP
          WHERE word = ? AND language = 'en'`
       )
       for (const r of results) {
         if (!r.word) continue
-        stmt.bind([r.phoneticUk, r.phoneticUs, r.definitionCn, r.definitionEn, r.partOfSpeech, r.difficulty, r.word])
+        stmt.bind([r.phoneticUk, r.phoneticUs, r.definitionCn, r.definitionEn, r.partOfSpeech, r.word])
         stmt.step()
         stmt.reset()
         if (r.examples.length > 0) {

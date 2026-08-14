@@ -223,6 +223,29 @@ INSERT OR IGNORE INTO categories (id, name, name_cn, parent_id, description, col
 (80, 'Quantity & Units',   '数量单位', 57, 'Number, amount, total, unit, part',    '#64748b', 3),
 (81, 'Relations & Structure','关系结构',57, 'Relation, connection, structure, system','#64748b', 4);
 `
+  },
+  {
+    // 17 个根分类换成 17 种高区分度颜色（旧色板里蓝/靛/天蓝、绿/青、粉/玫红、灰/石板灰几乎一样）
+    // 子类跟随父类颜色，视觉上自然分组
+    name: '003_category_colors.sql',
+    sql: `
+UPDATE categories SET color = '#3b82f6' WHERE id = 1  OR parent_id = 1;
+UPDATE categories SET color = '#10b981' WHERE id = 2  OR parent_id = 2;
+UPDATE categories SET color = '#f59e0b' WHERE id = 3  OR parent_id = 3;
+UPDATE categories SET color = '#22c55e' WHERE id = 4  OR parent_id = 4;
+UPDATE categories SET color = '#ef4444' WHERE id = 5  OR parent_id = 5;
+UPDATE categories SET color = '#ec4899' WHERE id = 6  OR parent_id = 6;
+UPDATE categories SET color = '#8b5cf6' WHERE id = 7  OR parent_id = 7;
+UPDATE categories SET color = '#6366f1' WHERE id = 8  OR parent_id = 8;
+UPDATE categories SET color = '#06b6d4' WHERE id = 9  OR parent_id = 9;
+UPDATE categories SET color = '#f97316' WHERE id = 10 OR parent_id = 10;
+UPDATE categories SET color = '#9ca3af' WHERE id = 11 OR parent_id = 11;
+UPDATE categories SET color = '#0ea5e9' WHERE id = 52 OR parent_id = 52;
+UPDATE categories SET color = '#d946ef' WHERE id = 53 OR parent_id = 53;
+UPDATE categories SET color = '#f43f5e' WHERE id = 54 OR parent_id = 54;
+UPDATE categories SET color = '#14b8a6' WHERE id = 55 OR parent_id = 55;
+UPDATE categories SET color = '#eab308' WHERE id = 56 OR parent_id = 56;
+UPDATE categories SET color = '#84cc16' WHERE id = 57 OR parent_id = 57;`
   }
 ]
 

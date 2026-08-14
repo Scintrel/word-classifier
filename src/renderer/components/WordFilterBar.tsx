@@ -1,4 +1,7 @@
 import { Filter, X } from 'lucide-react'
+import {
+  LEVEL_DEFS, FREQ_BANDS, POS_OPTIONS, POS_LABELS
+} from '../constants/wordMeta'
 
 interface Category {
   id: number
@@ -11,32 +14,46 @@ interface Category {
 interface WordFilterBarProps {
   categories: Category[]
   selectedCategory: number | null
-  selectedDifficulty: string
+  selectedLevel: string
+  selectedFrequency: string
+  selectedPos: string
   onCategoryChange: (categoryId: number | null) => void
-  onDifficultyChange: (difficulty: string) => void
+  onLevelChange: (level: string) => void
+  onFrequencyChange: (band: string) => void
+  onPosChange: (pos: string) => void
 }
 
 /**
  * Filter bar for the word list.
- * Filters by category and difficulty level.
+ * Filters by category, exam level, frequency band and part of speech.
  */
 export default function WordFilterBar({
   categories,
   selectedCategory,
-  selectedDifficulty,
+  selectedLevel,
+  selectedFrequency,
+  selectedPos,
   onCategoryChange,
-  onDifficultyChange
+  onLevelChange,
+  onFrequencyChange,
+  onPosChange
 }: WordFilterBarProps) {
   const rootCategories = categories.filter(c => c.parent_id === null)
-  const hasActiveFilters = selectedCategory !== null || selectedDifficulty !== 'all'
+  const hasActiveFilters =
+    selectedCategory !== null ||
+    selectedLevel !== 'all' ||
+    selectedFrequency !== 'all' ||
+    selectedPos !== 'all'
 
   function clearAll() {
     onCategoryChange(null)
-    onDifficultyChange('all')
+    onLevelChange('all')
+    onFrequencyChange('all')
+    onPosChange('all')
   }
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
       <Filter className="h-4 w-4 shrink-0 text-muted-foreground" />
 
       {/* Category filter */}
@@ -56,19 +73,50 @@ export default function WordFilterBar({
         </select>
       </div>
 
-      {/* Difficulty filter */}
+      {/* Level filter（考试等级标签） */}
       <div className="flex items-center gap-1.5">
-        <span className="text-xs text-muted-foreground">难度:</span>
+        <span className="text-xs text-muted-foreground">等级:</span>
         <select
-          value={selectedDifficulty}
-          onChange={(e) => onDifficultyChange(e.target.value)}
+          value={selectedLevel}
+          onChange={(e) => onLevelChange(e.target.value)}
           className="rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
         >
-          <option value="all">全部难度</option>
-          <option value="beginner">初级</option>
-          <option value="intermediate">中级</option>
-          <option value="advanced">高级</option>
-          <option value="unknown">未知</option>
+          <option value="all">全部等级</option>
+          {LEVEL_DEFS.map(d => (
+            <option key={d.key} value={d.key}>{d.label}</option>
+          ))}
+          <option value="other">其他</option>
+        </select>
+      </div>
+
+      {/* Frequency filter（词频档） */}
+      <div className="flex items-center gap-1.5">
+        <span className="text-xs text-muted-foreground">词频:</span>
+        <select
+          value={selectedFrequency}
+          onChange={(e) => onFrequencyChange(e.target.value)}
+          className="rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+        >
+          <option value="all">全部词频</option>
+          {FREQ_BANDS.map(b => (
+            <option key={b.key} value={b.key}>{b.label}</option>
+          ))}
+          <option value="none">无数据</option>
+        </select>
+      </div>
+
+      {/* Part of speech filter */}
+      <div className="flex items-center gap-1.5">
+        <span className="text-xs text-muted-foreground">词性:</span>
+        <select
+          value={selectedPos}
+          onChange={(e) => onPosChange(e.target.value)}
+          className="rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+        >
+          <option value="all">全部词性</option>
+          {POS_OPTIONS.map(p => (
+            <option key={p} value={p}>{POS_LABELS[p] || p}</option>
+          ))}
         </select>
       </div>
 

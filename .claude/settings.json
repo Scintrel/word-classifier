@@ -4,7 +4,9 @@
       "Bash(npm run *)",
       "Bash(npm ls *)",
       "Bash(node scripts/user-journey.mjs)",
-      "Bash(npx vitest *)"
+      "Bash(npx vitest *)",
+      "Bash(node scripts/ecdict-to-dict.js)",
+      "Bash(node -e ' *)"
     ]
   }
 }

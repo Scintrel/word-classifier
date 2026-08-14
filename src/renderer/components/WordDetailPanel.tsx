@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react'
 import { X, Save, Trash2, Plus, Loader2 } from 'lucide-react'
+import { FreqBadge } from './WordLevelBadges'
+import {
+  POS_OPTIONS, POS_LABELS, LEVEL_DEFS, parseLevels
+} from '../constants/wordMeta'
 
 interface WordData {
   id: number
@@ -10,6 +14,7 @@ interface WordData {
   definition_cn?: string
   definition_en?: string
   difficulty?: string
+  frequency?: number | null
   created_at?: string
   updated_at?: string
 }
@@ -33,27 +38,6 @@ interface WordDetailPanelProps {
   wordId: number | null
   onClose: () => void
   onSaved: () => void  // Refresh the word list
-}
-
-const DIFFICULTY_OPTIONS = [
-  { value: 'beginner', label: '初级', color: 'bg-green-100 text-green-700' },
-  { value: 'intermediate', label: '中级', color: 'bg-yellow-100 text-yellow-700' },
-  { value: 'advanced', label: '高级', color: 'bg-red-100 text-red-700' },
-  { value: 'unknown', label: '未知', color: 'bg-gray-100 text-gray-500' },
-]
-
-const POS_OPTIONS = [
-  'noun', 'verb', 'adjective', 'adverb', 'preposition',
-  'conjunction', 'pronoun', 'interjection', 'article',
-  'abbreviation', 'auxiliary', 'numeral', 'suffix', 'prefix'
-]
-
-/** 词性的中文名（用于界面显示） */
-const POS_LABELS: Record<string, string> = {
-  'noun': '名词', 'verb': '动词', 'adjective': '形容词', 'adverb': '副词',
-  'preposition': '介词', 'conjunction': '连词', 'pronoun': '代词', 'interjection': '感叹词',
-  'article': '冠词', 'abbreviation': '缩写', 'auxiliary': '助动词',
-  'numeral': '数词', 'suffix': '后缀', 'prefix': '前缀',
 }
 
 /**
@@ -124,7 +108,7 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
         part_of_speech: word.part_of_speech ?? null,
         definition_cn: word.definition_cn ?? null,
         definition_en: word.definition_en ?? null,
-        difficulty: word.difficulty ?? 'unknown'
+        difficulty: word.difficulty ?? ''
       })
 
       // Save category changes
@@ -208,8 +192,19 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
     updateField('part_of_speech', next.join(','))
   }
 
+  /** 切换考试等级（一词可多等级，逗号连接存储；全部取消 = 无标签） */
+  function toggleLevel(key: string) {
+    if (!word) return
+    const current = parseLevels(word.difficulty)
+    const next = current.includes(key) ? current.filter(k => k !== key) : [...current, key]
+    updateField('difficulty', next.join(','))
+  }
+
   // 当前选中的词性列表
   const wordPosList = (word?.part_of_speech ?? '').split(',').map(s => s.trim()).filter(Boolean)
+
+  // 当前选中的等级列表
+  const currentLevels = parseLevels(word?.difficulty)
 
   // 根类（含其子类分组展示）
   const rootCategories = allCategories.filter(c => c.parent_id === null)
@@ -306,16 +301,35 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
             </div>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium">难度</label>
-            <select
-              value={word.difficulty ?? 'unknown'}
-              onChange={(e) => updateField('difficulty', e.target.value)}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
-            >
-              {DIFFICULTY_OPTIONS.map(d => (
-                <option key={d.value} value={d.value}>{d.label}</option>
+            <label className="mb-1 block text-sm font-medium">等级（可多选，不选表示「其他」）</label>
+            <div className="flex flex-wrap gap-1.5">
+              {LEVEL_DEFS.map(d => (
+                <button
+                  key={d.key}
+                  type="button"
+                  onClick={() => toggleLevel(d.key)}
+                  className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                    currentLevels.includes(d.key)
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground hover:bg-accent'
+                  }`}
+                >
+                  {d.label}
+                </button>
               ))}
-            </select>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              一个单词可同时属于多个考试等级（如 高中+CET4）。等级由内置词典自动生成。
+            </p>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium">词频（自动生成，不可修改）</label>
+            <div className="flex items-center gap-2">
+              <FreqBadge frequency={word.frequency} showRank />
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              按 COCA 语料库排名分档，排名越靠前越常用。可到「单词检修」页用「等级词频回填」刷新。
+            </p>
           </div>
 
           {/* Definitions */}

@@ -66,6 +66,8 @@ export interface ElectronAPI {
     search?: string
     categoryId?: number
     difficulty?: string
+    frequency?: string
+    partOfSpeech?: string
   }) => Promise<{
     words: unknown[]
     total: number
@@ -80,19 +82,22 @@ export interface ElectronAPI {
   addExample: (wordId: number, sentenceEn: string, sentenceCn?: string) => Promise<boolean>
   deleteExample: (exampleId: number) => Promise<boolean>
   setWordCategories: (wordId: number, categoryIds: number[]) => Promise<boolean>
-  getDifficulties: () => Promise<unknown[]>
 
   // Validation
   checkValidation: () => Promise<unknown>
   autoFixCount: () => Promise<number>
   autoFixBatch: (batchSize?: number) => Promise<{ fixed: number; details: string[]; done: boolean }>
+  normalizePhoneticsCount: () => Promise<number>
+  normalizePhoneticsBatch: (batchSize?: number) => Promise<{ fixed: number; details: string[]; done: boolean }>
+  refillLevelsCount: () => Promise<number>
+  refillLevelsBatch: (batchSize?: number) => Promise<{ fixed: number; details: string[]; done: boolean }>
 
   // Classification
   runClassification: () => Promise<{ classified: number; total: number; details: unknown[] }>
   getClassificationStats: () => Promise<unknown>
 
   // Export
-  exportWords: (options?: { categoryId?: number; difficulty?: string }) => Promise<unknown[]>
+  exportWords: (options?: { categoryId?: number; difficulty?: string; frequency?: string }) => Promise<unknown[]>
 
   // Categories
   getCategories: () => Promise<unknown[]>
@@ -136,12 +141,15 @@ const api: ElectronAPI = {
   addExample: (wordId, sentenceEn, sentenceCn?) => ipcRenderer.invoke('words:addExample', wordId, sentenceEn, sentenceCn),
   deleteExample: (exampleId) => ipcRenderer.invoke('words:deleteExample', exampleId),
   setWordCategories: (wordId, categoryIds) => ipcRenderer.invoke('words:setCategories', wordId, categoryIds),
-  getDifficulties: () => ipcRenderer.invoke('words:getDifficulties'),
 
   // Validation
   checkValidation: () => ipcRenderer.invoke('validation:check'),
   autoFixCount: () => ipcRenderer.invoke('validation:autoFixCount'),
   autoFixBatch: (batchSize?) => ipcRenderer.invoke('validation:autoFixBatch', batchSize),
+  normalizePhoneticsCount: () => ipcRenderer.invoke('validation:normalizePhoneticsCount'),
+  normalizePhoneticsBatch: (batchSize?) => ipcRenderer.invoke('validation:normalizePhoneticsBatch', batchSize),
+  refillLevelsCount: () => ipcRenderer.invoke('validation:refillLevelsCount'),
+  refillLevelsBatch: (batchSize?) => ipcRenderer.invoke('validation:refillLevelsBatch', batchSize),
 
   // Classification
   runClassification: () => ipcRenderer.invoke('classification:run'),

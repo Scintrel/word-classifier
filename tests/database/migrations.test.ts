@@ -50,8 +50,18 @@ describe('Database Migrations', () => {
   it('should be idempotent on re-run', () => {
     runMigrations(db)
     const r = db.exec('SELECT COUNT(*) as c FROM _migrations')
-    // 迁移数量 = MIGRATIONS 数组长度（001 初始 + 002 抽象分类）
-    expect((r[0].values[0][0] as number)).toBe(3)
+    // 迁移数量 = MIGRATIONS 数组长度（001 初始 + 002 分类种子 + 002 抽象分类 + 003 调色板）
+    expect((r[0].values[0][0] as number)).toBe(4)
+  })
+
+  it('should apply the 17-hue category color palette', () => {
+    const one = db.exec('SELECT color FROM categories WHERE id = 11')
+    expect(one[0].values[0][0]).toBe('#9ca3af')
+    const root = db.exec('SELECT color FROM categories WHERE id = 9')
+    expect(root[0].values[0][0]).toBe('#06b6d4')
+    // 子类跟随父类颜色：70（逻辑连接-转折让步）原色 #94a3b8 → 新色 #14b8a6
+    const child = db.exec('SELECT color FROM categories WHERE id = 70')
+    expect(child[0].values[0][0]).toBe('#14b8a6')
   })
 
   it('should enforce foreign keys', () => {

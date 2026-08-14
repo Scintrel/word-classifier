@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import {
   Edit3, AlertTriangle, AlertCircle, CheckCircle2,
-  Search, XCircle, Zap, ChevronDown, ChevronRight, Cpu
+  Search, XCircle, Zap, ChevronDown, ChevronRight, Cpu, Award, Slash
 } from 'lucide-react'
 import WordDetailPanel from '../components/WordDetailPanel'
+import HelpTip from '../components/HelpTip'
 
 interface ValidationStats {
   complete: number
@@ -63,6 +64,14 @@ export default function DataEditorView() {
   const [aiFixing, setAiFixing] = useState(false)
   const [aiProgress, setAiProgress] = useState({ current: 0, total: 0 })
   const [aiFixResult, setAiFixResult] = useState<{ filled: number; words: string[] } | null>(null)
+  // 等级词频回填
+  const [levelFixing, setLevelFixing] = useState(false)
+  const [levelProgress, setLevelProgress] = useState({ current: 0, total: 0 })
+  const [levelResult, setLevelResult] = useState<{ fixed: number; details: string[] } | null>(null)
+  // 音标规范化
+  const [normFixing, setNormFixing] = useState(false)
+  const [normProgress, setNormProgress] = useState({ current: 0, total: 0 })
+  const [normResult, setNormResult] = useState<{ fixed: number; details: string[] } | null>(null)
   const [filterType, setFilterType] = useState<string | null>(null)
   const [expandedIssues, setExpandedIssues] = useState<Set<number>>(new Set())
   // 正在编辑的单词（点「手动编辑」时在本页滑出编辑面板）
@@ -155,6 +164,68 @@ export default function DataEditorView() {
     }
   }
 
+  /** 等级词频回填：用词典的考试标签和 COCA 词频填充 difficulty/frequency */
+  async function handleRefillLevels() {
+    setLevelFixing(true)
+    setLevelResult(null)
+    try {
+      const total = await window.api.refillLevelsCount()
+      if (total === 0) { setLevelResult({ fixed: 0, details: [] }); setLevelFixing(false); return }
+      setLevelProgress({ current: 0, total })
+      let allDetails: string[] = []
+      let totalFixed = 0
+      let attempts = 0
+      // 防卡死：最多循环"总单词数/每批300"批 + 2 批余量
+      const maxAttempts = Math.ceil(total / 300) + 2
+      while (attempts < maxAttempts) {
+        const data = await window.api.refillLevelsBatch(300)
+        // 词典未加载的错误（fixed = -1），直接显示错误并退出
+        if (data.fixed === -1) { setLevelResult({ fixed: -1, details: data.details }); break }
+        totalFixed += data.fixed
+        allDetails = [...allDetails, ...data.details]
+        setLevelProgress({ current: totalFixed, total })
+        attempts++
+        if (data.done) break
+        // 本批没有进展，避免无限循环
+        if (data.fixed === 0 && attempts > 1) break
+      }
+      if (totalFixed >= 0) setLevelResult({ fixed: totalFixed, details: allDetails })
+    } catch (err) {
+      console.error('Refill levels failed:', err)
+    } finally {
+      setLevelFixing(false)
+    }
+  }
+
+  /** 音标规范化：存量音标统一加 // 并修正特殊字符 */
+  async function handleNormalizePhonetics() {
+    setNormFixing(true)
+    setNormResult(null)
+    try {
+      const total = await window.api.normalizePhoneticsCount()
+      if (total === 0) { setNormResult({ fixed: 0, details: [] }); setNormFixing(false); return }
+      setNormProgress({ current: 0, total })
+      let allDetails: string[] = []
+      let totalFixed = 0
+      let attempts = 0
+      const maxAttempts = Math.ceil(total / 300) + 2
+      while (attempts < maxAttempts) {
+        const data = await window.api.normalizePhoneticsBatch(300)
+        totalFixed += data.fixed
+        allDetails = [...allDetails, ...data.details]
+        setNormProgress({ current: totalFixed, total })
+        attempts++
+        if (data.done) break
+        if (data.fixed === 0 && attempts > 1) break
+      }
+      setNormResult({ fixed: totalFixed, details: allDetails })
+    } catch (err) {
+      console.error('Normalize phonetics failed:', err)
+    } finally {
+      setNormFixing(false)
+    }
+  }
+
   function toggleExpand(issueIdx: number) {
     setExpandedIssues(prev => {
       const next = new Set(prev)
@@ -174,12 +245,22 @@ export default function DataEditorView() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">单词检修</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold">单词检修</h1>
+            <HelpTip title="单词检修说明">
+              「检查」扫描全部单词，找出缺失、重复、乱码等问题。<br />
+              「词典补全」用内置词典（约 77 万词条）填充音标/释义/词性，本地运行、免费、无需联网。<br />
+              「音标规范化」给存量音标统一加上 // 并修正特殊字符。<br />
+              「等级词频回填」用词典标签填充考试等级（初中/高中/CET/考研/托福/雅思/GRE）与 COCA 词频排名。<br />
+              「AI 补全」调用大模型生成更完整的信息和例句，需联网并在「设置」中配置。<br />
+              建议顺序：先词典补全 → 再等级词频回填 → 最后对词典里没有的词用 AI 补全。
+            </HelpTip>
+          </div>
           <p className="text-muted-foreground">
             检查和修复单词数据中的问题
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={handleCheck}
             disabled={checking}
@@ -187,6 +268,22 @@ export default function DataEditorView() {
           >
             <Search className={`h-4 w-4 ${checking ? 'animate-pulse' : ''}`} />
             {checking ? '检查中...' : result ? '重新检查' : '开始检查'}
+          </button>
+          <button
+            onClick={handleNormalizePhonetics}
+            disabled={normFixing}
+            className="flex items-center gap-2 rounded-md border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-medium text-teal-700 hover:bg-teal-100 disabled:opacity-50 dark:border-teal-800 dark:bg-teal-900/40 dark:text-teal-300"
+          >
+            <Slash className={`h-4 w-4 ${normFixing ? 'animate-spin' : ''}`} />
+            {normFixing ? '规范化中...' : '音标规范化'}
+          </button>
+          <button
+            onClick={handleRefillLevels}
+            disabled={levelFixing}
+            className="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50 dark:border-blue-800 dark:bg-blue-900/40 dark:text-blue-300"
+          >
+            <Award className={`h-4 w-4 ${levelFixing ? 'animate-spin' : ''}`} />
+            {levelFixing ? '回填中...' : '等级词频回填'}
           </button>
           {result && result.issues.length > 0 && (
             <>
@@ -210,6 +307,76 @@ export default function DataEditorView() {
           )}
         </div>
       </div>
+
+      {/* 音标规范化 progress */}
+      {normFixing && normProgress.total > 0 && (
+        <div className="mb-4 rounded-lg border border-teal-200 bg-teal-50 p-4 dark:border-teal-800 dark:bg-teal-900/40">
+          <div className="mb-2 flex items-center justify-between text-sm">
+            <span className="font-medium text-teal-800 dark:text-teal-300">音标规范化中...</span>
+            <span className="text-teal-600 dark:text-teal-400">{normProgress.current} / {normProgress.total}</span>
+          </div>
+          <div className="h-2 w-full overflow-hidden rounded-full bg-teal-200 dark:bg-teal-800">
+            <div className="h-full rounded-full bg-teal-500 transition-all duration-300"
+              style={{ width: `${(normProgress.current / normProgress.total) * 100}%` }} />
+          </div>
+        </div>
+      )}
+      {/* 音标规范化 result */}
+      {normResult && (
+        <div className={`mb-4 rounded-lg border p-4 ${normResult.fixed > 0 ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/40' : 'border-border bg-muted'}`}>
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5 text-green-600" />
+            <span className="font-medium text-green-800 dark:text-green-300">
+              {normResult.fixed > 0
+                ? `已规范化 ${normResult.fixed} 个单词的音标（补 // 并修正特殊字符）`
+                : '没有需要规范化的音标'}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* 等级词频回填 progress */}
+      {levelFixing && levelProgress.total > 0 && (
+        <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/40">
+          <div className="mb-2 flex items-center justify-between text-sm">
+            <span className="font-medium text-blue-800 dark:text-blue-300">等级词频回填中...</span>
+            <span className="text-blue-600 dark:text-blue-400">{levelProgress.current} / {levelProgress.total}</span>
+          </div>
+          <div className="h-2 w-full overflow-hidden rounded-full bg-blue-200 dark:bg-blue-800">
+            <div className="h-full rounded-full bg-blue-500 transition-all duration-300"
+              style={{ width: `${(levelProgress.current / levelProgress.total) * 100}%` }} />
+          </div>
+        </div>
+      )}
+      {/* 等级词频回填 result */}
+      {levelResult && levelResult.fixed === -1 && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/40">
+          <div className="flex items-center gap-2">
+            <XCircle className="h-5 w-5 text-red-500" />
+            <span className="font-medium text-red-800 dark:text-red-300">等级词频回填失败</span>
+          </div>
+          <div className="mt-2 text-sm text-red-700 dark:text-red-400">
+            {levelResult.details[0] || '未知错误'}
+          </div>
+        </div>
+      )}
+      {levelResult && levelResult.fixed >= 0 && (
+        <div className={`mb-4 rounded-lg border p-4 ${levelResult.fixed > 0 ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/40' : 'border-border bg-muted'}`}>
+          <div className="flex items-center gap-2">
+            <Award className="h-5 w-5 text-green-600" />
+            <span className="font-medium text-green-800 dark:text-green-300">
+              {levelResult.fixed > 0
+                ? `已回填 ${levelResult.fixed} 个单词的等级与词频`
+                : '没有需要回填的单词'}
+            </span>
+          </div>
+          {levelResult.details.length > 0 && (
+            <div className="mt-2 max-h-32 overflow-y-auto text-sm text-green-700 dark:text-green-400">
+              {levelResult.details.slice(0, 20).map((d, i) => (<p key={i}>• {d}</p>))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* No validation run yet */}
       {!result && (

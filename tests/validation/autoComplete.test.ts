@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { lookupWord, getAutoComplete } from '../../src/main/validation/autoComplete'
+import { lookupWord, getAutoComplete, normalizePhonetic } from '../../src/main/validation/autoComplete'
 
 describe('AutoComplete', () => {
   describe('lookupWord', () => {
@@ -45,6 +45,36 @@ describe('AutoComplete', () => {
       const r = getAutoComplete('zzqqxx')
       expect(r.foundInDict).toBe(false)
       expect(r.partOfSpeech).toBeUndefined()
+    })
+    it('should expose exam tags and COCA frequency for apple', () => {
+      const r = getAutoComplete('apple')
+      expect(r.difficultyTags).toContain('zk')
+      expect(r.difficultyTags).toContain('gk')
+      expect(r.frq).toBe(2695)
+    })
+    it('should wrap phonetics in slashes and normalize cyrillic chars', () => {
+      const r = getAutoComplete('apple')
+      expect(r.phoneticUk).toMatch(/^\/.*\/$/)
+      expect(r.phoneticUk).not.toMatch(/[әє]/)
+      expect(r.phoneticUs).toBe(r.phoneticUk)
+    })
+  })
+
+  describe('normalizePhonetic', () => {
+    it('converts ECDICT cyrillic chars and wraps in slashes', () => {
+      expect(normalizePhonetic("ә'bændәn")).toBe("/ə'bændən/")
+    })
+    it('keeps already-wrapped phonetics', () => {
+      expect(normalizePhonetic('/əbændən/')).toBe('/əbændən/')
+    })
+    it('leaves non-phonetic text untouched', () => {
+      expect(normalizePhonetic('你好世界')).toBe('你好世界')
+    })
+    it('returns null for empty input', () => {
+      expect(normalizePhonetic(null)).toBeNull()
+      expect(normalizePhonetic(undefined)).toBeNull()
+      expect(normalizePhonetic('')).toBeNull()
+      expect(normalizePhonetic('   ')).toBeNull()
     })
   })
 })

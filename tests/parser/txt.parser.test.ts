@@ -55,6 +55,38 @@ describe('TxtParser', () => {
   it('should handle files with tabs and spaces mixed', async () => {
     writeFileSync(testFile, 'apple\t/ˈæpəl/\t苹果\t一种水果\nbanana\t/bəˈnænə/\t香蕉\t一种热带水果', 'utf-8')
     const result = await parser.parse(testFile)
-    expect(result.totalRows).toBe(1) // First row looks like header, only 1 data row
+    // 无表头文件：第一行是数据，不能被当成表头剥掉（旧版长度启发式会丢首行）
+    expect(result.totalRows).toBe(2)
+    expect(result.rows[0]['列1']).toBe('apple')
+  })
+
+  it('one-column file with a header row keeps all words', async () => {
+    writeFileSync(testFile, '单词\napple\nbook\ncat', 'utf-8')
+    const result = await parser.parse(testFile)
+    expect(result.headers).toEqual(['word'])
+    expect(result.totalRows).toBe(3)
+    expect(result.rows[0]).toEqual({ word: 'apple' })
+  })
+
+  it('one-column file with long words is not misdetected as tab-separated', async () => {
+    writeFileSync(testFile, 'internationalization\nuncharacteristically\nmisunderstandings', 'utf-8')
+    const result = await parser.parse(testFile)
+    expect(result.totalRows).toBe(3) // 旧逻辑：平均长度>40 → 误判 tab 格式并丢首词
+    expect(result.rows[0].word).toBe('internationalization')
+  })
+
+  it('headerless two-column tab file keeps the first row', async () => {
+    writeFileSync(testFile, 'apple\t苹果\nbook\t书', 'utf-8')
+    const result = await parser.parse(testFile)
+    expect(result.headers).toEqual(['列1', '列2'])
+    expect(result.totalRows).toBe(2)
+    expect(result.rows[0]['列1']).toBe('apple')
+  })
+
+  it('tab file whose first line has no tab keeps the first line', async () => {
+    writeFileSync(testFile, 'apple\nbook\t书\ncat\t猫', 'utf-8')
+    const result = await parser.parse(testFile)
+    expect(result.totalRows).toBe(3)
+    expect(result.rows[0]['列1']).toBe('apple')
   })
 })

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Settings, Sun, Moon, Monitor, FileDown, Database, Cpu, CheckCircle2, XCircle, Loader2 } from 'lucide-react'
+import HelpTip from '../components/HelpTip'
+import { LEVEL_DEFS, FREQ_BANDS } from '../constants/wordMeta'
 
 /**
  * SettingsView - 设置页面
@@ -13,6 +15,9 @@ export default function SettingsView() {
   const [language, setLanguage] = useState('zh')
   const [exportFormat, setExportFormat] = useState('csv')
   const [autoClassify, setAutoClassify] = useState(true)
+  // 导出筛选
+  const [exportLevel, setExportLevel] = useState('all')
+  const [exportFreq, setExportFreq] = useState('all')
 
   // AI config
   const [aiProvider, setAiProvider] = useState('ollama')
@@ -153,11 +158,16 @@ export default function SettingsView() {
         </div>
       </section>
 
-      {/* Export */}
+      {/* Export format */}
       <section className="mb-6 rounded-lg border border-border p-5">
         <div className="mb-4 flex items-center gap-3">
           <FileDown className="h-5 w-5 text-primary" />
           <h2 className="font-semibold">导出格式</h2>
+          <HelpTip title="导出格式">
+            CSV：通用表格格式，Excel/WPS 可以直接打开。<br />
+            Excel 选项也以 CSV 格式导出（Excel 可直接打开）。<br />
+            JSON：结构化数据，适合程序处理或备份。
+          </HelpTip>
         </div>
         <div className="flex gap-3">
           {[
@@ -280,14 +290,51 @@ export default function SettingsView() {
         <div className="mb-4 flex items-center gap-3">
           <FileDown className="h-5 w-5 text-primary" />
           <h2 className="font-semibold">导出数据</h2>
+          <HelpTip title="导出筛选">
+            可选择按等级或词频范围导出部分单词，默认导出全部。<br />
+            「其他」= 没有等级标签的单词；「无数据」= 没有词频排名的单词。
+          </HelpTip>
         </div>
         <p className="mb-3 text-sm text-muted-foreground">
           按上方选择的格式导出分类好的单词表。Excel 格式以 CSV 导出（Excel 可直接打开）。
         </p>
+        <div className="mb-3 flex flex-wrap gap-4">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">等级:</span>
+            <select
+              value={exportLevel}
+              onChange={(e) => setExportLevel(e.target.value)}
+              className="rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+            >
+              <option value="all">全部等级</option>
+              {LEVEL_DEFS.map(d => (
+                <option key={d.key} value={d.key}>{d.label}</option>
+              ))}
+              <option value="other">其他</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">词频:</span>
+            <select
+              value={exportFreq}
+              onChange={(e) => setExportFreq(e.target.value)}
+              className="rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+            >
+              <option value="all">全部词频</option>
+              {FREQ_BANDS.map(b => (
+                <option key={b.key} value={b.key}>{b.label}</option>
+              ))}
+              <option value="none">无数据</option>
+            </select>
+          </div>
+        </div>
         <button
           onClick={async () => {
             try {
-              const words = await window.api.exportWords()
+              const words = await window.api.exportWords({
+                difficulty: exportLevel !== 'all' ? exportLevel : undefined,
+                frequency: exportFreq !== 'all' ? exportFreq : undefined
+              })
               let blob: Blob
               let fileName: string
               if (exportFormat === 'json') {
@@ -300,11 +347,18 @@ export default function SettingsView() {
                   const s = String(v ?? '')
                   return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
                 }
-                const headers = ['单词', '英式音标', '美式音标', '词性', '中文释义', '英文释义', '难度', '分类']
+                // 等级列：标签转中文（zk→初中 等），便于直接阅读
+                const levelToText = (d: unknown) => {
+                  const s = String(d ?? '')
+                  if (!s || s === 'none' || s === 'unknown') return '其他'
+                  return s.split(',').map(t => t.trim())
+                    .map(t => LEVEL_DEFS.find(x => x.key === t)?.label ?? t).join('、')
+                }
+                const headers = ['单词', '英式音标', '美式音标', '词性', '中文释义', '英文释义', '等级', '词频排名', '分类']
                 const lines = [headers.join(',')]
                 for (const w of words) {
                   lines.push([w.word, w.phonetic_uk, w.phonetic_us, w.part_of_speech,
-                    w.definition_cn, w.definition_en, w.difficulty, w.categories].map(esc).join(','))
+                    w.definition_cn, w.definition_en, levelToText(w.difficulty), w.frequency, w.categories].map(esc).join(','))
                 }
                 blob = new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' })
                 fileName = 'words-all.csv'
@@ -317,7 +371,7 @@ export default function SettingsView() {
           }}
           className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
-          导出全部单词 ({exportFormat === 'json' ? 'JSON' : 'CSV'})
+          导出单词 ({exportFormat === 'json' ? 'JSON' : 'CSV'})
         </button>
       </section>
 
@@ -326,6 +380,10 @@ export default function SettingsView() {
         <div className="mb-4 flex items-center gap-3">
           <Database className="h-5 w-5 text-red-600" />
           <h2 className="font-semibold text-red-900">数据管理</h2>
+          <HelpTip title="数据管理">
+            「清空所有单词」会删除全部单词及其分类、例句，不可恢复。<br />
+            「重置为默认分类」恢复出厂 81 个分类并清空所有单词的分类关联，下次自动分类会重新关联。
+          </HelpTip>
         </div>
         <p className="mb-3 text-sm text-red-700">
           以下操作不可撤销，请谨慎使用。

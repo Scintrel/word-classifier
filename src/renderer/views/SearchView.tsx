@@ -1,16 +1,29 @@
 import { useState } from 'react'
 import { Search, BookOpen } from 'lucide-react'
+import WordDetailPanel from '../components/WordDetailPanel'
+import CategoryBadges from '../components/CategoryBadges'
+import { LevelBadges, FreqBadge } from '../components/WordLevelBadges'
+import HelpTip from '../components/HelpTip'
+import { POS_LABELS } from '../constants/wordMeta'
+
+/** 词性显示为中文标签（noun,verb → 名词、动词） */
+function posLabels(pos?: string): string {
+  if (!pos) return ''
+  return pos.split(',').map(s => s.trim()).filter(Boolean)
+    .map(s => POS_LABELS[s] || s).join('、')
+}
 
 /**
  * SearchView - 搜索页面
  *
  * 搜索单词拼写和释义（中英文释义都搜）。
- * 结果以卡片列表展示。
+ * 结果以卡片列表展示，点击卡片打开编辑面板。
  */
 export default function SearchView() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<unknown[]>([])
   const [hasSearched, setHasSearched] = useState(false)
+  const [selectedWordId, setSelectedWordId] = useState<number | null>(null)
 
   async function handleSearch() {
     if (!query.trim()) return
@@ -29,7 +42,14 @@ export default function SearchView() {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-bold">搜索</h1>
+      <div className="mb-2 flex items-center gap-2">
+        <h1 className="text-2xl font-bold">搜索</h1>
+        <HelpTip title="搜索范围">
+          搜索范围：单词拼写、中文释义、英文释义。<br />
+          排序规则：拼写完全一致的最靠前（搜 art 第一个就是 art），前缀匹配其次（art → artist），其余按词频从高到低。<br />
+          点击任意结果卡片即可编辑该单词。
+        </HelpTip>
+      </div>
       <p className="mb-6 text-muted-foreground">
         搜索单词拼写或释义（中文、英文释义都可以搜）
       </p>
@@ -65,24 +85,27 @@ export default function SearchView() {
             {(results as Array<Record<string, unknown>>).map((word) => (
               <div
                 key={word.id as number}
+                onClick={() => setSelectedWordId(word.id as number)}
                 className="rounded-lg border border-border p-4 hover:border-primary/30 hover:bg-accent/30 transition-colors cursor-pointer"
               >
-                <div className="mb-1 flex items-center gap-3">
+                <div className="mb-1 flex flex-wrap items-center gap-3">
                   <span className="text-lg font-semibold">{word.word as string}</span>
                   <span className="text-sm text-muted-foreground">
                     {word.phonetic_uk as string || word.phonetic_us as string || ''}
                   </span>
-                  <span className="rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
-                    {word.part_of_speech as string || ''}
-                  </span>
+                  {word.part_of_speech ? (
+                    <span className="rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
+                      {posLabels(word.part_of_speech as string)}
+                    </span>
+                  ) : null}
                 </div>
                 <p className="text-sm text-foreground/80">
                   {word.definition_cn as string || word.definition_en as string || '暂无释义'}
                 </p>
-                <div className="mt-2 flex items-center gap-2">
-                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                    {word.categories as string || '未分类'}
-                  </span>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <CategoryBadges raw={word.category_badges as string | null} />
+                  <LevelBadges difficulty={word.difficulty as string | null} />
+                  <FreqBadge frequency={word.frequency as number | null} />
                 </div>
               </div>
             ))}
@@ -99,9 +122,18 @@ export default function SearchView() {
           <Search className="mb-3 h-12 w-12 text-muted-foreground/30" />
           <p className="text-muted-foreground">输入关键词开始搜索</p>
           <p className="text-sm text-muted-foreground/70">
-            支持中英文搜索单词、释义和例句
+            支持中英文搜索单词和释义
           </p>
         </div>
+      )}
+
+      {/* Word detail panel (slide-out) */}
+      {selectedWordId !== null && (
+        <WordDetailPanel
+          wordId={selectedWordId}
+          onClose={() => setSelectedWordId(null)}
+          onSaved={() => handleSearch()}
+        />
       )}
     </div>
   )
