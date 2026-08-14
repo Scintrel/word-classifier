@@ -103,16 +103,6 @@ export interface ElectronAPI {
   // Categories
   getCategories: () => Promise<unknown[]>
 
-  // AI
-  testAIConnection: () => Promise<{ ok: boolean; message: string }>
-  saveAIConfig: (config: Record<string, string>) => Promise<boolean>
-  getAIConfig: () => Promise<Record<string, string>>
-  aiCompleteWord: (word: string) => Promise<unknown>
-  aiCompleteWordsBatch: (words: string[]) => Promise<unknown[]>
-  aiAutoFillCount: () => Promise<number>
-  aiAutoFillAll: (batchSize?: number) => Promise<{ filled: number; words: string[]; done: boolean }>
-  aiClassifyWord: (word: string, definition: string) => Promise<unknown>
-
   // Data management
   clearWords: () => Promise<boolean>
   resetCategories: () => Promise<boolean>
@@ -203,16 +193,6 @@ const api: ElectronAPI = {
 
   // Categories
   getCategories: () => ipcRenderer.invoke('categories:getAll'),
-
-  // AI
-  testAIConnection: () => ipcRenderer.invoke('ai:testConnection'),
-  saveAIConfig: (config) => ipcRenderer.invoke('ai:saveConfig', config),
-  getAIConfig: () => ipcRenderer.invoke('ai:getConfig'),
-  aiCompleteWord: (word) => ipcRenderer.invoke('ai:completeWord', word),
-  aiCompleteWordsBatch: (words) => ipcRenderer.invoke('ai:completeWordsBatch', words),
-  aiAutoFillCount: () => ipcRenderer.invoke('ai:autoFillCount'),
-  aiAutoFillAll: (batchSize?) => ipcRenderer.invoke('ai:autoFillAll', batchSize),
-  aiClassifyWord: (word, def) => ipcRenderer.invoke('ai:classifyWord', word, def),
 
   // Data management
   clearWords: () => ipcRenderer.invoke('data:clearWords'),

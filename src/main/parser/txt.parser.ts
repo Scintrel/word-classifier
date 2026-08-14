@@ -54,7 +54,7 @@ export class TxtParser implements IParser {
     return lines.some(line => line.includes('\t')) ? 'tab-separated' : 'one-word-per-line'
   }
 
-  /** 纯单词模式里可能出现的表头行（明确命中才剥掉，绝不按长度猜） */
+  /** 一行一词的文件里可能出现的表头行（明确命中才剥掉，绝不按长度猜） */
   private static readonly WORD_HEADER_RE = /^(word|words|单词|词汇|vocabulary|wordlist|word list|spelling|拼写)$/i
 
   /**

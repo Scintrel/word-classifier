@@ -14,7 +14,6 @@ import {
 } from '../validation/autoComplete'
 import { classifyAll, getClassificationStats, previewClassification } from '../classification/classifier'
 import { listDictEntries, saveDictEntry, deleteDictEntry, listChangeLog, undoChange } from '../validation/userDict'
-import { createAIService, type AIConfig } from '../ai/aiService'
 
 // Wrap runSQL to auto-save after writes
 const runSQLWithSave = (sql: string, params: unknown[] = []) => { runSQL(getDatabase(), sql, params); saveDatabase() }
@@ -598,112 +597,6 @@ export function registerIpcHandlers(): void {
     runMigrations(db)
     logUserAction('重置为默认分类')
     return true
-  })
-
-  // ============================================
-  // AI: get current config
-  // ============================================
-  function getAIConfig(): AIConfig {
-    const provider = (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_provider'])?.value as string) || 'ollama'
-    const ollamaUrl = (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_ollama_url'])?.value as string) || 'http://localhost:11434'
-    const apiKey = (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_api_key'])?.value as string) || ''
-    const model = (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_model'])?.value as string) || ''
-    return { provider: provider as 'ollama' | 'deepseek', ollamaUrl, apiKey, model }
-  }
-
-  ipcMain.handle('ai:testConnection', async () => {
-    const ai = createAIService(getAIConfig())
-    return ai.testConnection()
-  })
-
-  ipcMain.handle('ai:saveConfig', (_event, config: Record<string, string>) => {
-    const db = getDatabase()
-    const upsert = db.prepare(
-      'INSERT INTO settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP) ON CONFLICT(key) DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP'
-    )
-    for (const [k, v] of Object.entries(config)) {
-      upsert.bind([`ai_${k}`, v, v])
-      upsert.step()
-      upsert.reset()
-    }
-    upsert.free()
-    saveDatabase()
-    return true
-  })
-
-  ipcMain.handle('ai:getConfig', () => ({
-    provider: (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_provider'])?.value as string) || 'ollama',
-    ollamaUrl: (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_ollama_url'])?.value as string) || 'http://localhost:11434',
-    apiKey: (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_api_key'])?.value as string) || '',
-    model: (queryOne_('SELECT value FROM settings WHERE key = ?', ['ai_model'])?.value as string) || '',
-  }))
-
-  ipcMain.handle('ai:completeWord', async (_event, word: string) => {
-    const ai = createAIService(getAIConfig())
-    return ai.completeWord(word)
-  })
-
-  ipcMain.handle('ai:completeWordsBatch', async (_event, words: string[]) => {
-    const ai = createAIService(getAIConfig())
-    return ai.completeWordsBatch(words)
-  })
-
-  ipcMain.handle('ai:autoFillCount', () => {
-    return queryOne_(
-      `SELECT COUNT(*) as c FROM words WHERE language = 'en'
-       AND (phonetic_uk IS NULL OR phonetic_uk = ''
-         OR definition_cn IS NULL OR definition_cn = ''
-         OR part_of_speech IS NULL OR part_of_speech = '')`
-    )?.c as number ?? 0
-  })
-
-  ipcMain.handle('ai:autoFillAll', async (_event, batchSize?: number) => {
-    const db = getDatabase()
-    const size = batchSize || 10
-    const rows = queryAll_(
-      `SELECT word FROM words WHERE language = 'en'
-       AND (phonetic_uk IS NULL OR phonetic_uk = ''
-         OR definition_cn IS NULL OR definition_cn = ''
-         OR part_of_speech IS NULL OR part_of_speech = '')
-       ORDER BY id LIMIT ?`,
-      [size]
-    )
-    if (rows.length === 0) return { filled: 0, words: [], done: true }
-    const words = rows.map(r => r.word as string)
-    const ai = createAIService(getAIConfig())
-    const results = await ai.completeWordsBatch(words)
-
-    let filled = 0
-    if (results.length > 0) {
-      // 难度已改为等级标签+词频体系，AI 不再写 difficulty（等级/词频只来自词典）
-      const stmt = db.prepare(
-        `UPDATE words SET phonetic_uk = ?, phonetic_us = ?, definition_cn = ?,
-         definition_en = ?, part_of_speech = ?, updated_at = CURRENT_TIMESTAMP
-         WHERE word = ? AND language = 'en'`
-      )
-      for (const r of results) {
-        if (!r.word) continue
-        stmt.bind([r.phoneticUk, r.phoneticUs, r.definitionCn, r.definitionEn, r.partOfSpeech, r.word])
-        stmt.step()
-        stmt.reset()
-        if (r.examples.length > 0) {
-          const exStmt = db.prepare('INSERT INTO examples (word_id, sentence_en, sentence_cn) SELECT id, ?, ? FROM words WHERE word = ? AND language = ?')
-          for (const ex of r.examples) {
-            if (ex.en) { exStmt.bind([ex.en, ex.cn || '', r.word, 'en']); exStmt.step(); exStmt.reset() }
-          }
-          exStmt.free()
-        }
-        filled++
-      }
-      stmt.free()
-      saveDatabase()
-    }
-    return { filled, words: results.map(r => r.word), done: words.length < size }
-  })
-
-  ipcMain.handle('ai:classifyWord', async (_event, word: string, definition: string) => {
-    const ai = createAIService(getAIConfig())
-    return ai.classifyWord(word, definition)
   })
 
   // ============================================

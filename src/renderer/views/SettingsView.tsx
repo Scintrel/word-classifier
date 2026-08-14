@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
-  Settings, Sun, Moon, Monitor, FileDown, Database, Cpu,
-  CheckCircle2, XCircle, Loader2, ChevronDown, ChevronRight
+  Settings, Sun, Moon, Monitor, FileDown, Database
 } from 'lucide-react'
 import HelpTip from '../components/HelpTip'
 import SectionCard from '../components/SectionCard'
@@ -24,39 +23,15 @@ export default function SettingsView() {
   const [exportLevel, setExportLevel] = useState('all')
   const [exportFreq, setExportFreq] = useState('all')
 
-  // AI config
-  const [aiProvider, setAiProvider] = useState('ollama')
-  const [aiOllamaUrl, setAiOllamaUrl] = useState('http://localhost:11434')
-  const [aiApiKey, setAiApiKey] = useState('')
-  const [aiModel, setAiModel] = useState('deepseek-chat')
-  const [testingAI, setTestingAI] = useState(false)
-  const [testResult, setTestResult] = useState<{ ok: boolean; message: string } | null>(null)
-  const [savingAI, setSavingAI] = useState(false)
-  // AI 配置区默认折叠，减少页面长度
-  const [aiOpen, setAiOpen] = useState(false)
   // 开发者模式开关（与侧边栏入口共用状态）
   const devEnabled = useDevStore(s => s.enabled)
   const setDevEnabled = useDevStore(s => s.setEnabled)
 
   useEffect(() => {
-    loadAIConfig()
     loadAppSettings()
     // 加载开发者模式开关状态
     window.api.getSetting('dev_mode').then(v => setDevEnabled(v === 'true'))
   }, [])
-
-  async function loadAIConfig() {
-    try {
-      const cfg = await window.api.getAIConfig()
-      if (cfg.provider) setAiProvider(cfg.provider)
-      if (cfg.ollamaUrl) setAiOllamaUrl(cfg.ollamaUrl)
-      if (cfg.apiKey) setAiApiKey(cfg.apiKey)
-      if (cfg.model) setAiModel(cfg.model)
-    } catch (err) {
-      // 加载失败不阻塞页面，但记录日志方便排查
-      console.error('加载 AI 配置失败:', err)
-    }
-  }
 
   // 从数据库 settings 表加载应用偏好（主题/语言/导出格式/自动分类）
   async function loadAppSettings() {
@@ -87,26 +62,6 @@ export default function SettingsView() {
       document.documentElement.classList.toggle('dark', mq.matches)
       localStorage.setItem('app-theme', 'system')
     }
-  }
-
-  async function handleTestAI() {
-    setTestingAI(true); setTestResult(null)
-    try {
-      // Save config first
-      await window.api.saveAIConfig({ provider: aiProvider, ollama_url: aiOllamaUrl, api_key: aiApiKey, model: aiModel })
-      const result = await window.api.testAIConnection()
-      setTestResult(result)
-    } catch (err) { setTestResult({ ok: false, message: String(err) }) }
-    finally { setTestingAI(false) }
-  }
-
-  async function handleSaveAI() {
-    setSavingAI(true)
-    try {
-      await window.api.saveAIConfig({ provider: aiProvider, ollama_url: aiOllamaUrl, api_key: aiApiKey, model: aiModel })
-      setTestResult({ ok: true, message: '配置已保存' })
-    } catch (err) { setTestResult({ ok: false, message: String(err) }) }
-    finally { setSavingAI(false) }
   }
 
   /** 行内选择按钮组（主题/语言/导出格式共用） */
@@ -285,94 +240,6 @@ export default function SettingsView() {
           </button>
         </div>
       </SectionCard>
-
-      {/* AI 模型配置（默认折叠） */}
-      <section className="mb-6 rounded-lg border border-border bg-card p-5">
-        <button
-          onClick={() => setAiOpen(o => !o)}
-          className="flex w-full items-center justify-between"
-        >
-          <div className="flex items-center gap-2">
-            <Cpu className="h-5 w-5 text-primary" />
-            <h2 className="font-semibold">AI 模型配置</h2>
-            <HelpTip title="AI 模型配置">
-              使用大模型自动补全单词信息（音标、释义、例句）。<br />
-              支持本地 Ollama（免费、数据不出电脑）和 DeepSeek API（云端）。
-            </HelpTip>
-          </div>
-          {aiOpen ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-        </button>
-        {aiOpen && (
-          <div className="mt-4 space-y-3">
-            <p className="text-sm text-muted-foreground">
-              使用大模型自动补全单词信息（音标、释义、例句）和智能分类。支持本地 Ollama 和 DeepSeek API。
-            </p>
-
-            {/* Provider */}
-            <div>
-              <label className="mb-1 block text-sm font-medium">AI 服务</label>
-              <div className="flex gap-2">
-                {[
-                  { v: 'ollama', label: 'Ollama (本地)' },
-                  { v: 'deepseek', label: 'DeepSeek API (云端)' },
-                ].map(({ v, label }) => (
-                  <button key={v} onClick={() => setAiProvider(v)}
-                    className={`rounded-md border px-4 py-2 text-sm ${aiProvider === v ? 'border-primary bg-primary/10 text-primary font-medium' : 'border-border hover:bg-accent'}`}
-                  >{label}</button>
-                ))}
-              </div>
-            </div>
-
-            {/* Ollama URL */}
-            {aiProvider === 'ollama' && (
-              <div>
-                <label className="mb-1 block text-sm font-medium">Ollama 地址</label>
-                <input type="text" value={aiOllamaUrl} onChange={e => setAiOllamaUrl(e.target.value)}
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none" />
-              </div>
-            )}
-
-            {/* Model name */}
-            <div>
-              <label className="mb-1 block text-sm font-medium">模型名称</label>
-              <input type="text" value={aiModel} onChange={e => setAiModel(e.target.value)}
-                placeholder={aiProvider === 'ollama' ? '例如: qwen2.5:7b' : '例如: deepseek-chat'}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none" />
-            </div>
-
-            {/* API Key (DeepSeek only) */}
-            {aiProvider === 'deepseek' && (
-              <div>
-                <label className="mb-1 block text-sm font-medium">DeepSeek API Key</label>
-                <input type="password" value={aiApiKey} onChange={e => setAiApiKey(e.target.value)}
-                  placeholder="sk-..."
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none" />
-              </div>
-            )}
-
-            {/* Test result */}
-            {testResult && (
-              <div className={`flex items-center gap-2 rounded-md p-3 text-sm ${testResult.ok ? 'bg-green-50 text-green-700 dark:bg-green-900/40 dark:text-green-300' : 'bg-red-50 text-red-600 dark:bg-red-900/40 dark:text-red-300'}`}>
-                {testResult.ok ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
-                {testResult.message}
-              </div>
-            )}
-
-            {/* Action buttons */}
-            <div className="flex gap-2">
-              <button onClick={handleTestAI} disabled={testingAI}
-                className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
-                {testingAI ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                测试连接
-              </button>
-              <button onClick={handleSaveAI} disabled={savingAI}
-                className="rounded-md border border-input px-4 py-2 text-sm font-medium hover:bg-accent">
-                {savingAI ? '保存中...' : '保存配置'}
-              </button>
-            </div>
-          </div>
-        )}
-      </section>
 
       {/* Developer mode toggle */}
       <SectionCard

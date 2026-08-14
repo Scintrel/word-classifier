@@ -30,7 +30,6 @@ export default function ImportView({ active = true }: { active?: boolean }) {
   const [fileName, setFileName] = useState<string | null>(null)
   const [preview, setPreview] = useState<FilePreview | null>(null)
   const [importResult, setImportResult] = useState<ImportResult | null>(null)
-  const [bareWordsMode, setBareWordsMode] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [importHistory, setImportHistory] = useState<unknown[]>([])
 
@@ -78,13 +77,7 @@ export default function ImportView({ active = true }: { active?: boolean }) {
    * Step 2 → Step 3: User wants to proceed from preview to mapping.
    */
   function handleStartMapping() {
-    if (bareWordsMode && preview) {
-      // Skip mapping — use first column as word, import directly
-      const firstCol = preview.headers[0] || 'word'
-      handleConfirmMapping({ word: firstCol })
-    } else {
-      setStep('mapping')
-    }
+    setStep('mapping')
   }
 
   /**
@@ -178,29 +171,10 @@ export default function ImportView({ active = true }: { active?: boolean }) {
             Step 1: File Selection
             ============================================ */}
         {(step === 'select' || step === 'mapping' || step === 'importing') && (
-          <>
-            {/* Bare-words toggle */}
-            <div className="mb-4 flex items-center gap-3 rounded-lg border border-border bg-card p-3">
-              <label className="relative inline-flex cursor-pointer items-center">
-                <input type="checkbox" checked={bareWordsMode} onChange={e => setBareWordsMode(e.target.checked)} className="peer sr-only" />
-                <div className="h-6 w-11 rounded-full bg-muted peer-checked:bg-purple-500 peer-focus:ring-2 peer-focus:ring-purple-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:after:translate-x-full" />
-              </label>
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-medium">纯单词模式</span>
-                  <HelpTip title="纯单词模式">
-                    如果文件只有一列单词（每行一个），勾选后可以跳过「列映射」直接导入。<br />
-                    导入后单词只有拼写，音标和释义可到「单词检修」页用「词典补全」免费填充（无需联网），或用「AI 补全」生成更详细的信息。
-                  </HelpTip>
-                </div>
-                <p className="text-xs text-muted-foreground">文件只包含单词列，导入后使用词典或 AI 补全音标和释义</p>
-              </div>
-            </div>
-            <FileDropZone
-              onFileSelected={handleFileSelected}
-              selectedFile={step === 'select' ? fileName : null}
-            />
-          </>
+          <FileDropZone
+            onFileSelected={handleFileSelected}
+            selectedFile={step === 'select' ? fileName : null}
+          />
         )}
 
         {step === 'select' && fileName && (
@@ -278,7 +252,7 @@ export default function ImportView({ active = true }: { active?: boolean }) {
                 onClick={handleStartMapping}
                 className="rounded-md bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
               >
-                {bareWordsMode ? '确认数据，直接导入 →' : '确认数据，开始列映射 →'}
+                确认数据，开始列映射 →
               </button>
             </div>
           </div>
@@ -386,26 +360,6 @@ export default function ImportView({ active = true }: { active?: boolean }) {
                 查看单词列表 →
               </button>
             </div>
-            {/* Bare-words prompt */}
-            {importResult && importResult.imported > 0 && bareWordsMode && (
-              <div className="mt-4 rounded-lg border border-purple-200 bg-purple-50 p-5 dark:border-purple-800 dark:bg-purple-900/40">
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">{'🤖'}</span>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-purple-900 dark:text-purple-300">检测到纯单词导入</h4>
-                    <p className="mt-1 text-sm text-purple-700 dark:text-purple-400">
-                      已导入 {importResult.imported} 个单词，但只有拼写没有音标和释义。可到「单词检修」页用词典补全（免费、无需联网），或用 AI 自动补全。
-                    </p>
-                    <div className="mt-3 flex gap-2">
-                      <button onClick={() => window.location.hash = '#/editor'}
-                        className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700">
-                        去单词检修补全 →
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
       </div>

@@ -4,13 +4,12 @@
  */
 import { create } from 'zustand'
 
-export type TaskType = 'dictFix' | 'normalize' | 'refill' | 'aiFill'
+export type TaskType = 'dictFix' | 'normalize' | 'refill'
 
 export const TASK_LABELS: Record<TaskType, string> = {
   dictFix: '词典补全',
   normalize: '音标规范化',
-  refill: '等级词频回填',
-  aiFill: 'AI 补全'
+  refill: '等级词频回填'
 }
 
 export interface TaskState {
@@ -36,8 +35,7 @@ export const useTaskStore = create<TaskStore>((set) => ({
   tasks: {
     dictFix: idle(),
     normalize: idle(),
-    refill: idle(),
-    aiFill: idle()
+    refill: idle()
   },
   update: (type, patch) => set(s => ({
     tasks: { ...s.tasks, [type]: { ...s.tasks[type], ...patch } }

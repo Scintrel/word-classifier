@@ -15,8 +15,7 @@ function logAction(action: string, detail?: string) {
 const runningFlags: Record<TaskType, boolean> = {
   dictFix: false,
   normalize: false,
-  refill: false,
-  aiFill: false
+  refill: false
 }
 
 /** 任务是否正在运行（按钮禁用态） */
@@ -113,21 +112,6 @@ export function startRefill(): Promise<void> {
     () => window.api.refillLevelsCount(),
     (size) => window.api.refillLevelsBatch(size),
     ({ fixed, details }) => useTaskStore.getState().update('refill', {
-      status: 'done', current: fixed, message: `${fixed} 个单词`, details
-    })
-  )
-}
-
-/** AI 补全（每批 8 个，节奏与原来一致） */
-export function startAIFill(): Promise<void> {
-  return runBatchLoop(
-    'aiFill',
-    () => window.api.aiAutoFillCount(),
-    async (size) => {
-      const data = await window.api.aiAutoFillAll(8)
-      return { fixed: data.filled, details: data.words, done: data.done }
-    },
-    ({ fixed, details }) => useTaskStore.getState().update('aiFill', {
       status: 'done', current: fixed, message: `${fixed} 个单词`, details
     })
   )

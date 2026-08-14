@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
   Edit3, AlertTriangle, AlertCircle, CheckCircle2,
-  Search, XCircle, Zap, ChevronDown, ChevronRight, Cpu, Award, Slash,
+  Search, XCircle, Zap, ChevronDown, ChevronRight, Award, Slash,
   ChevronLeft, X
 } from 'lucide-react'
 import WordDetailPanel from '../components/WordDetailPanel'
@@ -9,7 +9,7 @@ import PageHeader from '../components/PageHeader'
 import SectionCard from '../components/SectionCard'
 import EmptyState from '../components/EmptyState'
 import { useTaskStore, TASK_LABELS, type TaskType } from '../stores/taskStore'
-import { startDictFix, startNormalize, startRefill, startAIFill } from '../services/taskRunner'
+import { startDictFix, startNormalize, startRefill } from '../services/taskRunner'
 
 interface ValidationStats {
   complete: number
@@ -91,7 +91,7 @@ export default function DataEditorView() {
 
   // 任务完成时自动重新检查，刷新问题列表与统计（本页挂载期间；若任务在其他页面完成，
   // 回到本页的首次渲染同样会触发一次刷新）
-  const hasFinishedTask = (['dictFix', 'normalize', 'refill', 'aiFill'] as TaskType[])
+  const hasFinishedTask = (['dictFix', 'normalize', 'refill'] as TaskType[])
     .some(t => tasks[t].status === 'done' || tasks[t].status === 'error')
   useEffect(() => {
     if (hasFinishedTask) handleCheck()
@@ -191,8 +191,7 @@ export default function DataEditorView() {
               「词典补全」用内置词典（约 77 万词条）填充音标/释义/词性，本地运行、免费、无需联网。<br />
               「音标规范化」给存量音标统一加上 // 并修正特殊字符。<br />
               「等级词频回填」用词典标签填充考试等级与 COCA 词频排名。<br />
-              「AI 补全」调用大模型生成更完整的信息和例句，需联网并在「设置」中配置。<br />
-              建议顺序：先词典补全 → 再等级词频回填 → 最后对词典里没有的词用 AI 补全。<br />
+              建议顺序：先词典补全 → 再等级词频回填。<br />
               任务运行中可以切换到其他页面，任务会在后台继续，顶部栏有进度提示。
             </>
           )
@@ -208,24 +207,14 @@ export default function DataEditorView() {
               {checking ? '检查中...' : result ? '重新检查' : '开始检查'}
             </button>
             {result && result.issues.length > 0 && (
-              <>
-                <button
-                  onClick={() => startDictFix()}
-                  disabled={tasks.dictFix.status === 'running'}
-                  className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-                >
-                  <Zap className={`h-4 w-4 ${tasks.dictFix.status === 'running' ? 'animate-spin' : ''}`} />
-                  {tasks.dictFix.status === 'running' ? '补全中...' : '词典补全'}
-                </button>
-                <button
-                  onClick={() => startAIFill()}
-                  disabled={tasks.aiFill.status === 'running'}
-                  className="flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
-                >
-                  <Cpu className={`h-4 w-4 ${tasks.aiFill.status === 'running' ? 'animate-spin' : ''}`} />
-                  {tasks.aiFill.status === 'running' ? 'AI补全中...' : 'AI 智能补全'}
-                </button>
-              </>
+              <button
+                onClick={() => startDictFix()}
+                disabled={tasks.dictFix.status === 'running'}
+                className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              >
+                <Zap className={`h-4 w-4 ${tasks.dictFix.status === 'running' ? 'animate-spin' : ''}`} />
+                {tasks.dictFix.status === 'running' ? '补全中...' : '词典补全'}
+              </button>
             )}
           </>
         }
@@ -330,7 +319,7 @@ export default function DataEditorView() {
             </div>
           </div>
 
-          {/* 词典补全 / AI 补全进度与结果（全局任务） */}
+          {/* 词典补全进度与结果（全局任务） */}
           {tasks.dictFix.status === 'running' && tasks.dictFix.total > 0 && (
             <div className="mb-4">
               <ToolProgress color="blue" current={tasks.dictFix.current} total={tasks.dictFix.total} label="词典补全中..." />
@@ -339,20 +328,6 @@ export default function DataEditorView() {
           <div className="space-y-0">
             <TaskResultBanner type="dictFix" icon={<Zap className="h-4 w-4 text-green-600" />} />
           </div>
-
-          {tasks.aiFill.status === 'running' && tasks.aiFill.total > 0 && (
-            <div className="mb-4 rounded-lg border border-purple-200 bg-purple-50 p-3 dark:border-purple-800 dark:bg-purple-900/40">
-              <div className="mb-1.5 flex items-center justify-between text-sm">
-                <span className="font-medium text-purple-800 dark:text-purple-300">AI 补全中...</span>
-                <span className="text-purple-600 dark:text-purple-400">{tasks.aiFill.current} / {tasks.aiFill.total}</span>
-              </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-purple-200 dark:bg-purple-800">
-                <div className="h-full rounded-full bg-purple-500 transition-all duration-500"
-                  style={{ width: `${(tasks.aiFill.current / tasks.aiFill.total) * 100}%` }} />
-              </div>
-            </div>
-          )}
-          <TaskResultBanner type="aiFill" icon={<Cpu className="h-4 w-4 text-green-600" />} />
 
           {/* All clear */}
           {totalIssues === 0 ? (
