@@ -4,8 +4,8 @@ import WordFilterBar from '../components/WordFilterBar'
 import WordDetailPanel from '../components/WordDetailPanel'
 import CategoryBadges from '../components/CategoryBadges'
 import { LevelBadges, FreqBadge } from '../components/WordLevelBadges'
+import PageHeader from '../components/PageHeader'
 import HelpTip from '../components/HelpTip'
-import { POS_LABELS } from '../constants/wordMeta'
 
 interface WordRow {
   id: number
@@ -28,18 +28,12 @@ interface Category {
   word_count?: number
 }
 
-/** 词性显示为中文标签（noun,verb → 名词、动词） */
-function posLabels(pos?: string): string {
-  if (!pos) return ''
-  return pos.split(',').map(s => s.trim()).filter(Boolean)
-    .map(s => POS_LABELS[s] || s).join('、')
-}
-
 /**
  * WordListView - 单词列表页面
  *
  * Shows all imported words in a sortable, filterable table.
  * Click a row to open the detail/edit panel.
+ * 词性不单独占列（释义里已含词性），但仍可用筛选栏按词性过滤。
  */
 export default function WordListView() {
   const [words, setWords] = useState<WordRow[]>([])
@@ -140,37 +134,31 @@ export default function WordListView() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">单词列表</h1>
-          <p className="text-muted-foreground">
-            共 {total} 个单词
-            {hasFilter && ' · 已筛选'}
-          </p>
-        </div>
-
-        {/* Search bar */}
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="搜索单词或释义..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="w-64 rounded-md border border-input bg-background py-2 pl-10 pr-4 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
-          <button
-            onClick={handleSearch}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            搜索
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="单词列表"
+        subtitle={`共 ${total} 个单词${hasFilter ? ' · 已筛选' : ''}`}
+        actions={
+          <>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="搜索单词或释义..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-64 rounded-md border border-input bg-background py-2 pl-10 pr-4 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+            <button
+              onClick={handleSearch}
+              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            >
+              搜索
+            </button>
+          </>
+        }
+      />
 
       {/* Filter bar */}
       <div className="mb-4 flex items-center gap-2">
@@ -189,35 +177,35 @@ export default function WordListView() {
           分类：按主分类筛选（自动包含其子分类里的单词）。<br />
           等级：按考试等级标签筛选（初中/高中/CET4/CET6/考研/托福/雅思/GRE），选「其他」= 没有等级标签的词。<br />
           词频：按 COCA 语料库词频排名区间筛选（数字越小越常用）。<br />
-          词性：按词性筛选（一词多词性时命中任意一个即匹配）。
+          词性：按词性筛选（一词多词性时命中任意一个即匹配）。<br />
+          表格里只显示第一个等级徽章，点开单词可看全部等级。
         </HelpTip>
       </div>
 
       {/* Word table */}
       <div className="rounded-lg border border-border">
-        <table className="w-full">
+        <table className="w-full table-fixed">
           <thead>
             <tr className="border-b border-border bg-muted/50 text-left text-sm font-medium text-muted-foreground">
               <th className="px-4 py-3 w-32">单词</th>
-              <th className="px-4 py-3 w-28">音标</th>
+              <th className="px-4 py-3 w-32">音标</th>
               <th className="px-4 py-3">释义</th>
-              <th className="px-4 py-3 w-24">词性</th>
               <th className="px-4 py-3 w-36">分类</th>
-              <th className="px-4 py-3 w-52">等级</th>
+              <th className="px-4 py-3 w-28">等级</th>
               <th className="px-4 py-3 w-20">词频</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-4 py-16 text-center">
+                <td colSpan={6} className="px-4 py-16 text-center">
                   <Loader2 className="mx-auto mb-2 h-6 w-6 animate-spin text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">加载中...</span>
                 </td>
               </tr>
             ) : words.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-16 text-center">
+                <td colSpan={6} className="px-4 py-16 text-center">
                   <BookOpen className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
                   <p className="text-muted-foreground">
                     {search || hasFilter
@@ -234,29 +222,22 @@ export default function WordListView() {
                   onClick={() => setSelectedWordId(word.id)}
                   className="border-b border-border text-sm hover:bg-accent/50 cursor-pointer transition-colors"
                 >
-                  <td className="px-4 py-3 font-semibold text-foreground">
+                  <td className="px-4 py-3 font-semibold text-foreground truncate" title={word.word}>
                     {word.word}
                   </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground font-mono">
+                  <td className="px-4 py-3 text-xs text-muted-foreground font-mono truncate"
+                    title={word.phonetic_uk || word.phonetic_us || ''}>
                     {word.phonetic_uk || word.phonetic_us || '-'}
                   </td>
-                  <td className="px-4 py-3 max-w-[300px] truncate">
+                  <td className="px-4 py-3 max-w-[300px] truncate"
+                    title={word.definition_cn || word.definition_en || ''}>
                     {word.definition_cn || word.definition_en || '-'}
-                  </td>
-                  <td className="px-4 py-3">
-                    {word.part_of_speech ? (
-                      <span className="text-xs italic text-muted-foreground">
-                        {posLabels(word.part_of_speech)}
-                      </span>
-                    ) : (
-                      <span className="text-xs text-muted-foreground/50">-</span>
-                    )}
                   </td>
                   <td className="px-4 py-3">
                     <CategoryBadges raw={word.category_badges} />
                   </td>
                   <td className="px-4 py-3">
-                    <LevelBadges difficulty={word.difficulty} />
+                    <LevelBadges difficulty={word.difficulty} maxLevels={1} />
                   </td>
                   <td className="px-4 py-3">
                     <FreqBadge frequency={word.frequency} />

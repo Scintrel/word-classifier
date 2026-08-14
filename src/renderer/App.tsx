@@ -6,6 +6,7 @@ import CategoryView from './views/CategoryView'
 import SearchView from './views/SearchView'
 import DataEditorView from './views/DataEditorView'
 import SettingsView from './views/SettingsView'
+import DevModeView from './views/DevModeView'
 
 export default function App() {
   const location = useLocation()
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/search" element={<SearchView />} />
           <Route path="/editor" element={<DataEditorView />} />
           <Route path="/settings" element={<SettingsView />} />
+          <Route path="/dev" element={<DevModeView />} />
         </Routes>
       </div>
     </AppShell>

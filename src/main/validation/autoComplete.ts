@@ -17,6 +17,10 @@ interface DictEntry {
 let DICT_MAP: Map<string, DictEntry> | null = null
 let dictLoaded = false
 
+// 用户小词典（开发者模式里维护）：优先级高于 ECDICT 大词典
+let USER_DICT: Map<string, DictEntry> | null = null
+let userDictLoaded = false
+
 /**
  * Resolve possible resource directories without using __dirname
  * (which is not available in electron-vite's ESM bundle context).
@@ -87,19 +91,80 @@ export function normalizePhonetic(p: string | null | undefined): string | null {
   return `/${t}/`
 }
 
-export function lookupWord(word: string): DictEntry | null {
-  loadDictionary()
-  if (!DICT_MAP) return null
-  const t = word.trim()
-  // 1. 精确匹配（区分大小写：China ≠ china）
-  const exact = DICT_MAP.get(t)
+/**
+ * Load the user's personal dictionary (dict_entries table) into memory.
+ * 开发者模式里维护的小词典；用户修改后通过 resetUserDict() 让缓存失效。
+ */
+function loadUserDict(): void {
+  if (userDictLoaded) return
+  userDictLoaded = true
+  try {
+    const db = getDatabase()
+    const rows = queryAll(db, 'SELECT word, phonetic, definition, pos FROM dict_entries')
+    const map = new Map<string, DictEntry>()
+    for (const r of rows) {
+      const w = (r.word as string ?? '').trim()
+      if (!w) continue
+      map.set(w, {
+        word: w,
+        phonetic: (r.phonetic as string) ?? '',
+        definition: (r.definition as string) ?? '',
+        pos: (r.pos as string) ?? ''
+      })
+    }
+    USER_DICT = map
+    console.log(`User dict: ${map.size} entries`)
+  } catch {
+    // 数据库可能还没初始化（如纯查词场景），保持空词典
+    USER_DICT = new Map()
+  }
+}
+
+/** 小词典被修改后调用：让下次 lookupWord 重新读取 */
+export function resetUserDict(): void {
+  userDictLoaded = false
+  USER_DICT = null
+}
+
+/**
+ * 三步回退查找：精确 → 全小写 → 首字母大写。
+ * 先在用户小词典里找（优先级最高），再查 ECDICT 大词典。
+ */
+function findInMap(map: Map<string, DictEntry>, t: string): DictEntry | null {
+  const exact = map.get(t)
   if (exact) return exact
-  // 2. 全小写回退（单词表常用小写，词典词条可能大写开头）
-  const lower = DICT_MAP.get(t.toLowerCase())
+  const lower = map.get(t.toLowerCase())
   if (lower) return lower
-  // 3. 首字母大写回退（词典只有 China，用户写 china）
   const cap = t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()
-  return DICT_MAP.get(cap) ?? null
+  return map.get(cap) ?? null
+}
+
+export function lookupWord(word: string): DictEntry | null {
+  // 1. 用户小词典优先（开发者模式维护，可覆盖大词典）
+  const userHit = lookupUserEntry(word)
+  if (userHit) return userHit
+  // 2. ECDICT 大词典
+  return lookupDictEntry(word)
+}
+
+/** 只查用户小词典（开发者模式"查词试验场"区分来源用） */
+export function lookupUserEntry(word: string): DictEntry | null {
+  const t = word.trim()
+  loadUserDict()
+  return USER_DICT ? findInMap(USER_DICT, t) : null
+}
+
+/** 只查 ECDICT 大词典 */
+export function lookupDictEntry(word: string): DictEntry | null {
+  const t = word.trim()
+  loadDictionary()
+  return DICT_MAP ? findInMap(DICT_MAP, t) : null
+}
+
+/** ECDICT 大词典词条数（供开发者模式数据总览显示） */
+export function dictEntryCount(): number {
+  loadDictionary()
+  return DICT_MAP?.size ?? 0
 }
 
 /** Pattern-based POS guessing from word suffixes. */

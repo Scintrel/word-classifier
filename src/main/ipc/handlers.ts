@@ -1,4 +1,6 @@
-import { ipcMain, dialog } from 'electron'
+import { ipcMain, dialog, app } from 'electron'
+import { statSync } from 'fs'
+import { join } from 'path'
 import { getDatabase, saveDatabase } from '../database/connection'
 import { queryAll, queryOne, runSQL } from '../database/utils'
 import { ParserFactory } from '../parser/parser.factory'
@@ -6,10 +8,12 @@ import { type ColumnMapping } from '../parser/parser.types'
 import { validateAndLog } from '../validation/validator'
 import {
   autoCompleteCount, autoCompleteBatch, lookupWord,
+  lookupUserEntry, lookupDictEntry, dictEntryCount,
   normalizePhoneticsCount, normalizePhoneticsBatch,
   refillLevelsCount, refillLevelsBatch
 } from '../validation/autoComplete'
-import { classifyAll, getClassificationStats } from '../classification/classifier'
+import { classifyAll, getClassificationStats, previewClassification } from '../classification/classifier'
+import { listDictEntries, saveDictEntry, deleteDictEntry, listChangeLog, undoChange } from '../validation/userDict'
 import { createAIService, type AIConfig } from '../ai/aiService'
 
 // Wrap runSQL to auto-save after writes
@@ -681,6 +685,64 @@ export function registerIpcHandlers(): void {
     const ai = createAIService(getAIConfig())
     return ai.classifyWord(word, definition)
   })
+
+  // ============================================
+  // Developer mode：查词试验场 / 小词典 / 修改日志
+  // ============================================
+
+  ipcMain.handle('dev:getOverview', () => {
+    const dbPath = join(app.getPath('userData'), 'word-classifier.db')
+    let dbSize = 0
+    try { dbSize = statSync(dbPath).size } catch { /* 数据库尚未落盘 */ }
+    return {
+      version: '1.0.0',
+      platform: process.platform,
+      dbPath,
+      dbSize,
+      words: queryOne_('SELECT COUNT(*) as c FROM words')?.c ?? 0,
+      categories: queryOne_('SELECT COUNT(*) as c FROM categories')?.c ?? 0,
+      examples: queryOne_('SELECT COUNT(*) as c FROM examples')?.c ?? 0,
+      imports: queryOne_('SELECT COUNT(*) as c FROM import_history')?.c ?? 0,
+      dictEntries: queryOne_('SELECT COUNT(*) as c FROM dict_entries')?.c ?? 0,
+      logEntries: queryOne_('SELECT COUNT(*) as c FROM change_log')?.c ?? 0,
+      ecdictEntries: dictEntryCount()
+    }
+  })
+
+  /** 查词试验场：返回小词典命中、大词典词条、分类预览（全部只读） */
+  ipcMain.handle('dev:lookupWord', (_event, word: string) => {
+    const t = (word ?? '').trim()
+    if (!t) return { word: '', userEntry: null, dictEntry: null, classification: [], found: false }
+    const userEntry = lookupUserEntry(t)
+    const dictEntry = lookupDictEntry(t)
+    const entry = userEntry ?? dictEntry
+    const classification = previewClassification(
+      t,
+      entry?.definition ?? null,
+      null,
+      entry?.pos || null
+    )
+    return { word: t, userEntry, dictEntry, classification, found: !!entry }
+  })
+
+  /** 词库里大词典和小词典都查不到的词（引导用户补词条） */
+  ipcMain.handle('dev:getUnfixableWords', () => {
+    const rows = queryAll_("SELECT word FROM words WHERE language = 'en' ORDER BY id")
+    const missing: string[] = []
+    for (const r of rows) {
+      const w = (r.word as string).trim()
+      if (!w || missing.includes(w)) continue
+      if (!lookupWord(w)) missing.push(w)
+    }
+    return missing
+  })
+
+  // 小词典 CRUD 与修改日志/撤销（业务逻辑在 validation/userDict.ts，可直接单测）
+  ipcMain.handle('dev:listDictEntries', () => listDictEntries())
+  ipcMain.handle('dev:saveDictEntry', (_event, entry: { word: string; phonetic?: string; definition?: string; pos?: string }) => saveDictEntry(entry))
+  ipcMain.handle('dev:deleteDictEntry', (_event, word: string) => deleteDictEntry(word))
+  ipcMain.handle('dev:listChangeLog', (_event, page?: number, pageSize?: number) => listChangeLog(page ?? 1, pageSize ?? 50))
+  ipcMain.handle('dev:undoChange', (_event, logId: number) => undoChange(logId))
 
   // ============================================
   // Settings

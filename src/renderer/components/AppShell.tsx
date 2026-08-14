@@ -33,7 +33,7 @@ export default function AppShell({ children }: AppShellProps) {
   const showBack = location.pathname !== '/import'
   const titles: Record<string, string> = {
     '/import': '导入单词', '/words': '单词列表', '/categories': '分类浏览',
-    '/search': '搜索', '/editor': '单词检修', '/settings': '设置'
+    '/search': '搜索', '/editor': '单词检修', '/settings': '设置', '/dev': '开发者模式'
   }
 
   return (

@@ -246,6 +246,31 @@ UPDATE categories SET color = '#f43f5e' WHERE id = 54 OR parent_id = 54;
 UPDATE categories SET color = '#14b8a6' WHERE id = 55 OR parent_id = 55;
 UPDATE categories SET color = '#eab308' WHERE id = 56 OR parent_id = 56;
 UPDATE categories SET color = '#84cc16' WHERE id = 57 OR parent_id = 57;`
+  },
+  {
+    // 开发者模式：用户小词典（优先级高于内置 ECDICT）+ 修改日志（一切改动可追溯、可撤销）
+    name: '004_dev_mode.sql',
+    sql: `
+CREATE TABLE IF NOT EXISTS dict_entries (
+    word            TEXT PRIMARY KEY,
+    phonetic        TEXT,
+    definition      TEXT,
+    pos             TEXT,
+    created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS change_log (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    entity_type     TEXT NOT NULL,
+    entity_key      TEXT NOT NULL,
+    action          TEXT NOT NULL,
+    old_value       TEXT,
+    new_value       TEXT,
+    created_at      DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_change_log_created ON change_log(created_at);`
   }
 ]
 

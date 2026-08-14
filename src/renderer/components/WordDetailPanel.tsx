@@ -2,8 +2,17 @@ import { useState, useEffect } from 'react'
 import { X, Save, Trash2, Plus, Loader2 } from 'lucide-react'
 import { FreqBadge } from './WordLevelBadges'
 import {
-  POS_OPTIONS, POS_LABELS, LEVEL_DEFS, parseLevels
+  POS_OPTIONS, LEVEL_DEFS, parseLevels
 } from '../constants/wordMeta'
+
+/** 面板内的小节标题（分隔线 + 小号标题） */
+function SectionLabel({ children }: { children: string }) {
+  return (
+    <div className="mb-2 border-b border-border/60 pb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      {children}
+    </div>
+  )
+}
 
 interface WordData {
   id: number
@@ -53,6 +62,8 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
   const [saving, setSaving] = useState(false)
   const [newExampleEn, setNewExampleEn] = useState('')
   const [newExampleCn, setNewExampleCn] = useState('')
+  // 分类选择区是否展开（默认折叠，只显示已选分类）
+  const [showCatPicker, setShowCatPicker] = useState(false)
 
   // Load word data when wordId changes
   useEffect(() => {
@@ -233,20 +244,21 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
       {/* Backdrop */}
       <div className="fixed inset-0 z-30 bg-black/20" onClick={onClose} />
 
-      {/* Side panel */}
-      <div className="fixed inset-y-0 right-0 z-40 flex w-[420px] flex-col border-l border-border bg-card shadow-2xl overflow-y-auto">
+      {/* Side panel（头部固定、中间滚动、底部按钮固定） */}
+      <div className="fixed inset-y-0 right-0 z-40 flex w-[420px] flex-col border-l border-border bg-card shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4">
           <h2 className="text-lg font-semibold">编辑单词</h2>
           <button onClick={onClose} className="rounded-md p-1 hover:bg-accent">
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Form body */}
-        <div className="flex-1 space-y-5 p-5">
-          {/* Word */}
+        {/* Form body（滚动区） */}
+        <div className="flex-1 space-y-5 overflow-y-auto p-5">
+          {/* 基本信息 */}
           <div>
+            <SectionLabel>基本信息</SectionLabel>
             <label className="mb-1 block text-sm font-medium">单词 *</label>
             <input
               type="text"
@@ -257,32 +269,35 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
           </div>
 
           {/* Phonetics */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1 block text-sm font-medium">英式音标</label>
-              <input
-                type="text"
-                value={word.phonetic_uk ?? ''}
-                onChange={(e) => updateField('phonetic_uk', e.target.value)}
-                placeholder="/ˈɪŋɡlɪʃ/"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium">美式音标</label>
-              <input
-                type="text"
-                value={word.phonetic_us ?? ''}
-                onChange={(e) => updateField('phonetic_us', e.target.value)}
-                placeholder="/ˈɪŋɡlɪʃ/"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              />
+          <div>
+            <SectionLabel>音标</SectionLabel>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="mb-1 block text-sm font-medium">英式</label>
+                <input
+                  type="text"
+                  value={word.phonetic_uk ?? ''}
+                  onChange={(e) => updateField('phonetic_uk', e.target.value)}
+                  placeholder="/ˈɪŋɡlɪʃ/"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">美式</label>
+                <input
+                  type="text"
+                  value={word.phonetic_us ?? ''}
+                  onChange={(e) => updateField('phonetic_us', e.target.value)}
+                  placeholder="/ˈɪŋɡlɪʃ/"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Part of speech（多选标签）+ Difficulty */}
+          {/* 词性（英文全称多选标签） */}
           <div>
-            <label className="mb-1 block text-sm font-medium">词性（可多选）</label>
+            <SectionLabel>词性（可多选）</SectionLabel>
             <div className="flex flex-wrap gap-1.5">
               {POS_OPTIONS.map(pos => (
                 <button
@@ -295,12 +310,15 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
                       : 'bg-muted text-muted-foreground hover:bg-accent'
                   }`}
                 >
-                  {POS_LABELS[pos] || pos}
+                  {pos}
                 </button>
               ))}
             </div>
           </div>
+
+          {/* 等级 + 词频 */}
           <div>
+            <SectionLabel>等级与词频</SectionLabel>
             <label className="mb-1 block text-sm font-medium">等级（可多选，不选表示「其他」）</label>
             <div className="flex flex-wrap gap-1.5">
               {LEVEL_DEFS.map(d => (
@@ -321,19 +339,20 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
             <p className="mt-1 text-xs text-muted-foreground">
               一个单词可同时属于多个考试等级（如 高中+CET4）。等级由内置词典自动生成。
             </p>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">词频（自动生成，不可修改）</label>
-            <div className="flex items-center gap-2">
-              <FreqBadge frequency={word.frequency} showRank />
+            <div className="mt-3">
+              <label className="mb-1 block text-sm font-medium">词频（自动生成，不可修改）</label>
+              <div className="flex items-center gap-2">
+                <FreqBadge frequency={word.frequency} showRank />
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                按 COCA 语料库排名分档，排名越靠前越常用。可到「单词检修」页用「等级词频回填」刷新。
+              </p>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              按 COCA 语料库排名分档，排名越靠前越常用。可到「单词检修」页用「等级词频回填」刷新。
-            </p>
           </div>
 
           {/* Definitions */}
           <div>
+            <SectionLabel>释义</SectionLabel>
             <label className="mb-1 block text-sm font-medium">中文释义</label>
             <textarea
               value={word.definition_cn ?? ''}
@@ -341,9 +360,7 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
               rows={2}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none"
             />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">英文释义</label>
+            <label className="mb-1 mt-3 block text-sm font-medium">英文释义</label>
             <textarea
               value={word.definition_en ?? ''}
               onChange={(e) => updateField('definition_en', e.target.value)}
@@ -352,60 +369,103 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
             />
           </div>
 
-          {/* Categories（大类 + 子类树形选择） */}
+          {/* Categories（折叠式：默认只显示已选分类） */}
           <div>
-            <label className="mb-2 block text-sm font-medium">所属分类（可选子类）</label>
-            <div className="space-y-2">
-              {rootCategories.map((root) => (
-                <div key={root.id}>
-                  <button
-                    type="button"
-                    onClick={() => toggleCategory(root)}
-                    className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                      wordCategories.some(c => c.id === root.id)
-                        ? 'text-white'
-                        : 'bg-muted text-muted-foreground hover:bg-accent'
-                    }`}
-                    style={wordCategories.some(c => c.id === root.id) ? {
-                      backgroundColor: root.color,
-                      borderColor: root.color
-                    } : {}}
-                  >
-                    {root.name_cn || root.name}
-                  </button>
-                  {/* 子类（缩进显示） */}
-                  {childrenOf(root.id).length > 0 && (
-                    <div className="mt-1 flex flex-wrap gap-1.5 pl-4">
-                      {childrenOf(root.id).map((sub) => (
+            <SectionLabel>所属分类</SectionLabel>
+            {!showCatPicker ? (
+              <div>
+                <div className="flex flex-wrap gap-1.5">
+                  {wordCategories.length === 0 ? (
+                    <span className="text-sm text-muted-foreground">未分类</span>
+                  ) : (
+                    wordCategories.map(cat => (
+                      <span
+                        key={cat.id}
+                        className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-white"
+                        style={{ backgroundColor: cat.color || '#6b7280' }}
+                      >
+                        {cat.name_cn || cat.name}
                         <button
-                          key={sub.id}
                           type="button"
-                          onClick={() => toggleCategory(sub)}
-                          className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
-                            wordCategories.some(c => c.id === sub.id)
-                              ? 'text-white'
-                              : 'bg-muted text-muted-foreground hover:bg-accent'
-                          }`}
-                          style={wordCategories.some(c => c.id === sub.id) ? {
-                            backgroundColor: sub.color,
-                            borderColor: sub.color
-                          } : {}}
+                          onClick={() => toggleCategory(cat)}
+                          className="ml-0.5 rounded-full hover:bg-white/25"
+                          title="移除"
                         >
-                          {sub.name_cn || sub.name}
+                          <X className="h-3 w-3" />
                         </button>
-                      ))}
-                    </div>
+                      </span>
+                    ))
                   )}
                 </div>
-              ))}
-            </div>
+                <button
+                  type="button"
+                  onClick={() => setShowCatPicker(true)}
+                  className="mt-2 rounded-md border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                >
+                  <Plus className="mr-1 inline h-3.5 w-3.5" />
+                  添加分类
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div className="max-h-64 space-y-2 overflow-y-auto rounded-md border border-border bg-background p-3">
+                  {rootCategories.map((root) => (
+                    <div key={root.id}>
+                      <button
+                        type="button"
+                        onClick={() => toggleCategory(root)}
+                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                          wordCategories.some(c => c.id === root.id)
+                            ? 'text-white'
+                            : 'bg-muted text-muted-foreground hover:bg-accent'
+                        }`}
+                        style={wordCategories.some(c => c.id === root.id) ? {
+                          backgroundColor: root.color,
+                          borderColor: root.color
+                        } : {}}
+                      >
+                        {root.name_cn || root.name}
+                      </button>
+                      {/* 子类（缩进显示） */}
+                      {childrenOf(root.id).length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-1.5 pl-4">
+                          {childrenOf(root.id).map((sub) => (
+                            <button
+                              key={sub.id}
+                              type="button"
+                              onClick={() => toggleCategory(sub)}
+                              className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
+                                wordCategories.some(c => c.id === sub.id)
+                                  ? 'text-white'
+                                  : 'bg-muted text-muted-foreground hover:bg-accent'
+                              }`}
+                              style={wordCategories.some(c => c.id === sub.id) ? {
+                                backgroundColor: sub.color,
+                                borderColor: sub.color
+                              } : {}}
+                            >
+                              {sub.name_cn || sub.name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowCatPicker(false)}
+                  className="mt-2 w-full rounded-md border border-input px-3 py-1.5 text-xs hover:bg-accent transition-colors"
+                >
+                  完成
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Examples */}
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              例句 ({examples.length})
-            </label>
+            <SectionLabel>例句 ({examples.length})</SectionLabel>
             <div className="space-y-2">
               {examples.map((ex) => (
                 <div key={ex.id} className="flex items-start gap-2 rounded-md border border-border bg-background p-2.5 group">
@@ -457,8 +517,8 @@ export default function WordDetailPanel({ wordId, onClose, onSaved }: WordDetail
           </div>
         </div>
 
-        {/* Footer actions */}
-        <div className="flex items-center justify-between border-t border-border px-5 py-4">
+        {/* Footer actions（固定在面板底部，不随内容滚动） */}
+        <div className="flex shrink-0 items-center justify-between border-t border-border bg-card px-5 py-4">
           <button
             onClick={handleDelete}
             className="flex items-center gap-1.5 rounded-md border border-red-200 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"

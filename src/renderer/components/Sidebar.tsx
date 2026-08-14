@@ -6,8 +6,10 @@ import {
   Search,
   Wrench,
   Settings,
+  Terminal,
   Sparkles
 } from 'lucide-react'
+import { useDevStore } from '../stores/devStore'
 
 /**
  * Navigation items for the sidebar.
@@ -25,8 +27,11 @@ const navItems = [
 /**
  * Left sidebar with navigation links.
  * Highlights the current active page.
+ * 开发者模式开启时，在「设置」上方显示「开发者」入口。
  */
 export default function Sidebar() {
+  const devEnabled = useDevStore(s => s.enabled)
+
   return (
     <aside className="flex w-56 flex-col border-r border-border bg-card">
       {/* App logo / title */}
@@ -53,6 +58,23 @@ export default function Sidebar() {
             {label}
           </NavLink>
         ))}
+
+        {/* 开发者模式入口（设置页开关控制） */}
+        {devEnabled && (
+          <NavLink
+            to="/dev"
+            className={({ isActive }) =>
+              `flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                isActive
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+              }`
+            }
+          >
+            <Terminal className="h-4 w-4" />
+            开发者
+          </NavLink>
+        )}
       </nav>
 
       {/* Footer: version info */}

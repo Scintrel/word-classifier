@@ -6,6 +6,7 @@ import {
 import FileDropZone from '../components/FileDropZone'
 import ColumnMapper from '../components/ColumnMapper'
 import HelpTip from '../components/HelpTip'
+import PageHeader from '../components/PageHeader'
 import type { FilePreview, ColumnMapping, ImportResult } from '../../preload/index'
 
 /**
@@ -109,10 +110,10 @@ export default function ImportView() {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-bold">导入单词</h1>
-      <p className="mb-6 text-muted-foreground">
-        上传你的单词表文件，程序会自动解析、校验并导入。
-      </p>
+      <PageHeader
+        title="导入单词"
+        subtitle="上传你的单词表文件，程序会自动解析、校验并导入"
+      />
 
       {/* Error banner */}
       {error && (
@@ -310,13 +311,13 @@ export default function ImportView() {
         {step === 'done' && importResult && (
           <div className="space-y-4">
             {/* Success banner */}
-            <div className="flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 p-6">
+            <div className="flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 p-6 dark:border-green-800 dark:bg-green-900/40">
               <CheckCircle2 className="h-6 w-6 shrink-0 text-green-600" />
               <div>
-                <h3 className="text-lg font-semibold text-green-800">
+                <h3 className="text-lg font-semibold text-green-800 dark:text-green-300">
                   导入完成！
                 </h3>
-                <p className="mt-1 text-sm text-green-700">
+                <p className="mt-1 text-sm text-green-700 dark:text-green-400">
                   成功导入 {importResult.imported} 个单词
                   {importResult.skipped > 0 && `，跳过 ${importResult.skipped} 个重复`}
                 </p>
@@ -325,28 +326,28 @@ export default function ImportView() {
 
             {/* Stats cards */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-center">
-                <p className="text-3xl font-bold text-green-700">{importResult.imported}</p>
-                <p className="text-sm text-green-600">成功导入</p>
+              <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-center dark:border-green-800 dark:bg-green-900/40">
+                <p className="text-3xl font-bold text-green-700 dark:text-green-300">{importResult.imported}</p>
+                <p className="text-sm text-green-600 dark:text-green-400">成功导入</p>
               </div>
-              <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-center">
-                <p className="text-3xl font-bold text-yellow-700">{importResult.skipped}</p>
-                <p className="text-sm text-yellow-600">跳过(重复)</p>
+              <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-center dark:border-yellow-800 dark:bg-yellow-900/40">
+                <p className="text-3xl font-bold text-yellow-700 dark:text-yellow-300">{importResult.skipped}</p>
+                <p className="text-sm text-yellow-600 dark:text-yellow-400">跳过(重复)</p>
               </div>
-              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-center">
-                <p className="text-3xl font-bold text-blue-700">{importResult.warnings}</p>
-                <p className="text-sm text-blue-600">警告</p>
+              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-center dark:border-blue-800 dark:bg-blue-900/40">
+                <p className="text-3xl font-bold text-blue-700 dark:text-blue-300">{importResult.warnings}</p>
+                <p className="text-sm text-blue-600 dark:text-blue-400">警告</p>
               </div>
             </div>
 
             {/* Warning messages */}
             {importResult.messages.length > 0 && (
-              <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+              <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-800 dark:bg-yellow-900/40">
                 <div className="mb-2 flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 text-yellow-600" />
-                  <span className="font-medium text-yellow-800">导入提示</span>
+                  <span className="font-medium text-yellow-800 dark:text-yellow-300">导入提示</span>
                 </div>
-                <ul className="space-y-1 text-sm text-yellow-700">
+                <ul className="space-y-1 text-sm text-yellow-700 dark:text-yellow-400">
                   {importResult.messages.map((msg, i) => (
                     <li key={i}>• {msg}</li>
                   ))}
@@ -374,22 +375,18 @@ export default function ImportView() {
             </div>
             {/* Bare-words prompt */}
             {importResult && importResult.imported > 0 && bareWordsMode && (
-              <div className="mt-4 rounded-lg border border-purple-200 bg-purple-50 p-5">
+              <div className="mt-4 rounded-lg border border-purple-200 bg-purple-50 p-5 dark:border-purple-800 dark:bg-purple-900/40">
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">{'🤖'}</span>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-purple-900">检测到纯单词导入</h4>
-                    <p className="mt-1 text-sm text-purple-700">
-                      已导入 {importResult.imported} 个单词，但只有拼写没有音标和释义。可使用 AI 自动补全（需先在设置中配置）。
+                    <h4 className="font-semibold text-purple-900 dark:text-purple-300">检测到纯单词导入</h4>
+                    <p className="mt-1 text-sm text-purple-700 dark:text-purple-400">
+                      已导入 {importResult.imported} 个单词，但只有拼写没有音标和释义。可到「单词检修」页用词典补全（免费、无需联网），或用 AI 自动补全。
                     </p>
                     <div className="mt-3 flex gap-2">
                       <button onClick={() => window.location.hash = '#/editor'}
                         className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700">
-                        去 AI 智能补全 →
-                      </button>
-                      <button onClick={() => window.location.hash = '#/settings'}
-                        className="rounded-md border border-purple-300 px-4 py-2 text-sm font-medium text-purple-700 hover:bg-purple-100">
-                        配置 AI
+                        去单词检修补全 →
                       </button>
                     </div>
                   </div>

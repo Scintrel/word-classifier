@@ -116,6 +116,40 @@ export interface ElectronAPI {
   clearWords: () => Promise<boolean>
   resetCategories: () => Promise<boolean>
 
+  // Developer mode
+  devGetOverview: () => Promise<{
+    version: string
+    platform: string
+    dbPath: string
+    dbSize: number
+    words: number
+    categories: number
+    examples: number
+    imports: number
+    dictEntries: number
+    logEntries: number
+    ecdictEntries: number
+  }>
+  devLookupWord: (word: string) => Promise<{
+    word: string
+    userEntry: unknown | null
+    dictEntry: unknown | null
+    classification: unknown[]
+    found: boolean
+  }>
+  devGetUnfixableWords: () => Promise<string[]>
+  devListDictEntries: () => Promise<unknown[]>
+  devSaveDictEntry: (entry: { word: string; phonetic?: string; definition?: string; pos?: string }) => Promise<{ ok: boolean; message?: string }>
+  devDeleteDictEntry: (word: string) => Promise<{ ok: boolean; message?: string }>
+  devListChangeLog: (page?: number, pageSize?: number) => Promise<{
+    rows: unknown[]
+    total: number
+    page: number
+    pageSize: number
+    totalPages: number
+  }>
+  devUndoChange: (logId: number) => Promise<{ ok: boolean; message?: string }>
+
   // Settings
   getSetting: (key: string) => Promise<string | null>
   setSetting: (key: string, value: string) => Promise<boolean>
@@ -174,6 +208,16 @@ const api: ElectronAPI = {
   // Data management
   clearWords: () => ipcRenderer.invoke('data:clearWords'),
   resetCategories: () => ipcRenderer.invoke('data:resetCategories'),
+
+  // Developer mode
+  devGetOverview: () => ipcRenderer.invoke('dev:getOverview'),
+  devLookupWord: (word) => ipcRenderer.invoke('dev:lookupWord', word),
+  devGetUnfixableWords: () => ipcRenderer.invoke('dev:getUnfixableWords'),
+  devListDictEntries: () => ipcRenderer.invoke('dev:listDictEntries'),
+  devSaveDictEntry: (entry) => ipcRenderer.invoke('dev:saveDictEntry', entry),
+  devDeleteDictEntry: (word) => ipcRenderer.invoke('dev:deleteDictEntry', word),
+  devListChangeLog: (page?, pageSize?) => ipcRenderer.invoke('dev:listChangeLog', page, pageSize),
+  devUndoChange: (logId) => ipcRenderer.invoke('dev:undoChange', logId),
 
   // Settings
   getSetting: (key) => ipcRenderer.invoke('settings:get', key),

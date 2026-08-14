@@ -22,7 +22,7 @@ interface CategoryBadgesProps {
   max?: number
 }
 
-export default function CategoryBadges({ raw, max = 3 }: CategoryBadgesProps) {
+export default function CategoryBadges({ raw, max = 2 }: CategoryBadgesProps) {
   const badges = parseCategoryBadges(raw)
   if (badges.length === 0) {
     return (
@@ -36,14 +36,20 @@ export default function CategoryBadges({ raw, max = 3 }: CategoryBadgesProps) {
       {badges.slice(0, max).map((b, i) => (
         <span
           key={i}
-          className="rounded-full px-2 py-0.5 text-xs font-medium text-white"
+          className="inline-flex h-5 items-center rounded-full px-1.5 text-[10px] font-medium leading-5 whitespace-nowrap text-white"
           style={{ backgroundColor: b.color || '#6b7280' }}
+          title={b.name}
         >
           {b.name}
         </span>
       ))}
       {badges.length > max && (
-        <span className="text-xs text-muted-foreground">+{badges.length - max}</span>
+        <span
+          className="text-xs text-muted-foreground"
+          title={badges.slice(max).map(b => b.name).join('、')}
+        >
+          +{badges.length - max}
+        </span>
       )}
     </div>
   )

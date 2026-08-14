@@ -151,6 +151,28 @@ const POS_FALLBACK_CATEGORY: Record<string, number> = {
 }
 
 /**
+ * 查词试验场（开发者模式）用：对任意单词做一次"只读分类预览"，
+ * 返回它会被分到哪些类、置信度、命中的关键词。不写数据库。
+ */
+export function previewClassification(
+  word: string,
+  definitionCn: string | null,
+  definitionEn: string | null,
+  partOfSpeech: string | null
+): ClassificationResult[] {
+  const results = classifyWord(0, word, definitionCn, definitionEn, partOfSpeech)
+  if (results.length === 0) return []
+  // 补上分类名称（classifyWord 内部不查名字，这里从数据库读）
+  const db = getDatabase()
+  const rows = db.exec('SELECT id, name, name_cn FROM categories')
+  const nameMap = new Map<number, string>()
+  if (rows.length > 0) {
+    rows[0].values.forEach(r => nameMap.set(r[0] as number, (r[2] as string) || (r[1] as string)))
+  }
+  return results.map(r => ({ ...r, categoryName: nameMap.get(r.categoryId) ?? '' }))
+}
+
+/**
  * Classify all unclassified words in the database.
  * Only classifies words that don't already have manual category assignments.
  */
