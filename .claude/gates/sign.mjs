@@ -17,7 +17,10 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const GATES_DIR = dirname(fileURLToPath(import.meta.url))
-const MAX_AGE_MS = 15 * 60 * 1000
+const ROOT = join(GATES_DIR, '..', '..')
+// 有效期 60 分钟：质量检查代理跑完整注释检查+安全审计需要几分钟，
+// 15 分钟太短会让 unit-test 通行证在检查期间过期
+const MAX_AGE_MS = 60 * 60 * 1000
 const GATES = ['unit-test', 'quality']
 
 function passPath(gate) {
@@ -26,21 +29,28 @@ function passPath(gate) {
 
 function git(cmd) {
   // 静音 Windows 下 CRLF 换行警告（走 stderr，不污染哈希，但会干扰输出）
-  return execSync(`git ${cmd}`, { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] })
+  return execSync(`git ${cmd}`, { encoding: 'utf-8', cwd: ROOT, stdio: ['ignore', 'pipe', 'ignore'] })
 }
 
 /**
- * 当前代码状态指纹：HEAD + 未暂存改动 + 已暂存改动 + 未跟踪文件名的哈希。
- * 把"暂存/未暂存"两边都计入：git add 只是让改动在两者之间移动、总和不变，
- * 所以暂存动作不会让通行证失效（否则刚签发通行证就被 git add 作废，无法提交）。
+ * 当前代码状态指纹：对全部"会被提交的文件"（已跟踪 + 未跟踪且未被忽略）的内容逐一哈希。
+ * 完全不依赖 git 的暂存状态——git add 只是暂存，文件内容不变，指纹就不变；
+ * 任何文件内容一变，指纹立刻变，通行证失效。
+ * ⚠️ 此函数与 .claude/hooks/pre-commit-check.mjs 里的实现必须保持一致。
  */
 function stateHash() {
-  const head = git('rev-parse HEAD').trim()
-  const unstaged = git('diff')
-  const staged = git('diff --cached')
-  const untracked = git('ls-files --others --exclude-standard')
-  const material = [head, unstaged, staged, untracked].join('\n---\n')
-  return createHash('sha256').update(material).digest('hex').slice(0, 16)
+  const files = git('ls-files --cached --others --exclude-standard').trim().split('\n').filter(Boolean)
+  const h = createHash('sha256')
+  for (const f of files) {
+    h.update(f + '\n')
+    try {
+      const contentHash = createHash('sha256').update(readFileSync(join(ROOT, f))).digest('hex')
+      h.update(contentHash + '\n')
+    } catch {
+      h.update('<missing>\n')  // 已删除的文件：记占位符（签名与校验两侧行为一致）
+    }
+  }
+  return h.digest('hex').slice(0, 16)
 }
 
 function sign(gate, summary) {

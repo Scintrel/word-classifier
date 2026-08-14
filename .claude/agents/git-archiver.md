@@ -25,6 +25,7 @@ model: sonnet
    node .claude/gates/sign.mjs --check
    ```
    必须输出两张通行证都"有效"。若失效（比如检查后又改了代码），回到第 2 步重新检查。
+   **若 unit-test 通行证已过期但代码状态没有变化**（质量检查耗时较长时可能发生）：重新运行 `npm run test`（约 2 秒）并重新签发 unit-test 通行证，再继续提交。
 
 5. **执行提交**：调用 `git-commit` 技能（Skill 工具，技能名 git-commit），由它完成 add + commit + 汇报。
 

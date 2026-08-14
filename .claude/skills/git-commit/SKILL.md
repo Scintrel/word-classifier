@@ -1,6 +1,6 @@
 ---
 name: git-commit
-description: 执行 git 提交：检查改动、确认无用户数据、生成中文提交信息并提交。质量门 Hook 会在提交时自动复核测试与质量通行证。
+description: 执行 git 提交：检查改动、确认无用户数据、生成中文提交信息并提交。质量门 Hook 会在提交时自动复核两张质量通行证。
 ---
 
 # git-commit 技能
@@ -20,7 +20,7 @@ description: 执行 git 提交：检查改动、确认无用户数据、生成�
    - 确认没有用户数据被加入：`*.db`、`resources/ecdict*.csv/json`（大词典）、`shots/` 等已被 .gitignore 排除，如 status 里出现这些文件，**停止并提醒用户**。
    - 确认没有敏感信息（密钥、密码、Token）混入改动。
 
-3. **提交**（提交时质量门 Hook 会自动复核测试与通行证）：
+3. **提交**（提交时质量门 Hook 会自动复核两张通行证）：
    ```bash
    git add -A
    git commit -m "$(cat << 'EOF'
