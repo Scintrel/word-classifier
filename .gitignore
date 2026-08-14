@@ -21,11 +21,13 @@ Thumbs.db
 *.log
 .tmp/
 
-# 大词典文件（可以重新下载/生成）
+# 大词典文件（太大不入库，可以重新下载/生成）
 resources/ecdict.json
 resources/ecdict-dict.json
 resources/ecdict.csv
 resources/DB.Browser.for.SQLite.zip
+# 精简版词典例外：随仓库分发，克隆即可用（node scripts/make-lite-dict.mjs 可重新生成）
+!resources/ecdict-lite.json
 node_modules
 
 # 用户旅程测试截图

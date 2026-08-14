@@ -6,7 +6,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "postbuild": "node -e \"const fs=require('fs');const p=require('path');const d='out/resources';fs.mkdirSync(d,{recursive:true});try{fs.copyFileSync('resources/ecdict-dict.json',p.join(d,'ecdict-dict.json'))}catch(e){};try{fs.copyFileSync('resources/dictionary.json',p.join(d,'dictionary.json'))}catch(e){};console.log('dict copied')\"",
+    "postbuild": "node -e \"const fs=require('fs');const p=require('path');const d='out/resources';fs.mkdirSync(d,{recursive:true});for(const f of ['ecdict-dict.json','ecdict-lite.json','dictionary.json']){try{fs.copyFileSync(p.join('resources',f),p.join(d,f))}catch(e){}};console.log('dict copied')\"",
     "dev": "npm run postbuild && electron-vite dev",
     "build": "electron-vite build && npm run postbuild",
     "preview": "electron-vite preview",

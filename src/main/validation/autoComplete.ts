@@ -51,7 +51,8 @@ function loadDictionary(): void {
   if (dictLoaded) return
   dictLoaded = true
   const dirs = getResourceDirs()
-  const fns = ['ecdict-dict.json', 'dictionary.json']
+  // 优先级：完整大词典（本机）→ 精简版（随仓库分发）→ 备用小词典
+  const fns = ['ecdict-dict.json', 'ecdict-lite.json', 'dictionary.json']
   for (const dir of dirs) {
     for (const fn of fns) {
       const p = join(dir, fn)
