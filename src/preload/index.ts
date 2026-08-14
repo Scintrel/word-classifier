@@ -68,6 +68,7 @@ export interface ElectronAPI {
     difficulty?: string
     frequency?: string
     partOfSpeech?: string
+    sort?: 'default' | 'az' | 'za'
   }) => Promise<{
     words: unknown[]
     total: number
@@ -149,6 +150,14 @@ export interface ElectronAPI {
     totalPages: number
   }>
   devUndoChange: (logId: number) => Promise<{ ok: boolean; message?: string }>
+  devLogUserAction: (payload: { page?: string; action: string; detail?: string }) => Promise<boolean>
+  devListUserActions: (page?: number, pageSize?: number) => Promise<{
+    rows: unknown[]
+    total: number
+    page: number
+    pageSize: number
+    totalPages: number
+  }>
 
   // Settings
   getSetting: (key: string) => Promise<string | null>
@@ -218,6 +227,8 @@ const api: ElectronAPI = {
   devDeleteDictEntry: (word) => ipcRenderer.invoke('dev:deleteDictEntry', word),
   devListChangeLog: (page?, pageSize?) => ipcRenderer.invoke('dev:listChangeLog', page, pageSize),
   devUndoChange: (logId) => ipcRenderer.invoke('dev:undoChange', logId),
+  devLogUserAction: (payload) => ipcRenderer.invoke('dev:logUserAction', payload),
+  devListUserActions: (page?, pageSize?) => ipcRenderer.invoke('dev:listUserActions', page, pageSize),
 
   // Settings
   getSetting: (key) => ipcRenderer.invoke('settings:get', key),

@@ -50,13 +50,14 @@ describe('Database Migrations', () => {
   it('should be idempotent on re-run', () => {
     runMigrations(db)
     const r = db.exec('SELECT COUNT(*) as c FROM _migrations')
-    // 迁移数量 = MIGRATIONS 数组长度（001 初始 + 002 分类种子 + 002 抽象分类 + 003 调色板 + 004 开发者模式）
-    expect((r[0].values[0][0] as number)).toBe(5)
+    // 迁移数量 = MIGRATIONS 数组长度（001 初始 + 002 分类种子 + 002 抽象分类 + 003 调色板 + 004 开发者模式 + 005 操作记录）
+    expect((r[0].values[0][0] as number)).toBe(6)
   })
 
   it('should create developer mode tables', () => {
     expect(tableExists('dict_entries')).toBe(true)
     expect(tableExists('change_log')).toBe(true)
+    expect(tableExists('user_action_log')).toBe(true)
   })
 
   it('should apply the 17-hue category color palette', () => {

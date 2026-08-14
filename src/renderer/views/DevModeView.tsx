@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
-  Terminal, Database, FlaskConical, BookMarked, History,
+  Terminal, Database, FlaskConical, BookMarked, History, Activity,
   Search, Plus, Save, Trash2, RotateCcw, AlertTriangle, Loader2
 } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
@@ -48,7 +48,7 @@ interface LogRow {
   created_at: string
 }
 
-type TabKey = 'overview' | 'sandbox' | 'dict' | 'log'
+type TabKey = 'overview' | 'sandbox' | 'dict' | 'log' | 'actions'
 
 const ACTION_LABELS: Record<string, string> = {
   create: '新增', update: '修改', delete: '删除', undo: '撤销'
@@ -90,6 +90,11 @@ export default function DevModeView() {
   const [logPage, setLogPage] = useState(1)
   const [logTotalPages, setLogTotalPages] = useState(1)
 
+  // 操作记录
+  const [actionRows, setActionRows] = useState<Record<string, unknown>[]>([])
+  const [actionPage, setActionPage] = useState(1)
+  const [actionTotalPages, setActionTotalPages] = useState(1)
+
   useEffect(() => {
     loadOverview()
   }, [])
@@ -97,6 +102,7 @@ export default function DevModeView() {
   useEffect(() => {
     if (tab === 'dict') loadDict()
     if (tab === 'log') loadLog(1)
+    if (tab === 'actions') loadActions(1)
   }, [tab])
 
   async function loadOverview() {
@@ -163,6 +169,15 @@ export default function DevModeView() {
     } catch (err) { console.error('Load log failed:', err) }
   }
 
+  async function loadActions(page: number) {
+    try {
+      const res = await window.api.devListUserActions(page, 50)
+      setActionRows(res.rows as Record<string, unknown>[])
+      setActionPage(res.page)
+      setActionTotalPages(res.totalPages)
+    } catch (err) { console.error('Load actions failed:', err) }
+  }
+
   async function undoChange(logId: number) {
     setDictBusy(true)
     try {
@@ -186,6 +201,7 @@ export default function DevModeView() {
     { key: 'sandbox', label: '查词试验场', icon: FlaskConical },
     { key: 'dict', label: '小词典', icon: BookMarked },
     { key: 'log', label: '修改日志', icon: History },
+    { key: 'actions', label: '操作记录', icon: Activity },
   ]
 
   return (
@@ -644,6 +660,66 @@ export default function DevModeView() {
                   上一页
                 </button>
                 <button onClick={() => loadLog(Math.min(logTotalPages, logPage + 1))} disabled={logPage === logTotalPages}
+                  className="rounded-md border border-border px-2 py-1.5 text-xs disabled:opacity-30 hover:bg-accent transition-colors">
+                  下一页
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ============ 操作记录 ============ */}
+      {tab === 'actions' && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <h2 className="font-semibold">操作记录</h2>
+            <HelpTip title="操作记录">
+              应用会自动记录你的每一步关键操作：切换页面、运行检查、批量任务、导入、分类、编辑单词、小词典修改等。<br />
+              出问题时，Claude 直接读这张表就能完整还原你的操作过程，不需要你回忆。<br />
+              记录只存在你电脑的数据库里，不会上传。
+            </HelpTip>
+          </div>
+
+          {actionRows.length === 0 ? (
+            <EmptyState
+              icon={<Activity className="h-12 w-12" />}
+              title="还没有操作记录"
+              description="切换页面或使用功能后，记录会自动出现在这里"
+            />
+          ) : (
+            <div className="rounded-lg border border-border divide-y divide-border">
+              {actionRows.map(row => (
+                <div key={row.id as number} className="flex items-start gap-3 px-4 py-2.5 hover:bg-accent/20">
+                  <span className="shrink-0 font-mono text-xs text-muted-foreground">#{row.id}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-sm font-medium">{row.action as string}</span>
+                      {row.page && (
+                        <span className="rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">{row.page as string}</span>
+                      )}
+                    </div>
+                    {row.detail && (
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground" title={row.detail as string}>
+                        {row.detail as string}
+                      </p>
+                    )}
+                  </div>
+                  <span className="shrink-0 text-xs text-muted-foreground">{row.created_at as string}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {actionTotalPages > 1 && (
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span>第 {actionPage}/{actionTotalPages} 页</span>
+              <div className="flex gap-1">
+                <button onClick={() => loadActions(Math.max(1, actionPage - 1))} disabled={actionPage === 1}
+                  className="rounded-md border border-border px-2 py-1.5 text-xs disabled:opacity-30 hover:bg-accent transition-colors">
+                  上一页
+                </button>
+                <button onClick={() => loadActions(Math.min(actionTotalPages, actionPage + 1))} disabled={actionPage === actionTotalPages}
                   className="rounded-md border border-border px-2 py-1.5 text-xs disabled:opacity-30 hover:bg-accent transition-colors">
                   下一页
                 </button>

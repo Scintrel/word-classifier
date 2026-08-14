@@ -17,15 +17,18 @@ interface WordFilterBarProps {
   selectedLevel: string
   selectedFrequency: string
   selectedPos: string
+  selectedSort: string
   onCategoryChange: (categoryId: number | null) => void
   onLevelChange: (level: string) => void
   onFrequencyChange: (band: string) => void
   onPosChange: (pos: string) => void
+  onSortChange: (sort: string) => void
 }
 
 /**
  * Filter bar for the word list.
- * Filters by category, exam level, frequency band and part of speech.
+ * Filters by category, exam level, frequency band and part of speech,
+ * plus alphabetical sorting.
  */
 export default function WordFilterBar({
   categories,
@@ -33,23 +36,27 @@ export default function WordFilterBar({
   selectedLevel,
   selectedFrequency,
   selectedPos,
+  selectedSort,
   onCategoryChange,
   onLevelChange,
   onFrequencyChange,
-  onPosChange
+  onPosChange,
+  onSortChange
 }: WordFilterBarProps) {
   const rootCategories = categories.filter(c => c.parent_id === null)
   const hasActiveFilters =
     selectedCategory !== null ||
     selectedLevel !== 'all' ||
     selectedFrequency !== 'all' ||
-    selectedPos !== 'all'
+    selectedPos !== 'all' ||
+    selectedSort !== 'default'
 
   function clearAll() {
     onCategoryChange(null)
     onLevelChange('all')
     onFrequencyChange('all')
     onPosChange('all')
+    onSortChange('default')
   }
 
   return (
@@ -117,6 +124,20 @@ export default function WordFilterBar({
           {POS_OPTIONS.map(p => (
             <option key={p} value={p}>{POS_LABELS[p] || p}</option>
           ))}
+        </select>
+      </div>
+
+      {/* Sort */}
+      <div className="flex items-center gap-1.5">
+        <span className="text-xs text-muted-foreground">排序:</span>
+        <select
+          value={selectedSort}
+          onChange={(e) => onSortChange(e.target.value)}
+          className="rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+        >
+          <option value="default">默认（最近修改）</option>
+          <option value="az">字母 A→Z</option>
+          <option value="za">字母 Z→A</option>
         </select>
       </div>
 

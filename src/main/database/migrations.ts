@@ -271,6 +271,21 @@ CREATE TABLE IF NOT EXISTS change_log (
 );
 
 CREATE INDEX IF NOT EXISTS idx_change_log_created ON change_log(created_at);`
+  },
+  {
+    // 操作记录：自动记录用户的关键操作（页面切换/检查/补全/导入/分类/编辑等），
+    // 出问题时 Claude 可直接读这张表还原用户的操作过程
+    name: '005_user_action_log.sql',
+    sql: `
+CREATE TABLE IF NOT EXISTS user_action_log (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    page            TEXT,
+    action          TEXT NOT NULL,
+    detail          TEXT,
+    created_at      DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_action_created ON user_action_log(created_at);`
   }
 ]
 

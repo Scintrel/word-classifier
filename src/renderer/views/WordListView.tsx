@@ -34,8 +34,9 @@ interface Category {
  * Shows all imported words in a sortable, filterable table.
  * Click a row to open the detail/edit panel.
  * 词性不单独占列（释义里已含词性），但仍可用筛选栏按词性过滤。
+ * 页面常驻：切走只是隐藏，筛选/翻页保持；切回来自动拉取最新数据。
  */
-export default function WordListView() {
+export default function WordListView({ active = true }: { active?: boolean }) {
   const [words, setWords] = useState<WordRow[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
@@ -49,6 +50,7 @@ export default function WordListView() {
   const [selectedLevel, setSelectedLevel] = useState('all')
   const [selectedFrequency, setSelectedFrequency] = useState('all')
   const [selectedPos, setSelectedPos] = useState('all')
+  const [selectedSort, setSelectedSort] = useState('default')
 
   // Detail panel
   const [selectedWordId, setSelectedWordId] = useState<number | null>(null)
@@ -63,7 +65,12 @@ export default function WordListView() {
   // Load words when page or filters change
   useEffect(() => {
     loadWords()
-  }, [page, selectedCategory, selectedLevel, selectedFrequency, selectedPos])
+  }, [page, selectedCategory, selectedLevel, selectedFrequency, selectedPos, selectedSort])
+
+  // 切回本页时刷新数据（保持筛选/页码不变）
+  useEffect(() => {
+    if (active) loadWords()
+  }, [active])
 
   async function loadCategories() {
     try {
@@ -84,7 +91,8 @@ export default function WordListView() {
         categoryId: selectedCategory ?? undefined,
         difficulty: selectedLevel !== 'all' ? selectedLevel : undefined,
         frequency: selectedFrequency !== 'all' ? selectedFrequency : undefined,
-        partOfSpeech: selectedPos !== 'all' ? selectedPos : undefined
+        partOfSpeech: selectedPos !== 'all' ? selectedPos : undefined,
+        sort: selectedSort !== 'default' ? (selectedSort as 'az' | 'za') : undefined
       })
       setWords(result.words as WordRow[])
       setTotal(result.total)
@@ -122,6 +130,11 @@ export default function WordListView() {
 
   const handlePosChange = useCallback((pos: string) => {
     setSelectedPos(pos)
+    setPage(1)
+  }, [])
+
+  const handleSortChange = useCallback((sort: string) => {
+    setSelectedSort(sort)
     setPage(1)
   }, [])
 
@@ -168,10 +181,12 @@ export default function WordListView() {
           selectedLevel={selectedLevel}
           selectedFrequency={selectedFrequency}
           selectedPos={selectedPos}
+          selectedSort={selectedSort}
           onCategoryChange={handleCategoryChange}
           onLevelChange={handleLevelChange}
           onFrequencyChange={handleFrequencyChange}
           onPosChange={handlePosChange}
+          onSortChange={handleSortChange}
         />
         <HelpTip title="筛选说明">
           分类：按主分类筛选（自动包含其子分类里的单词）。<br />

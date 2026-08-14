@@ -127,8 +127,9 @@ export function resetUserDict(): void {
 }
 
 /**
- * 三步回退查找：精确 → 全小写 → 首字母大写。
- * 先在用户小词典里找（优先级最高），再查 ECDICT 大词典。
+ * 四步回退查找：精确 → 全小写 → 首字母大写 → 全大写。
+ * 全大写是必须的：ECDICT 里 CORE、FAX 等词条以全大写存储（如缩写词），
+ * 缺这一步会导致明明有音标却补不上。
  */
 function findInMap(map: Map<string, DictEntry>, t: string): DictEntry | null {
   const exact = map.get(t)
@@ -136,7 +137,9 @@ function findInMap(map: Map<string, DictEntry>, t: string): DictEntry | null {
   const lower = map.get(t.toLowerCase())
   if (lower) return lower
   const cap = t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()
-  return map.get(cap) ?? null
+  const capped = map.get(cap)
+  if (capped) return capped
+  return map.get(t.toUpperCase()) ?? null
 }
 
 export function lookupWord(word: string): DictEntry | null {

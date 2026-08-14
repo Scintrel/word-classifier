@@ -104,6 +104,7 @@ export function registerIpcHandlers(): void {
     difficulty?: string
     frequency?: string
     partOfSpeech?: string
+    sort?: 'default' | 'az' | 'za'
   }) => {
     const page = options?.page ?? 1
     const pageSize = options?.pageSize ?? 50
@@ -161,11 +162,17 @@ export function registerIpcHandlers(): void {
     )
     const total = (countResult?.total as number) ?? 0
 
-    // 搜索时的排序参数单独追加到列表查询里（计数查询不需要），且必须在 LIMIT/OFFSET 之前
+    // 排序：白名单校验（非白名单值一律按默认处理，防注入）
+    // 用户明确选了字母排序时，字母序优先于搜索相关度
     const listParams = [...params]
     let orderBy = 'w.updated_at DESC'
-    if (options?.search) {
+    if (options?.sort === 'az') {
+      orderBy = 'w.word COLLATE NOCASE ASC, w.id ASC'
+    } else if (options?.sort === 'za') {
+      orderBy = 'w.word COLLATE NOCASE DESC, w.id ASC'
+    } else if (options?.search) {
       // 完全匹配 → 前缀匹配 → 其余包含；同级按词频（越常用越靠前），再按 id
+      // 搜索参数单独追加到列表查询里（计数查询不需要），且必须在 LIMIT/OFFSET 之前
       orderBy = `CASE WHEN LOWER(w.word) = LOWER(?) THEN 0
                  WHEN LOWER(w.word) LIKE LOWER(?) || '%' THEN 1
                  ELSE 2 END,
@@ -237,6 +244,7 @@ export function registerIpcHandlers(): void {
     params.push(wordId)
 
     runSQLWithSave(`UPDATE words SET ${sets.join(', ')} WHERE id = ?`, params)
+    logUserAction('编辑单词', `#${wordId} 修改字段: ${Object.keys(updates).filter(k => allowedFields.includes(k)).join('、')}`)
     return true
   })
 
@@ -244,8 +252,10 @@ export function registerIpcHandlers(): void {
   // Words: delete a word (and cascade to examples/relations)
   // ============================================
   ipcMain.handle('words:delete', (_event, wordId: number) => {
+    const wordRow = queryOne_('SELECT word FROM words WHERE id = ?', [wordId])
     // Foreign keys with ON DELETE CASCADE handle related records
     runSQLWithSave('DELETE FROM words WHERE id = ?', [wordId])
+    logUserAction('删除单词', `#${wordId} ${wordRow?.word ?? ''}`.trim())
     return true
   })
 
@@ -328,7 +338,9 @@ export function registerIpcHandlers(): void {
     )
 
     // Get the last inserted row ID
-    const lastId = queryOne_('SELECT last_insert_rowid() as id')
+    // ⚠️ 不能用 last_insert_rowid()：runSQLWithSave 里 saveDatabase() 会调 db.export()，
+    // 而 sql.js 的 export() 会把 last_insert_rowid 重置为 0，导致历史记录更新落空（"导入 0 条"的根源）
+    const lastId = queryOne_('SELECT MAX(id) as id FROM import_history')
     const historyId = (lastId?.id as number) ?? 0
 
     let imported = 0
@@ -380,8 +392,8 @@ export function registerIpcHandlers(): void {
         ]
       )
 
-      // Get the newly inserted word ID
-      const wordIdResult = queryOne_('SELECT last_insert_rowid() as id')
+      // Get the newly inserted word ID（同样避开 last_insert_rowid 的 export 重置陷阱）
+      const wordIdResult = queryOne_('SELECT MAX(id) as id FROM words')
       const wordId = (wordIdResult?.id as number) ?? 0
 
       // Insert example sentence if provided
@@ -403,6 +415,9 @@ export function registerIpcHandlers(): void {
 
     // 整个导入流程只写盘这一次
     saveDatabase()
+
+    // 操作记录：导入的完整结果（出问题时可还原）
+    logUserAction('导入单词', `${filePath.split(/[/\\]/).pop() ?? filePath}: 成功 ${imported} 跳过 ${skipped}`)
 
     return {
       imported,
@@ -426,6 +441,7 @@ export function registerIpcHandlers(): void {
   // Validation: scan all words for issues
   // ============================================
   ipcMain.handle('validation:check', () => {
+    logUserAction('运行数据检查')
     return validateAndLog()
   })
 
@@ -473,6 +489,7 @@ export function registerIpcHandlers(): void {
   // ============================================
   ipcMain.handle('classification:run', () => {
     const result = classifyAll()
+    logUserAction('自动分类', `分类 ${result.classified} 个单词（共 ${result.total} 个待处理）`)
     return result
   })
 
@@ -544,6 +561,7 @@ export function registerIpcHandlers(): void {
       return { ...w, examples }
     })
 
+    logUserAction('导出单词', `导出 ${enrichedWords.length} 个单词`)
     return enrichedWords
   })
 
@@ -560,6 +578,7 @@ export function registerIpcHandlers(): void {
     db.run('DELETE FROM import_history')
     db.run('DELETE FROM words')
     saveDatabase()
+    logUserAction('清空所有单词')
     return true
   })
 
@@ -577,6 +596,7 @@ export function registerIpcHandlers(): void {
     // Re-run all migrations (CREATE TABLE IF NOT EXISTS + 分类种子 + 调色板)
     const { runMigrations } = require('../database/migrations')
     runMigrations(db)
+    logUserAction('重置为默认分类')
     return true
   })
 
@@ -690,6 +710,32 @@ export function registerIpcHandlers(): void {
   // Developer mode：查词试验场 / 小词典 / 修改日志
   // ============================================
 
+  /**
+   * 记录用户操作到 user_action_log（操作监控）。
+   * 出问题时 Claude 直接读这张表就能还原用户的操作过程。
+   */
+  function logUserAction(action: string, detail?: string, page?: string) {
+    runSQLWithSave(
+      'INSERT INTO user_action_log (page, action, detail) VALUES (?, ?, ?)',
+      [page ?? null, action, detail ?? null]
+    )
+  }
+
+  /** 渲染进程上报操作（页面切换、任务启停等） */
+  ipcMain.handle('dev:logUserAction', (_event, payload: { page?: string; action: string; detail?: string }) => {
+    logUserAction(payload?.action ?? '未知操作', payload?.detail, payload?.page)
+    return true
+  })
+
+  /** 分页读取操作记录（开发者模式「操作记录」标签页） */
+  ipcMain.handle('dev:listUserActions', (_event, page?: number, pageSize?: number) => {
+    const p = page ?? 1
+    const size = pageSize ?? 50
+    const total = (queryOne_('SELECT COUNT(*) as total FROM user_action_log')?.total as number) ?? 0
+    const rows = queryAll_('SELECT * FROM user_action_log ORDER BY id DESC LIMIT ? OFFSET ?', [size, (p - 1) * size])
+    return { rows, total, page: p, pageSize: size, totalPages: Math.ceil(total / size) }
+  })
+
   ipcMain.handle('dev:getOverview', () => {
     const dbPath = join(app.getPath('userData'), 'word-classifier.db')
     let dbSize = 0
@@ -739,10 +785,22 @@ export function registerIpcHandlers(): void {
 
   // 小词典 CRUD 与修改日志/撤销（业务逻辑在 validation/userDict.ts，可直接单测）
   ipcMain.handle('dev:listDictEntries', () => listDictEntries())
-  ipcMain.handle('dev:saveDictEntry', (_event, entry: { word: string; phonetic?: string; definition?: string; pos?: string }) => saveDictEntry(entry))
-  ipcMain.handle('dev:deleteDictEntry', (_event, word: string) => deleteDictEntry(word))
+  ipcMain.handle('dev:saveDictEntry', (_event, entry: { word: string; phonetic?: string; definition?: string; pos?: string }) => {
+    const res = saveDictEntry(entry)
+    if (res.ok) logUserAction('小词典修改', `词条 ${(entry?.word ?? '').trim()}`)
+    return res
+  })
+  ipcMain.handle('dev:deleteDictEntry', (_event, word: string) => {
+    const res = deleteDictEntry(word)
+    if (res.ok) logUserAction('小词典删除', `词条 ${word}`)
+    return res
+  })
   ipcMain.handle('dev:listChangeLog', (_event, page?: number, pageSize?: number) => listChangeLog(page ?? 1, pageSize ?? 50))
-  ipcMain.handle('dev:undoChange', (_event, logId: number) => undoChange(logId))
+  ipcMain.handle('dev:undoChange', (_event, logId: number) => {
+    const res = undoChange(logId)
+    if (res.ok) logUserAction('小词典撤销', `日志 #${logId}`)
+    return res
+  })
 
   // ============================================
   // Settings

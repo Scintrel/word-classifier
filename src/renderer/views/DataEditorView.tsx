@@ -1,13 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Edit3, AlertTriangle, AlertCircle, CheckCircle2,
   Search, XCircle, Zap, ChevronDown, ChevronRight, Cpu, Award, Slash,
-  ChevronLeft
+  ChevronLeft, X
 } from 'lucide-react'
 import WordDetailPanel from '../components/WordDetailPanel'
 import PageHeader from '../components/PageHeader'
 import SectionCard from '../components/SectionCard'
 import EmptyState from '../components/EmptyState'
+import { useTaskStore, TASK_LABELS, type TaskType } from '../stores/taskStore'
+import { startDictFix, startNormalize, startRefill, startAIFill } from '../services/taskRunner'
 
 interface ValidationStats {
   complete: number
@@ -63,37 +65,18 @@ const ISSUE_PAGE_SIZE = 50
 export default function DataEditorView() {
   const [result, setResult] = useState<ValidationResult | null>(null)
   const [checking, setChecking] = useState(false)
-  const [fixing, setFixing] = useState(false)
-  const [dictProgress, setDictProgress] = useState({ current: 0, total: 0 })
-  const [fixResult, setFixResult] = useState<{ fixed: number; details: string[] } | null>(null)
-  const [aiFixing, setAiFixing] = useState(false)
-  const [aiProgress, setAiProgress] = useState({ current: 0, total: 0 })
-  const [aiFixResult, setAiFixResult] = useState<{ filled: number; words: string[] } | null>(null)
-  // 等级词频回填
-  const [levelFixing, setLevelFixing] = useState(false)
-  const [levelProgress, setLevelProgress] = useState({ current: 0, total: 0 })
-  const [levelResult, setLevelResult] = useState<{ fixed: number; details: string[] } | null>(null)
-  // 音标规范化
-  const [normFixing, setNormFixing] = useState(false)
-  const [normProgress, setNormProgress] = useState({ current: 0, total: 0 })
-  const [normResult, setNormResult] = useState<{ fixed: number; details: string[] } | null>(null)
   const [filterType, setFilterType] = useState<string | null>(null)
   const [issuePage, setIssuePage] = useState(1)
   const [expandedIssues, setExpandedIssues] = useState<Set<number>>(new Set())
   // 正在编辑的单词（点「手动编辑」时在本页滑出编辑面板）
   const [editWordId, setEditWordId] = useState<number | null>(null)
 
-  /** 开始新操作时清掉其他操作的结果横幅，页面上同时只显示最新一个操作的结果 */
-  function resetAllBanners() {
-    setFixResult(null)
-    setAiFixResult(null)
-    setLevelResult(null)
-    setNormResult(null)
-  }
+  // 批量任务全部来自全局 taskStore（切页不中断，回来还能看到进度和结果）
+  const tasks = useTaskStore(s => s.tasks)
+  const dismissTask = useTaskStore(s => s.dismiss)
 
   async function handleCheck() {
     setChecking(true)
-    resetAllBanners()
     try {
       const data = await window.api.checkValidation()
       setResult(data as ValidationResult)
@@ -106,141 +89,13 @@ export default function DataEditorView() {
     }
   }
 
-  async function handleAutoFix() {
-    setFixing(true)
-    resetAllBanners()
-    try {
-      const total = await window.api.autoFixCount()
-      if (total === 0) { setFixResult({ fixed: 0, details: [] }); setFixing(false); return }
-      setDictProgress({ current: 0, total })
-      let allDetails: string[] = []
-      let totalFixed = 0
-      let attempts = 0
-      // 防卡死：最多循环"总单词数/每批300"批 + 2 批余量
-      const maxAttempts = Math.ceil(total / 300) + 2
-      while (attempts < maxAttempts) {
-        const data = await window.api.autoFixBatch(300)
-        // 词典未加载的错误（fixed = -1），直接显示错误并退出
-        if (data.fixed === -1) { setFixResult({ fixed: -1, details: data.details }); break }
-        totalFixed += data.fixed
-        allDetails = [...allDetails, ...data.details]
-        setDictProgress({ current: totalFixed, total })
-        attempts++
-        if (data.done) break
-        // 本批没有进展，避免无限循环
-        if (data.fixed === 0 && attempts > 1) break
-      }
-      if (totalFixed >= 0) {
-        setFixResult({ fixed: totalFixed, details: allDetails })
-        const updated = await window.api.checkValidation()
-        setResult(updated as ValidationResult)
-      }
-    } catch (err) {
-      console.error('Auto-fix failed:', err)
-    } finally {
-      setFixing(false)
-    }
-  }
-
-  async function handleAIAutoFill() {
-    setAiFixing(true)
-    resetAllBanners()
-    try {
-      const total = await window.api.aiAutoFillCount()
-      if (total === 0) {
-        setAiFixResult({ filled: 0, words: [] })
-        setAiFixing(false)
-        return
-      }
-      setAiProgress({ current: 0, total })
-      let allWords: string[] = []
-      let totalFilled = 0
-      let attempts = 0
-      const maxAttempts = Math.ceil(total / 8) + 2
-      while (attempts < maxAttempts) {
-        const data = await window.api.aiAutoFillAll(8)
-        totalFilled += data.filled
-        allWords = [...allWords, ...data.words]
-        setAiProgress({ current: totalFilled, total })
-        attempts++
-        if (data.done) break
-        // If no progress in this batch, don't retry infinitely
-        if (data.filled === 0 && attempts > 1) break
-      }
-      setAiFixResult({ filled: totalFilled, words: allWords })
-      if (totalFilled > 0) {
-        const updated = await window.api.checkValidation()
-        setResult(updated as ValidationResult)
-      }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err)
-      setAiFixResult({ filled: -1, words: [msg] })
-    } finally {
-      setAiFixing(false)
-    }
-  }
-
-  /** 等级词频回填：用词典的考试标签和 COCA 词频填充 difficulty/frequency */
-  async function handleRefillLevels() {
-    setLevelFixing(true)
-    resetAllBanners()
-    try {
-      const total = await window.api.refillLevelsCount()
-      if (total === 0) { setLevelResult({ fixed: 0, details: [] }); setLevelFixing(false); return }
-      setLevelProgress({ current: 0, total })
-      let allDetails: string[] = []
-      let totalFixed = 0
-      let attempts = 0
-      // 防卡死：最多循环"总单词数/每批300"批 + 2 批余量
-      const maxAttempts = Math.ceil(total / 300) + 2
-      while (attempts < maxAttempts) {
-        const data = await window.api.refillLevelsBatch(300)
-        // 词典未加载的错误（fixed = -1），直接显示错误并退出
-        if (data.fixed === -1) { setLevelResult({ fixed: -1, details: data.details }); break }
-        totalFixed += data.fixed
-        allDetails = [...allDetails, ...data.details]
-        setLevelProgress({ current: totalFixed, total })
-        attempts++
-        if (data.done) break
-        // 本批没有进展，避免无限循环
-        if (data.fixed === 0 && attempts > 1) break
-      }
-      if (totalFixed >= 0) setLevelResult({ fixed: totalFixed, details: allDetails })
-    } catch (err) {
-      console.error('Refill levels failed:', err)
-    } finally {
-      setLevelFixing(false)
-    }
-  }
-
-  /** 音标规范化：存量音标统一加 // 并修正特殊字符 */
-  async function handleNormalizePhonetics() {
-    setNormFixing(true)
-    resetAllBanners()
-    try {
-      const total = await window.api.normalizePhoneticsCount()
-      if (total === 0) { setNormResult({ fixed: 0, details: [] }); setNormFixing(false); return }
-      setNormProgress({ current: 0, total })
-      let allDetails: string[] = []
-      let totalFixed = 0
-      let attempts = 0
-      const maxAttempts = Math.ceil(total / 300) + 2
-      while (attempts < maxAttempts) {
-        const data = await window.api.normalizePhoneticsBatch(300)
-        totalFixed += data.fixed
-        allDetails = [...allDetails, ...data.details]
-        setNormProgress({ current: totalFixed, total })
-        attempts++
-        if (data.done) break
-        if (data.fixed === 0 && attempts > 1) break
-      }
-      setNormResult({ fixed: totalFixed, details: allDetails })
-    } catch (err) {
-      console.error('Normalize phonetics failed:', err)
-    } finally {
-      setNormFixing(false)
-    }
-  }
+  // 任务完成时自动重新检查，刷新问题列表与统计（本页挂载期间；若任务在其他页面完成，
+  // 回到本页的首次渲染同样会触发一次刷新）
+  const hasFinishedTask = (['dictFix', 'normalize', 'refill', 'aiFill'] as TaskType[])
+    .some(t => tasks[t].status === 'done' || tasks[t].status === 'error')
+  useEffect(() => {
+    if (hasFinishedTask) handleCheck()
+  }, [hasFinishedTask])
 
   function toggleExpand(issueIdx: number) {
     setExpandedIssues(prev => {
@@ -280,40 +135,43 @@ export default function DataEditorView() {
     )
   }
 
-  /** 批量工具的结果横幅 */
-  function ToolResult({ icon, fixed, label, details, errorText }: {
-    icon: React.ReactNode; fixed: number; label: string; details: string[]; errorText?: string
-  }) {
-    if (fixed === -1) {
+  /** 任务结果横幅（来自全局 store，可关闭） */
+  function TaskResultBanner({ type, icon }: { type: TaskType; icon: React.ReactNode }) {
+    const t = tasks[type]
+    if (t.status !== 'done' && t.status !== 'error') return null
+    const label = TASK_LABELS[type]
+    if (t.status === 'error') {
       return (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/40">
-          <div className="flex items-center gap-2">
-            <XCircle className="h-4 w-4 text-red-500" />
-            <span className="text-sm font-medium text-red-800 dark:text-red-300">{label}失败</span>
+        <div className="mb-3 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/40">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <XCircle className="h-4 w-4 text-red-500" />
+              <span className="text-sm font-medium text-red-800 dark:text-red-300">{label}失败</span>
+            </div>
+            <button onClick={() => dismissTask(type)} className="rounded p-0.5 text-red-400 hover:bg-red-100 dark:hover:bg-red-900/60">
+              <X className="h-3.5 w-3.5" />
+            </button>
           </div>
-          <div className="mt-1.5 text-sm text-red-700 dark:text-red-400">{errorText ?? '未知错误'}</div>
-        </div>
-      )
-    }
-    if (fixed === 0) {
-      return (
-        <div className="rounded-lg border border-border bg-muted p-3">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
-            <span className="text-sm text-muted-foreground">没有需要{label}的内容</span>
-          </div>
+          <div className="mt-1.5 text-sm text-red-700 dark:text-red-400">{t.message || '未知错误'}</div>
         </div>
       )
     }
     return (
-      <div className="rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-800 dark:bg-green-900/40">
-        <div className="flex items-center gap-2">
-          {icon}
-          <span className="text-sm font-medium text-green-800 dark:text-green-300">已{label} {fixed} 个单词</span>
+      <div className="mb-3 rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-800 dark:bg-green-900/40">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            {icon}
+            <span className="text-sm font-medium text-green-800 dark:text-green-300">
+              {t.message ? `已${label} ${t.message}` : `没有需要${label}的内容`}
+            </span>
+          </div>
+          <button onClick={() => dismissTask(type)} className="rounded p-0.5 text-green-400 hover:bg-green-100 dark:hover:bg-green-900/60">
+            <X className="h-3.5 w-3.5" />
+          </button>
         </div>
-        {details.length > 0 && (
+        {t.details.length > 0 && (
           <div className="mt-1.5 max-h-24 overflow-y-auto text-xs text-green-700 dark:text-green-400">
-            {details.slice(0, 10).map((d, i) => (<p key={i}>• {d}</p>))}
+            {t.details.slice(0, 10).map((d, i) => (<p key={i}>• {d}</p>))}
           </div>
         )}
       </div>
@@ -334,7 +192,8 @@ export default function DataEditorView() {
               「音标规范化」给存量音标统一加上 // 并修正特殊字符。<br />
               「等级词频回填」用词典标签填充考试等级与 COCA 词频排名。<br />
               「AI 补全」调用大模型生成更完整的信息和例句，需联网并在「设置」中配置。<br />
-              建议顺序：先词典补全 → 再等级词频回填 → 最后对词典里没有的词用 AI 补全。
+              建议顺序：先词典补全 → 再等级词频回填 → 最后对词典里没有的词用 AI 补全。<br />
+              任务运行中可以切换到其他页面，任务会在后台继续，顶部栏有进度提示。
             </>
           )
         }}
@@ -351,20 +210,20 @@ export default function DataEditorView() {
             {result && result.issues.length > 0 && (
               <>
                 <button
-                  onClick={handleAutoFix}
-                  disabled={fixing}
+                  onClick={() => startDictFix()}
+                  disabled={tasks.dictFix.status === 'running'}
                   className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                 >
-                  <Zap className={`h-4 w-4 ${fixing ? 'animate-spin' : ''}`} />
-                  {fixing ? '修复中...' : '词典补全'}
+                  <Zap className={`h-4 w-4 ${tasks.dictFix.status === 'running' ? 'animate-spin' : ''}`} />
+                  {tasks.dictFix.status === 'running' ? '补全中...' : '词典补全'}
                 </button>
                 <button
-                  onClick={handleAIAutoFill}
-                  disabled={aiFixing}
+                  onClick={() => startAIFill()}
+                  disabled={tasks.aiFill.status === 'running'}
                   className="flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
                 >
-                  <Cpu className={`h-4 w-4 ${aiFixing ? 'animate-spin' : ''}`} />
-                  {aiFixing ? 'AI补全中...' : 'AI 智能补全'}
+                  <Cpu className={`h-4 w-4 ${tasks.aiFill.status === 'running' ? 'animate-spin' : ''}`} />
+                  {tasks.aiFill.status === 'running' ? 'AI补全中...' : 'AI 智能补全'}
                 </button>
               </>
             )}
@@ -372,7 +231,7 @@ export default function DataEditorView() {
         }
       />
 
-      {/* 批量工具卡片（不依赖检查结果，随时可用） */}
+      {/* 批量工具卡片（不依赖检查结果，随时可用；切页后任务继续） */}
       <SectionCard
         icon={<Slash className="h-5 w-5 text-teal-500" />}
         title="批量工具"
@@ -382,51 +241,44 @@ export default function DataEditorView() {
           children: (
             <>
               「音标规范化」：统一补上 // 并修正特殊字符（可以重复运行，无副作用）。<br />
-              「等级词频回填」：给没有等级/词频的词补上考试标签与 COCA 排名（已填过的词不受影响）。
+              「等级词频回填」：给没有等级/词频的词补上考试标签与 COCA 排名（已填过的词不受影响）。<br />
+              任务运行中可以切换到其他页面，任务在后台继续跑，顶部栏会显示进度。
             </>
           )
         }}
       >
         <div className="flex flex-wrap gap-3">
           <button
-            onClick={handleNormalizePhonetics}
-            disabled={normFixing}
+            onClick={() => startNormalize()}
+            disabled={tasks.normalize.status === 'running'}
             className="flex items-center gap-2 rounded-md border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-medium text-teal-700 hover:bg-teal-100 disabled:opacity-50 dark:border-teal-800 dark:bg-teal-900/40 dark:text-teal-300"
           >
-            <Slash className={`h-4 w-4 ${normFixing ? 'animate-spin' : ''}`} />
-            {normFixing ? '规范化中...' : '音标规范化'}
+            <Slash className={`h-4 w-4 ${tasks.normalize.status === 'running' ? 'animate-spin' : ''}`} />
+            {tasks.normalize.status === 'running' ? '规范化中...' : '音标规范化'}
           </button>
           <button
-            onClick={handleRefillLevels}
-            disabled={levelFixing}
+            onClick={() => startRefill()}
+            disabled={tasks.refill.status === 'running'}
             className="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50 dark:border-blue-800 dark:bg-blue-900/40 dark:text-blue-300"
           >
-            <Award className={`h-4 w-4 ${levelFixing ? 'animate-spin' : ''}`} />
-            {levelFixing ? '回填中...' : '等级词频回填'}
+            <Award className={`h-4 w-4 ${tasks.refill.status === 'running' ? 'animate-spin' : ''}`} />
+            {tasks.refill.status === 'running' ? '回填中...' : '等级词频回填'}
           </button>
         </div>
 
-        {normFixing && normProgress.total > 0 && (
+        {tasks.normalize.status === 'running' && tasks.normalize.total > 0 && (
           <div className="mt-3">
-            <ToolProgress color="teal" current={normProgress.current} total={normProgress.total} label="音标规范化中..." />
+            <ToolProgress color="teal" current={tasks.normalize.current} total={tasks.normalize.total} label="音标规范化中..." />
           </div>
         )}
-        {normResult && (
-          <div className="mt-3">
-            <ToolResult icon={<Slash className="h-4 w-4 text-green-600" />} fixed={normResult.fixed}
-              label="规范化" details={normResult.details} />
-          </div>
-        )}
+        <div className="mt-3 space-y-0">
+          <TaskResultBanner type="normalize" icon={<Slash className="h-4 w-4 text-green-600" />} />
+          <TaskResultBanner type="refill" icon={<Award className="h-4 w-4 text-green-600" />} />
+        </div>
 
-        {levelFixing && levelProgress.total > 0 && (
+        {tasks.refill.status === 'running' && tasks.refill.total > 0 && (
           <div className="mt-3">
-            <ToolProgress color="blue" current={levelProgress.current} total={levelProgress.total} label="等级词频回填中..." />
-          </div>
-        )}
-        {levelResult && (
-          <div className="mt-3">
-            <ToolResult icon={<Award className="h-4 w-4 text-green-600" />} fixed={levelResult.fixed}
-              label="回填" details={levelResult.details} errorText={levelResult.details[0]} />
+            <ToolProgress color="blue" current={tasks.refill.current} total={tasks.refill.total} label="等级词频回填中..." />
           </div>
         )}
       </SectionCard>
@@ -478,60 +330,29 @@ export default function DataEditorView() {
             </div>
           </div>
 
-          {/* Dict progress */}
-          {fixing && dictProgress.total > 0 && (
+          {/* 词典补全 / AI 补全进度与结果（全局任务） */}
+          {tasks.dictFix.status === 'running' && tasks.dictFix.total > 0 && (
             <div className="mb-4">
-              <ToolProgress color="blue" current={dictProgress.current} total={dictProgress.total} label="词典补全中..." />
+              <ToolProgress color="blue" current={tasks.dictFix.current} total={tasks.dictFix.total} label="词典补全中..." />
             </div>
           )}
-          {/* Fix result message（词典补全） */}
-          {fixResult && (
-            <div className="mb-4">
-              <ToolResult icon={<Zap className="h-4 w-4 text-green-600" />} fixed={fixResult.fixed}
-                label="词典补全" details={fixResult.details} errorText={fixResult.details[0]} />
-            </div>
-          )}
+          <div className="space-y-0">
+            <TaskResultBanner type="dictFix" icon={<Zap className="h-4 w-4 text-green-600" />} />
+          </div>
 
-          {/* AI progress */}
-          {aiFixing && aiProgress.total > 0 && (
+          {tasks.aiFill.status === 'running' && tasks.aiFill.total > 0 && (
             <div className="mb-4 rounded-lg border border-purple-200 bg-purple-50 p-3 dark:border-purple-800 dark:bg-purple-900/40">
               <div className="mb-1.5 flex items-center justify-between text-sm">
                 <span className="font-medium text-purple-800 dark:text-purple-300">AI 补全中...</span>
-                <span className="text-purple-600 dark:text-purple-400">{aiProgress.current} / {aiProgress.total}</span>
+                <span className="text-purple-600 dark:text-purple-400">{tasks.aiFill.current} / {tasks.aiFill.total}</span>
               </div>
               <div className="h-2 w-full overflow-hidden rounded-full bg-purple-200 dark:bg-purple-800">
                 <div className="h-full rounded-full bg-purple-500 transition-all duration-500"
-                  style={{ width: `${(aiProgress.current / aiProgress.total) * 100}%` }} />
+                  style={{ width: `${(tasks.aiFill.current / tasks.aiFill.total) * 100}%` }} />
               </div>
             </div>
           )}
-          {/* AI fix result */}
-          {aiFixResult && (
-            <div className={`mb-4 rounded-lg border p-4 ${aiFixResult.filled === -1 ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/40' : aiFixResult.filled > 0 ? 'border-purple-200 bg-purple-50 dark:border-purple-800 dark:bg-purple-900/40' : 'border-border bg-muted'}`}>
-              <div className="flex items-center gap-2">
-                {aiFixResult.filled === -1 ? (
-                  <XCircle className="h-5 w-5 text-red-500" />
-                ) : aiFixResult.filled > 0 ? (
-                  <Cpu className="h-5 w-5 text-purple-600" />
-                ) : (
-                  <AlertCircle className="h-5 w-5 text-muted-foreground" />
-                )}
-                <span className={`text-sm font-medium ${aiFixResult.filled === -1 ? 'text-red-800 dark:text-red-300' : aiFixResult.filled > 0 ? 'text-purple-800 dark:text-purple-300' : 'text-muted-foreground'}`}>
-                  {aiFixResult.filled === -1
-                    ? 'AI 补全失败'
-                    : aiFixResult.filled > 0
-                      ? `AI 已补全 ${aiFixResult.filled} 个单词：${aiFixResult.words.slice(0, 10).join(', ')}`
-                      : '没有需要 AI 补全的单词'}
-                </span>
-              </div>
-              {aiFixResult.filled === -1 && (
-                <div className="mt-2 text-sm text-red-700 dark:text-red-400">
-                  错误: {aiFixResult.words[0] || '未知错误'}<br />
-                  请确保已在「设置」中配置 AI 并测试连接通过后再试。
-                </div>
-              )}
-            </div>
-          )}
+          <TaskResultBanner type="aiFill" icon={<Cpu className="h-4 w-4 text-green-600" />} />
 
           {/* All clear */}
           {totalIssues === 0 ? (

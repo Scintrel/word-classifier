@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   CheckCircle2, XCircle, AlertCircle, Loader2,
   FileText, Clock
@@ -23,7 +23,7 @@ type ImportStep = 'select' | 'preview' | 'mapping' | 'importing' | 'done'
  * 3. Map columns to word fields
  * 4. Import with progress feedback
  */
-export default function ImportView() {
+export default function ImportView({ active = true }: { active?: boolean }) {
   // State
   const [step, setStep] = useState<ImportStep>('select')
   const [filePath, setFilePath] = useState<string | null>(null)
@@ -33,6 +33,20 @@ export default function ImportView() {
   const [bareWordsMode, setBareWordsMode] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [importHistory, setImportHistory] = useState<unknown[]>([])
+
+  async function loadImportHistory() {
+    try {
+      const history = await window.api.getImportHistory()
+      setImportHistory(history)
+    } catch (err) {
+      console.error('加载导入历史失败:', err)
+    }
+  }
+
+  // 打开页面即加载历史（切页回来时刷新——页面常驻，历史保持最新）
+  useEffect(() => {
+    if (active) loadImportHistory()
+  }, [active])
 
   /**
    * Step 1 → Step 2: File selected, parse it for preview.
@@ -88,8 +102,7 @@ export default function ImportView() {
       setStep('done')
 
       // Refresh import history
-      const history = await window.api.getImportHistory()
-      setImportHistory(history)
+      await loadImportHistory()
     } catch (err) {
       setError(`导入失败: ${err instanceof Error ? err.message : '未知错误'}`)
       setStep('mapping') // Go back so user can retry

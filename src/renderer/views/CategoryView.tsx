@@ -37,7 +37,7 @@ interface ClassifyResult {
 
 const WORD_PAGE_SIZE = 50
 
-export default function CategoryView() {
+export default function CategoryView({ active = true }: { active?: boolean }) {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [classifying, setClassifying] = useState(false)
@@ -51,10 +51,19 @@ export default function CategoryView() {
   const [totalPages, setTotalPages] = useState(1)
   const [wordsLoading, setWordsLoading] = useState(false)
   const [selectedWordId, setSelectedWordId] = useState<number | null>(null)
+  // 单词表排序
+  const [wordSort, setWordSort] = useState('default')
 
   useEffect(() => {
     loadCategories()
   }, [])
+
+  // 切回本页时刷新分类计数；若已选中分类，同时刷新其单词列表（选择与页码保持）
+  useEffect(() => {
+    if (!active) return
+    loadCategories()
+    if (selectedCat) loadCatWords(selectedCat.id, wordPage)
+  }, [active])
 
   async function loadCategories() {
     setLoading(true)
@@ -118,13 +127,15 @@ export default function CategoryView() {
     loadCatWords(cat.id, 1)
   }
 
-  async function loadCatWords(catId: number, page: number) {
+  async function loadCatWords(catId: number, page: number, sort?: string) {
     setWordsLoading(true)
     try {
+      const effectiveSort = sort ?? wordSort
       const result = await window.api.listWords({
         categoryId: catId,
         page,
-        pageSize: WORD_PAGE_SIZE
+        pageSize: WORD_PAGE_SIZE,
+        sort: effectiveSort !== 'default' ? (effectiveSort as 'az' | 'za') : undefined
       })
       setWords(result.words as WordRow[])
       setTotalPages(result.totalPages)
@@ -302,12 +313,28 @@ export default function CategoryView() {
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-lg border border-border">
           {selectedCat ? (
             <>
-              <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
+              <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3">
                 <h2 className="font-semibold">
                   「{selectedCat.name_cn || selectedCat.name}」的单词
                   {selectedHasSubs && <span className="text-sm font-normal text-muted-foreground">（含子分类）</span>}
                 </h2>
-                <span className="text-xs text-muted-foreground">第 {wordPage}/{Math.max(totalPages, 1)} 页</span>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={wordSort}
+                    onChange={(e) => {
+                      const v = e.target.value
+                      setWordSort(v)
+                      setWordPage(1)
+                      if (selectedCat) loadCatWords(selectedCat.id, 1, v)
+                    }}
+                    className="rounded-md border border-input bg-background px-2 py-1 text-xs focus:border-primary focus:outline-none"
+                  >
+                    <option value="default">默认排序</option>
+                    <option value="az">字母 A→Z</option>
+                    <option value="za">字母 Z→A</option>
+                  </select>
+                  <span className="text-xs text-muted-foreground">第 {wordPage}/{Math.max(totalPages, 1)} 页</span>
+                </div>
               </div>
               <div className="min-h-0 flex-1 overflow-y-auto">
                 <table className="w-full table-fixed">

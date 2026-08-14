@@ -60,6 +60,18 @@ describe('AutoComplete', () => {
     })
   })
 
+  describe('uppercase fallback', () => {
+    it('should find ALL-CAPS dictionary entries like CORE and FAX', () => {
+      // ECDICT 里 core/fax 以全大写 CORE/FAX 存储，小写查找必须能命中
+      const core = lookupWord('core')
+      expect(core).not.toBeNull()
+      expect(core!.phonetic).toBeTruthy()
+      const fax = lookupWord('fax')
+      expect(fax).not.toBeNull()
+      expect(fax!.phonetic).toBeTruthy()
+    })
+  })
+
   describe('normalizePhonetic', () => {
     it('converts ECDICT cyrillic chars and wraps in slashes', () => {
       expect(normalizePhonetic("ә'bændәn")).toBe("/ə'bændən/")
