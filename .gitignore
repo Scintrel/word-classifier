@@ -35,3 +35,6 @@ shots/
 
 # 编辑器个人配置
 .vscode/
+
+# 质量门通行证（临时状态，不入库；签发/校验脚本 .claude/gates/sign.mjs 入库）
+.claude/gates/*.pass

@@ -8,5 +8,19 @@
       "Bash(node scripts/ecdict-to-dict.js)",
       "Bash(node -e ' *)"
     ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/pre-commit-check.mjs",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
   }
 }
