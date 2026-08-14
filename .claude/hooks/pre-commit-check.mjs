@@ -60,7 +60,7 @@ function verifyGate(gate) {
   let pass
   try { pass = JSON.parse(readFileSync(p, 'utf-8')) } catch { return `「${gate}」通行证损坏` }
   if (!pass.issuedAt || Date.now() - pass.issuedAt > MAX_AGE_MS) {
-    return `「${gate}」通行证已过期（超 15 分钟），需重新检查`
+    return `「${gate}」通行证已过期（超 60 分钟），需重新检查`
   }
   if (pass.stateHash !== stateHash()) {
     return `「${gate}」通行证失效：签发后代码又被改动，需重新检查`
@@ -80,7 +80,10 @@ try {
 } catch { input = {} }
 
 const cmd = input.tool_input?.command ?? ''
-if (!/\bgit\s+commit\b/.test(cmd)) process.exit(0) // 不是提交命令：放行
+// 提交命令识别：git + 任意数量的选项（-c key=value / --no-pager / -C 路径…）+ commit 子命令。
+// 选项值用负向断言排除 "commit" 本身，避免 `git --no-pager commit` 把 commit 吃成选项值。
+const COMMIT_RE = /(^|[\s;&|])git(?:\s+--?[A-Za-z][A-Za-z0-9-]*(?:\s+(?!commit\b)[^\s]+)?)*\s+commit(?:\s|$)/
+if (!COMMIT_RE.test(cmd)) process.exit(0) // 不是提交命令：放行
 
 // 两张通行证（测试证据由 unit-test 通行证承载：签发前已在正常环境真实跑完测试）
 const problems = ['unit-test', 'quality'].map(verifyGate).filter(Boolean)

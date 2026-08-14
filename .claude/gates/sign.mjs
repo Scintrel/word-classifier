@@ -7,7 +7,7 @@
  *   node .claude/gates/sign.mjs quality "无阻塞性问题"        # 签发质量检查通行证
  *   node .claude/gates/sign.mjs --check                       # 校验两张通行证是否都有效
  *
- * 通行证有效期 15 分钟；stateHash 绑定"签发那一刻的代码状态"——
+ * 通行证有效期 60 分钟；stateHash 绑定"签发那一刻的代码状态"——
  * 签发后代码一旦改动（git status 变化或 HEAD 变化），通行证立即失效。
  */
 import { execSync } from 'node:child_process'
@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url'
 const GATES_DIR = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(GATES_DIR, '..', '..')
 // 有效期 60 分钟：质量检查代理跑完整注释检查+安全审计需要几分钟，
-// 15 分钟太短会让 unit-test 通行证在检查期间过期
+// 原来的 15 分钟太短会让 unit-test 通行证在检查期间过期
 const MAX_AGE_MS = 60 * 60 * 1000
 const GATES = ['unit-test', 'quality']
 
@@ -62,7 +62,7 @@ function sign(gate, summary) {
     stateHash: stateHash()
   }
   writeFileSync(passPath(gate), JSON.stringify(pass, null, 2))
-  console.log(`✅ 已签发 ${gate} 通行证（代码状态 ${pass.stateHash}，15 分钟内有效）`)
+  console.log(`✅ 已签发 ${gate} 通行证（代码状态 ${pass.stateHash}，60 分钟内有效）`)
 }
 
 /** 校验单张通行证，返回 { ok, reason } */
@@ -74,7 +74,7 @@ function verifyGate(gate) {
     return { ok: false, reason: `${gate} 通行证损坏` }
   }
   if (!pass.issuedAt || Date.now() - pass.issuedAt > MAX_AGE_MS) {
-    return { ok: false, reason: `${gate} 通行证已过期（超过 15 分钟），请重新检查` }
+    return { ok: false, reason: `${gate} 通行证已过期（超过 60 分钟），请重新检查` }
   }
   if (pass.stateHash !== stateHash()) {
     return { ok: false, reason: `${gate} 通行证失效：签发后代码又改动了，请重新检查` }
