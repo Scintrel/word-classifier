@@ -405,9 +405,13 @@ export default function DataEditorView() {
                                 <span className={`rounded border px-1.5 py-0.5 text-xs ${ISSUE_COLORS[issue.issueType] ?? 'bg-muted'}`}>
                                   {ISSUE_LABELS[issue.issueType] ?? issue.issueType}
                                 </span>
-                                {issue.autoFixable && (
+                                {issue.autoFixable ? (
                                   <span className="rounded bg-green-100 px-1.5 py-0.5 text-xs text-green-700 dark:bg-green-900/40 dark:text-green-300">
                                     可自动修复
+                                  </span>
+                                ) : (
+                                  <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500 dark:bg-gray-800/60 dark:text-gray-400">
+                                    需手动处理
                                   </span>
                                 )}
                               </div>

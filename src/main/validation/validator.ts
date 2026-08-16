@@ -1,4 +1,5 @@
 import { getDatabase } from '../database/connection'
+import { getAutoComplete, normalizePhonetic } from './autoComplete'
 
 /**
  * Types of validation issues that can be detected.
@@ -150,6 +151,11 @@ export function validateAllWords(): ValidationResult {
     const defEn = (row.definition_en as string)?.trim()
     const pos = (row.part_of_speech as string)?.trim()
 
+    // 与「词典补全」完全一致的查词结果——「可自动修复」标签必须如实：
+    // 只有词典里真能查到音标/释义/词性（或后缀规律能推出词性）才算可修，
+    // 查不到的标成"需手动处理"，不再骗人说可以自动修。
+    const auto = getAutoComplete(word, defCn || defEn || undefined)
+
     // 1. Missing word
     if (!word) {
       issues.push({
@@ -191,8 +197,8 @@ export function validateAllWords(): ValidationResult {
         issueType: 'missing_phonetic',
         description: `缺少音标（${missingSide}）`,
         currentValue: [phoneticUk, phoneticUs].filter(Boolean).join(' / ') || null,
-        suggestion: null,
-        autoFixable: true  // Can be auto-completed from dictionary
+        suggestion: auto.phoneticUk ? null : '内置词典里查不到这个词的音标，可手动编辑，或在开发者模式把它加进小词典',
+        autoFixable: Boolean(auto.phoneticUk)
       })
     }
 
@@ -202,8 +208,9 @@ export function validateAllWords(): ValidationResult {
         wordId, word, field: 'phonetic_uk',
         issueType: 'phonetic_invalid',
         description: '英式音标格式可能不正确',
-        currentValue: phoneticUk, suggestion: null,
-        autoFixable: true
+        currentValue: phoneticUk,
+        suggestion: normalizePhonetic(phoneticUk) !== phoneticUk ? '可运行「音标规范化」自动修正' : '音标内容无法自动修正，请手动编辑',
+        autoFixable: normalizePhonetic(phoneticUk) !== phoneticUk
       })
     }
 
@@ -213,8 +220,9 @@ export function validateAllWords(): ValidationResult {
         wordId, word, field: 'definition',
         issueType: 'missing_definition',
         description: '缺少释义（中文和英文均为空）',
-        currentValue: null, suggestion: null,
-        autoFixable: true  // Can be auto-completed from dictionary
+        currentValue: null,
+        suggestion: auto.definitionCn ? null : '内置词典里查不到这个词的释义，可手动编辑，或在开发者模式把它加进小词典',
+        autoFixable: Boolean(auto.definitionCn)
       })
     }
 
@@ -244,8 +252,9 @@ export function validateAllWords(): ValidationResult {
         wordId, word, field: 'part_of_speech',
         issueType: 'pos_unknown',
         description: '词性未设置',
-        currentValue: null, suggestion: null,
-        autoFixable: true  // Can be guessed from suffix
+        currentValue: null,
+        suggestion: auto.partOfSpeech ? null : '无法从词典或后缀规律推测词性，请手动选择',
+        autoFixable: Boolean(auto.partOfSpeech)
       })
     }
   }
